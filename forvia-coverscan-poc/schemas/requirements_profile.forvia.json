@@ -1,0 +1,88 @@
+{
+  "$schema": "./requirements_profile.schema.json",
+  "profiles": [
+    {
+      "id": "FORVIA_GPTC_DEFAULT",
+      "name": "FORVIA GPTC (default)",
+      "version": "1.0.0",
+      "description": "Thresholds from FORVIA General Purchasing Terms & Conditions as stated in the needs expression. Secondary criteria and severities are POC defaults to calibrate in the scoring workshop.",
+      "scope": { "countries": ["*"], "forviaEntities": ["*"], "markets": ["*"], "priority": 0 },
+      "currency": "EUR",
+      "fx": { "source": "ECB", "referenceDateRule": "RECEPTION_DATE" },
+      "gates": {
+        "FILE_FORMAT_OK": { "severity": "BLOCK", "allowed": ["pdf", "png", "jpg", "jpeg"] },
+        "DOCUMENT_IS_CERTIFICATE": { "severity": "BLOCK", "minConfidence": 0.7 },
+        "ISSUER_IS_INSURER": { "severity": "BLOCK", "allowAuthorisedBroker": false },
+        "INSURER_IDENTIFIED": { "severity": "BLOCK", "fuzzyReviewBand": [0.6, 0.85] },
+        "INSURER_RATING_FLOOR": { "severity": "BLOCK", "floor": { "SP": "BBB+", "AMBEST": "A-", "MOODYS": "Baa1", "FITCH": "BBB+" }, "unratedAction": "REVIEW", "captiveAction": "REVIEW" },
+        "STAMP_PRESENT": { "severity": "BLOCK", "minConfidence": 0.85 },
+        "SIGNATURE_PRESENT": { "severity": "BLOCK", "minConfidence": 0.7 },
+        "POLICY_NUMBER_PRESENT": { "severity": "BLOCK" },
+        "DATES_PRESENT": { "severity": "BLOCK" },
+        "NOT_EXPIRED": { "severity": "BLOCK" },
+        "ENTITY_MATCH": { "severity": "BLOCK", "acceptAs": ["POLICYHOLDER", "NAMED_INSURED", "ADDITIONAL_INSURED", "CO_INSURED"], "minScore": 0.85, "reviewBand": [0.6, 0.85] },
+        "COINSURANCE_COMPLETE": { "severity": "BLOCK" },
+        "CAPTIVE_FRONTED": { "severity": "BLOCK" }
+      },
+      "formalGates": ["STAMP_PRESENT", "SIGNATURE_PRESENT", "POLICY_NUMBER_PRESENT", "ENTITY_MATCH"],
+      "expiry": { "windowMonths": 10, "severity": "WARNING" },
+      "critical": {
+        "PRODUCT_LIABILITY":   { "minEur": 20000000, "weight": 30, "inheritFrom": ["COMBINED_GL_PL"] },
+        "PRODUCT_RECALL":      { "minEur": 15000000, "weight": 30, "inheritFrom": ["AUTOMOTIVE_RECALL"] },
+        "PURE_FINANCIAL_LOSS": { "minEur": 15000000, "weight": 15, "inheritFrom": ["COMBINED_GL_PL_WITH_PFL"] }
+      },
+      "secondary": {
+        "CONSEQUENTIAL_FINANCIAL_LOSS": { "minEur": 1000000, "weight": 5, "toConfirm": true },
+        "DISMANTLING_REFITTING":        { "presence": true, "weight": 5 },
+        "EXTENDED_PRODUCT_LIABILITY":   { "presence": true, "weight": 5 },
+        "TERRITORY_USA_CANADA":         { "presence": true, "weight": 5 },
+        "AGGREGATE_BASIS":              { "presence": true, "weight": 5 }
+      },
+      "penalties": { "CRITICAL_EXCLUSION": -10, "CRITICAL_EXCLUSION_CAP": -20, "CLAIMS_MADE": -5, "PER_CLAIM_ONLY": 0 },
+      "criticalExclusionPatterns": [
+        "USA/Canada excluded on recall, withdrawal, dismantling or refitting costs",
+        "Product recall excluded",
+        "Automotive critical components excluded (steering, brakes, tyres, seatbelts, airbags)",
+        "Failure to supply exclusion"
+      ],
+      "amountBasis": { "prefer": "ANNUAL_AGGREGATE", "perClaimOnlyAction": "WARNING" },
+      "cslAllocation": "FULL",
+      "review": { "globalIasThreshold": 0.75, "criticalFieldIasThreshold": 0.60, "anyUnclearRoutesToReview": true },
+      "keywordsRequired": ["product recall", "pure financial loss", "extended product liability", "assembly and disassembly", "dismantling and refitting costs"]
+    },
+    {
+      "id": "EXPERT_MEKOUAR",
+      "name": "Expert practice (R. Mekouar) — demo only",
+      "version": "0.1.0",
+      "description": "Levels heard live on 17/08/2026 (Unibail habits). Demonstrates configurability; NOT FORVIA's contractual position.",
+      "scope": { "countries": ["*"], "forviaEntities": ["*"], "markets": ["*"], "priority": -1 },
+      "extends": "FORVIA_GPTC_DEFAULT",
+      "gates": { "STAMP_PRESENT": { "severity": "REQUEST_CHANGES" } },
+      "critical": {
+        "GENERAL_LIABILITY":   { "minEur": 5000000,  "weight": 25, "inheritFrom": ["COMBINED_GL_PL"] },
+        "PRODUCT_LIABILITY":   { "minEur": 5000000,  "weight": 25, "inheritFrom": ["COMBINED_GL_PL"] },
+        "PRODUCT_RECALL":      { "minEur": 5000000,  "weight": 20, "inheritFrom": ["AUTOMOTIVE_RECALL"] },
+        "PURE_FINANCIAL_LOSS": { "minEur": 1000000,  "weight": 10, "inheritFrom": ["COMBINED_GL_PL_WITH_PFL"] },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": { "minEur": 500000, "weight": 10 }
+      },
+      "secondary": {
+        "POLLUTION_ACCIDENTAL": { "minEur": 500000, "weight": 5 },
+        "TERRITORY_USA_CANADA": { "presence": true, "weight": 5 }
+      }
+    },
+    {
+      "id": "FORVIA_GPTC_USA",
+      "name": "FORVIA GPTC — US/Canada suppliers (placeholder)",
+      "version": "0.1.0",
+      "description": "Placeholder showing per-country modulation (Q08: US claims 10–100x). Values are illustrative and must be set by FORVIA.",
+      "scope": { "countries": ["US", "CA"], "forviaEntities": ["*"], "markets": ["*"], "priority": 10 },
+      "extends": "FORVIA_GPTC_DEFAULT",
+      "critical": {
+        "PRODUCT_LIABILITY":   { "minEur": 50000000, "weight": 30 },
+        "PRODUCT_RECALL":      { "minEur": 25000000, "weight": 30 },
+        "PURE_FINANCIAL_LOSS": { "minEur": 25000000, "weight": 15 }
+      },
+      "expectedFormat": "ACORD_25"
+    }
+  ]
+}

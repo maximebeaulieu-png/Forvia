@@ -1,0 +1,229 @@
+{
+  "profile": "FORVIA_GPTC_DEFAULT",
+  "demoClock": "2025-04-15",
+  "id": "02_generali-de_scherdel_DE",
+  "file": "20250408_VEB_Scherdel_GmbH_Ru_ckruf.pdf",
+  "language": [
+    "de",
+    "en"
+  ],
+  "pages": 2,
+  "format": "PDF_TEXT",
+  "documentType": "CERTIFICATE",
+  "supplierMaster": {
+    "name": "Scherdel GmbH",
+    "country": "DE",
+    "ariba_id": "S-000102"
+  },
+  "issuer": {
+    "name": "Generali Deutschland Versicherung AG",
+    "type": "INSURER",
+    "country": "DE",
+    "regulator": "BaFin",
+    "ratingIndicative": "A+ (AM Best)"
+  },
+  "policyholder": "Scherdel GmbH",
+  "additionalInsureds": [],
+  "policyNumber": "DE-CAS-AB70346-2025",
+  "period": {
+    "from": "2025-01-01",
+    "to": "2026-01-01"
+  },
+  "issuedAt": "2025-01-09",
+  "issuedPlace": "München",
+  "receivedAt": "2025-01-16",
+  "fx": {},
+  "visual": {
+    "stamp": {
+      "present": false,
+      "confidence": 0.9
+    },
+    "signature": {
+      "present": true,
+      "page": 2,
+      "confidence": 0.85,
+      "note": "two scanned handwritten signatures (ppa. S. Vogel, i.A. A. Heindl)"
+    },
+    "logo": {
+      "present": true,
+      "page": 1
+    }
+  },
+  "territory": {
+    "statement": null,
+    "usaCanada": "UNCLEAR"
+  },
+  "trigger": "UNSTATED",
+  "basisSummary": "BOTH",
+  "guarantees": [
+    {
+      "code": "AUTOMOTIVE_RECALL",
+      "labelOriginal": "KFZ Rückrufkostenversicherung (inkl. Aus- und Einbaukosten ohne Rückruf)",
+      "page": 2,
+      "amountOriginal": 2000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 2000000,
+      "basis": "PER_EVENT_2X_ANNUAL",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": "double annual aggregate = 4M"
+    },
+    {
+      "code": "PRODUCT_RECALL",
+      "labelOriginal": "Produktrückrufkosten / Product recall cost insurance",
+      "page": 2,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_EVENT_1X_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "DISMANTLING_REFITTING",
+      "labelOriginal": "Aus- und Einbaukosten ohne Rückruf (within automotive recall)",
+      "page": 2,
+      "amountOriginal": 2000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 2000000,
+      "basis": "PER_EVENT_2X_ANNUAL",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PRODUCT_LIABILITY",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": "Recall-only certificate: no general/product liability at all"
+    },
+    {
+      "code": "PURE_FINANCIAL_LOSS",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": "Recall costs are 'pure financial loss' but restricted to enumerated recall expenses — does not satisfy PFL requirement"
+    }
+  ],
+  "exclusions": [
+    {
+      "text": "No coverage for bodily injury or property damage as such",
+      "critical": false
+    }
+  ],
+  "deductibles": null,
+  "gates": {
+    "DOCUMENT_IS_CERTIFICATE": "PASS",
+    "ISSUER_IS_INSURER": "PASS",
+    "INSURER_IDENTIFIED": "PASS",
+    "INSURER_RATING_FLOOR": "PASS",
+    "STAMP_PRESENT": "FAIL",
+    "SIGNATURE_PRESENT": "PASS",
+    "POLICY_NUMBER_PRESENT": "PASS",
+    "DATES_PRESENT": "PASS",
+    "NOT_EXPIRED": "PASS",
+    "ENTITY_MATCH": "PASS",
+    "COINSURANCE_COMPLETE": "PASS",
+    "CAPTIVE_FRONTED": "PASS",
+    "FILE_FORMAT_OK": "PASS"
+  },
+  "accuracyScore": 0.93,
+  "expert": {
+    "reviewedInSession": true,
+    "verdict": "NO_GO",
+    "quotes": [
+      "Plein d'imperfections : il n'y a pas la signature d'une personne, il n'y a pas le cachet (note: signatures are in fact present on p.2; stamp is absent)",
+      "Garantie globale mais très peu de sous-garanties, pas détaillé en ligne, pas les sous-limites",
+      "Pour moi c'est pas bon — blocage niveau 1"
+    ]
+  },
+  "demoAngle": "Formal No-Go (no stamp) + structural gap: recall-only certificate. Request must ask for stamp AND a GL/PL certificate AND recall ≥ €15M.",
+  "computed": {
+    "profile": "FORVIA_GPTC_DEFAULT",
+    "riskScore": null,
+    "riskScoreProvisional": 20,
+    "breakdown": {
+      "PRODUCT_LIABILITY": {
+        "required": 20000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 30
+      },
+      "PRODUCT_RECALL": {
+        "required": 15000000,
+        "found": 5000000,
+        "status": "BELOW_MINIMUM",
+        "points": 10.0,
+        "max": 30
+      },
+      "PURE_FINANCIAL_LOSS": {
+        "required": 15000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 15
+      },
+      "CONSEQUENTIAL_FINANCIAL_LOSS": {
+        "required": 1000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 5
+      },
+      "DISMANTLING_REFITTING": {
+        "required": "PRESENT",
+        "status": "PRESENT",
+        "points": 5,
+        "max": 5
+      },
+      "EXTENDED_PRODUCT_LIABILITY": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "TERRITORY_USA_CANADA": {
+        "status": "UNCLEAR",
+        "points": 0,
+        "max": 5
+      },
+      "AGGREGATE_BASIS": {
+        "status": "BOTH",
+        "points": 5,
+        "max": 5
+      },
+      "_penalties": 0
+    },
+    "decision": "NO_GO",
+    "noGoSubtype": "FORMAL_DEFECT",
+    "failedGates": [
+      "STAMP_PRESENT"
+    ],
+    "reviewGates": [],
+    "needsHumanReview": false,
+    "matchesExpert": true
+  }
+}

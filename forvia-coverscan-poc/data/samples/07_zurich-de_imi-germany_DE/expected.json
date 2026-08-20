@@ -1,0 +1,273 @@
+{
+  "profile": "FORVIA_GPTC_DEFAULT",
+  "demoClock": "2025-04-15",
+  "id": "07_zurich-de_imi-germany_DE",
+  "file": "Certificate_Bilingual_IMI_Germany_Holding_B_V___Co__KG_LA_20240715_v1_0.pdf",
+  "language": [
+    "de",
+    "en"
+  ],
+  "pages": 4,
+  "format": "PDF_TEXT",
+  "documentType": "CERTIFICATE",
+  "supplierMaster": {
+    "name": "Norgren GmbH",
+    "country": "DE",
+    "ariba_id": "S-000107",
+    "note": "hypothetical FORVIA-contracting entity chosen among the 16 co-insured for the demo"
+  },
+  "issuer": {
+    "name": "Zurich Insurance Europe AG, Niederlassung für Deutschland",
+    "type": "INSURER",
+    "country": "DE",
+    "regulator": "BaFin",
+    "ratingIndicative": "AA- (S&P)"
+  },
+  "policyholder": "IMI Germany Holding B.V. & Co. KG",
+  "additionalInsureds": [
+    "Bahr Modultechnik Holding GmbH",
+    "Bahr Modultechnik GmbH",
+    "Bopp & Reuther Valves GmbH",
+    "Buschjost GmbH",
+    "Fluid Automation Systems GmbH",
+    "Heimeier GmbH",
+    "Herion Systemtechnik GmbH",
+    "IMI Critical Engineering Holding GmbH",
+    "IMI Deutschland II GmbH & CO KG",
+    "IMI Deutschland Verwaltungs GmbH",
+    "IMI Hydronic Engineering Deutschland GmbH",
+    "Norgren GmbH",
+    "Th Jansen-Armaturen GmbH",
+    "THJ Holding GmbH",
+    "Valves Holding GmbH",
+    "Z&J Technologies GmbH"
+  ],
+  "policyNumber": "801.380.041.190",
+  "period": {
+    "from": "2024-06-30",
+    "to": "2025-06-29"
+  },
+  "issuedAt": "2024-07-15",
+  "issuedPlace": "Frankfurt am Main",
+  "receivedAt": "2024-07-22",
+  "fx": {},
+  "visual": {
+    "stamp": {
+      "present": false,
+      "confidence": 0.92
+    },
+    "signature": {
+      "present": true,
+      "page": 4,
+      "confidence": 0.93,
+      "note": "handwritten signature Dr. Carsten Schildknecht"
+    },
+    "logo": {
+      "present": true,
+      "page": 1
+    }
+  },
+  "territory": {
+    "statement": "Weltweite Exporte / Exports worldwide",
+    "usaCanada": "INCLUDED"
+  },
+  "trigger": "UNSTATED",
+  "basisSummary": "BOTH",
+  "guarantees": [
+    {
+      "code": "COMBINED_GL_PL",
+      "labelOriginal": "Betriebs- und Produkt-Haftpflichtversicherung / Combined limit for General and Product Liability — BI & PD",
+      "page": 1,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_EVENT_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PRODUCT_LIABILITY",
+      "labelOriginal": "(inherits combined limit)",
+      "page": 1,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_EVENT_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "EXTENDED_PRODUCT_LIABILITY",
+      "labelOriginal": "erweiterte Produkt-Haftpflicht (named in type of insurance, no sublimit shown)",
+      "page": 1,
+      "amountOriginal": null,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "POLLUTION_ACCIDENTAL",
+      "labelOriginal": "Umwelt-Haftpflichtversicherung",
+      "page": 2,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_EVENT_AND_ANNUAL",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PROFESSIONAL_INDEMNITY",
+      "labelOriginal": "Berufshaftpflicht für Architekten und Ingenieure",
+      "page": 2,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_EVENT_AND_ANNUAL",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PRODUCT_RECALL",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PURE_FINANCIAL_LOSS",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": "'named pure financial loss' only within environmental liability"
+    }
+  ],
+  "exclusions": [
+    {
+      "text": "Only the German contract is binding; coverage amounts may be reduced by claim payments",
+      "critical": false
+    }
+  ],
+  "deductibles": null,
+  "gates": {
+    "DOCUMENT_IS_CERTIFICATE": "PASS",
+    "ISSUER_IS_INSURER": "PASS",
+    "INSURER_IDENTIFIED": "PASS",
+    "INSURER_RATING_FLOOR": "PASS",
+    "STAMP_PRESENT": "FAIL",
+    "SIGNATURE_PRESENT": "PASS",
+    "POLICY_NUMBER_PRESENT": "PASS",
+    "DATES_PRESENT": "PASS",
+    "NOT_EXPIRED": "PASS",
+    "ENTITY_MATCH": "PASS",
+    "COINSURANCE_COMPLETE": "PASS",
+    "CAPTIVE_FRONTED": "PASS",
+    "FILE_FORMAT_OK": "PASS"
+  },
+  "entityMatchNote": "Supplier matched as co-insured (1 of 16)",
+  "accuracyScore": 0.95,
+  "expert": {
+    "reviewedInSession": false,
+    "verdict": "NO_GO",
+    "quotes": [],
+    "note": "Not discussed individually; verdict inferred from stated rules (no stamp; €5M vs €20M; no recall)"
+  },
+  "demoAngle": "Group policy with 16 co-insured → entity matching. Premium-paid statement. €5M combined limit far below €20M.",
+  "computed": {
+    "profile": "FORVIA_GPTC_DEFAULT",
+    "riskScore": null,
+    "riskScoreProvisional": 22,
+    "breakdown": {
+      "PRODUCT_LIABILITY": {
+        "required": 20000000,
+        "found": 5000000,
+        "status": "BELOW_MINIMUM",
+        "points": 7.5,
+        "max": 30
+      },
+      "PRODUCT_RECALL": {
+        "required": 15000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 30
+      },
+      "PURE_FINANCIAL_LOSS": {
+        "required": 15000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 15
+      },
+      "CONSEQUENTIAL_FINANCIAL_LOSS": {
+        "required": 1000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 5
+      },
+      "DISMANTLING_REFITTING": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "EXTENDED_PRODUCT_LIABILITY": {
+        "required": "PRESENT",
+        "status": "PRESENT",
+        "points": 5,
+        "max": 5
+      },
+      "TERRITORY_USA_CANADA": {
+        "status": "INCLUDED",
+        "points": 5,
+        "max": 5
+      },
+      "AGGREGATE_BASIS": {
+        "status": "BOTH",
+        "points": 5,
+        "max": 5
+      },
+      "_penalties": 0
+    },
+    "decision": "NO_GO",
+    "noGoSubtype": "FORMAL_DEFECT",
+    "failedGates": [
+      "STAMP_PRESENT"
+    ],
+    "reviewGates": [],
+    "needsHumanReview": false,
+    "matchesExpert": true
+  }
+}

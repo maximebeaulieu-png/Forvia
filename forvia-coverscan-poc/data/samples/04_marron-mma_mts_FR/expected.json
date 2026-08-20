@@ -1,0 +1,302 @@
+{
+  "profile": "FORVIA_GPTC_DEFAULT",
+  "demoClock": "2025-04-15",
+  "id": "04_marron-mma_mts_FR",
+  "file": "Attestation_2025_MTS_RC_.pdf",
+  "language": [
+    "fr"
+  ],
+  "pages": 2,
+  "format": "PDF_SCANNED",
+  "documentType": "CERTIFICATE",
+  "supplierMaster": {
+    "name": "M.T.S.",
+    "country": "FR",
+    "ariba_id": "S-000104"
+  },
+  "issuer": {
+    "name": "SARL MARRON & ASSOCIÉS",
+    "type": "AGENT_BROKER",
+    "country": "FR",
+    "regulator": "ORIAS 07 002 497",
+    "ratingIndicative": null,
+    "note": "'Assureur Conseil' — Agent Général Exclusif MMA et Courtier. Underlying insurer: MMA IARD / MMA ENTREPRISE"
+  },
+  "policyholder": "La Société M.T.S.",
+  "additionalInsureds": [],
+  "policyNumber": "L48 362 819",
+  "period": {
+    "from": "2025-01-01",
+    "to": "2025-12-31"
+  },
+  "issuedAt": "2025-01-07",
+  "issuedPlace": "Oyonnax",
+  "receivedAt": "2025-01-14",
+  "fx": {},
+  "visual": {
+    "stamp": {
+      "present": true,
+      "page": 1,
+      "confidence": 0.85,
+      "note": "stamp is the BROKER's (Marron & Associés), not the insurer's → does not satisfy gate"
+    },
+    "signature": {
+      "present": false,
+      "confidence": 0.7,
+      "note": "no insurer signature; names of broker staff printed in the margin"
+    },
+    "logo": {
+      "present": true,
+      "page": 2,
+      "note": "MMA Entreprise logo bottom-right (insurer logo on a broker document)"
+    }
+  },
+  "territory": {
+    "statement": "USA/Canada section with reduced limits and exclusions",
+    "usaCanada": "PARTIAL_EXCLUDED"
+  },
+  "trigger": "UNSTATED",
+  "basisSummary": "BOTH",
+  "guarantees": [
+    {
+      "code": "GENERAL_LIABILITY",
+      "labelOriginal": "RC Exploitation — Tous dommages confondus",
+      "page": 2,
+      "amountOriginal": 10000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 10000000,
+      "basis": "PER_CLAIM",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "CONSEQUENTIAL_FINANCIAL_LOSS",
+      "labelOriginal": "Dommages matériels et immatériels consécutifs y compris biens confiés",
+      "page": 2,
+      "amountOriginal": 2000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 2000000,
+      "basis": "PER_CLAIM",
+      "deductible": 750,
+      "status": "COMPLIANT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PURE_FINANCIAL_LOSS",
+      "labelOriginal": "Dommages immatériels non consécutifs",
+      "page": 2,
+      "amountOriginal": 305000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 305000,
+      "basis": "PER_CLAIM",
+      "deductible": 1500,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "POLLUTION_ACCIDENTAL",
+      "labelOriginal": "Atteintes à l'environnement accidentelles",
+      "page": 2,
+      "amountOriginal": 750000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 750000,
+      "basis": "PER_CLAIM",
+      "deductible": 2000,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PRODUCT_LIABILITY",
+      "labelOriginal": "RC Après Livraison — Tous dommages confondus (hors USA/Canada)",
+      "page": 2,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null,
+      "excludedTerritories": [
+        "USA",
+        "Canada"
+      ]
+    },
+    {
+      "code": "PRODUCT_RECALL",
+      "labelOriginal": "Frais de retrait engagés par l'assuré",
+      "page": 2,
+      "amountOriginal": 305000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 305000,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": 3000,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null,
+      "excludedTerritories": [
+        "USA",
+        "Canada"
+      ]
+    },
+    {
+      "code": "DISMANTLING_REFITTING",
+      "labelOriginal": "Frais de dépose repose engagés par l'assuré",
+      "page": 2,
+      "amountOriginal": 305000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 305000,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": 3000,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null,
+      "excludedTerritories": [
+        "USA",
+        "Canada"
+      ]
+    },
+    {
+      "code": "OTHER",
+      "labelOriginal": "DINC y compris frais de dépose repose et de retrait engagés par un tiers",
+      "page": 2,
+      "amountOriginal": 500000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 500000,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": 3000,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    }
+  ],
+  "exclusions": [
+    {
+      "text": "USA/Canada: Dommages immatériels non consécutifs suite à un vice caché (loss of use) — Exclu",
+      "critical": true
+    },
+    {
+      "text": "USA/Canada: Frais de dépose repose — Exclu",
+      "critical": true
+    },
+    {
+      "text": "USA/Canada: Frais de retrait — Exclu",
+      "critical": true
+    },
+    {
+      "text": "Tout dispositif/matériel implantable dans le corps humain",
+      "critical": false
+    }
+  ],
+  "deductibles": "€750–€15,000 per claim depending on line",
+  "gates": {
+    "DOCUMENT_IS_CERTIFICATE": "PASS",
+    "ISSUER_IS_INSURER": "FAIL",
+    "INSURER_IDENTIFIED": "PASS",
+    "INSURER_RATING_FLOOR": "PASS",
+    "STAMP_PRESENT": "FAIL",
+    "SIGNATURE_PRESENT": "FAIL",
+    "POLICY_NUMBER_PRESENT": "PASS",
+    "DATES_PRESENT": "PASS",
+    "NOT_EXPIRED": "PASS",
+    "ENTITY_MATCH": "PASS",
+    "COINSURANCE_COMPLETE": "PASS",
+    "CAPTIVE_FRONTED": "PASS",
+    "FILE_FORMAT_OK": "PASS"
+  },
+  "accuracyScore": 0.82,
+  "expert": {
+    "reviewedInSession": true,
+    "verdict": "NO_GO",
+    "quotes": [
+      "Marron & Associés c'est pas un assureur, c'est un petit courtier… refus total",
+      "Le mec te fait une attestation pour faire plaisir à son copain client — aucune valeur juridique",
+      "Frais de retrait 305 000 € — absolument pas suffisant ; je demande souvent 1, 2 voire 5 millions",
+      "Ils annoncent un seuil global mais il y a des sous-limites",
+      "Aux États-Unis/Canada les frais de dépose-repose et de retrait sont carrément exclus — red flag énorme",
+      "Elle est doublement bidon : Marron et associés + sous-limites inacceptables"
+    ]
+  },
+  "demoAngle": "THE demo case: broker-issued (ORIAS lookup), scanned OCR, €10M headline vs €305k recall sub-limit, USA/Canada exclusions in the fine print.",
+  "computed": {
+    "profile": "FORVIA_GPTC_DEFAULT",
+    "riskScore": null,
+    "riskScoreProvisional": 3,
+    "breakdown": {
+      "PRODUCT_LIABILITY": {
+        "required": 20000000,
+        "found": 5000000,
+        "status": "BELOW_MINIMUM",
+        "points": 7.5,
+        "max": 30
+      },
+      "PRODUCT_RECALL": {
+        "required": 15000000,
+        "found": 305000,
+        "status": "BELOW_MINIMUM",
+        "points": 0.6,
+        "max": 30
+      },
+      "PURE_FINANCIAL_LOSS": {
+        "required": 15000000,
+        "found": 305000,
+        "status": "BELOW_MINIMUM",
+        "points": 0.3,
+        "max": 15
+      },
+      "CONSEQUENTIAL_FINANCIAL_LOSS": {
+        "required": 1000000,
+        "found": 2000000,
+        "status": "COMPLIANT",
+        "points": 5.0,
+        "max": 5
+      },
+      "DISMANTLING_REFITTING": {
+        "required": "PRESENT",
+        "status": "PRESENT",
+        "points": 5,
+        "max": 5
+      },
+      "EXTENDED_PRODUCT_LIABILITY": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "TERRITORY_USA_CANADA": {
+        "status": "PARTIAL_EXCLUDED",
+        "points": 0,
+        "max": 5
+      },
+      "AGGREGATE_BASIS": {
+        "status": "BOTH",
+        "points": 5,
+        "max": 5
+      },
+      "_penalties": -20
+    },
+    "decision": "NO_GO",
+    "noGoSubtype": "STRUCTURAL",
+    "failedGates": [
+      "ISSUER_IS_INSURER",
+      "STAMP_PRESENT",
+      "SIGNATURE_PRESENT"
+    ],
+    "reviewGates": [],
+    "needsHumanReview": false,
+    "matchesExpert": true
+  }
+}

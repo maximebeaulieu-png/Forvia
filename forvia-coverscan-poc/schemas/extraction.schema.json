@@ -1,0 +1,621 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExtractionResult",
+  "description": "Strict output of the extraction LLM call (stage 3). Extract, do not judge. Every field carries confidence and a verbatim source quote. Normalization (taxonomy codes, FX) happens later in code.",
+  "type": "object",
+  "required": [
+    "document",
+    "issuer",
+    "insurer",
+    "policyholder",
+    "policyNumbers",
+    "period",
+    "guarantees",
+    "exclusions",
+    "territory",
+    "trigger",
+    "signatureBlocks",
+    "notes"
+  ],
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": [
+        "page",
+        "quote"
+      ],
+      "properties": {
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "quote": {
+          "type": "string",
+          "description": "Verbatim substring of the page text (source language)"
+        },
+        "bbox": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "description": "x0,y0,x1,y1 normalized 0..1, optional"
+        }
+      }
+    },
+    "fieldStr": {
+      "type": "object",
+      "required": [
+        "value",
+        "confidence",
+        "source"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "fieldDate": {
+      "type": "object",
+      "required": [
+        "value",
+        "confidence",
+        "source"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "original": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "required": [
+        "name",
+        "confidence",
+        "source"
+      ],
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "registrationIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "SIREN/RCS, HRB, NIF/CIF, ORIAS, VAT…"
+        },
+        "roleWords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "verbatim role words found near the name: 'Assureur Conseil', 'Courtier', 'Versicherer', 'Insurer'…"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "amount": {
+      "type": "object",
+      "required": [
+        "labelOriginal",
+        "amount",
+        "currency",
+        "basis",
+        "confidence",
+        "source"
+      ],
+      "properties": {
+        "labelOriginal": {
+          "type": "string"
+        },
+        "labelEnglish": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Your literal translation of the label; NOT a taxonomy code"
+        },
+        "amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Parsed number as written; null if 'covered' without figure"
+        },
+        "amountOriginalText": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ISO 4217 as written or inferred from symbol/context"
+        },
+        "basis": {
+          "enum": [
+            "PER_CLAIM",
+            "PER_OCCURRENCE",
+            "ANNUAL_AGGREGATE",
+            "PER_CLAIM_AND_ANNUAL",
+            "COMBINED_SINGLE_LIMIT",
+            "UNSTATED"
+          ]
+        },
+        "basisOriginal": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "aggregateMultiplier": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "e.g. 2 for 'begrenzt auf das Zweifache… je Versicherungsjahr'"
+        },
+        "coveredStatement": {
+          "type": "boolean",
+          "description": "true when the line says covered/included without an amount"
+        },
+        "excluded": {
+          "type": "boolean"
+        },
+        "deductible": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sublimitOf": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "labelOriginal of the parent headline limit if nested"
+        },
+        "territoryNote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "e.g. 'hors USA/Canada', 'USA only'"
+        },
+        "section": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "section heading above the line, verbatim"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    }
+  },
+  "properties": {
+    "document": {
+      "type": "object",
+      "required": [
+        "type",
+        "languages",
+        "confidence"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "CERTIFICATE",
+            "CERTIFICATE_WITH_COVER_LETTER",
+            "QUOTE",
+            "POLICY_EXCERPT",
+            "EMAIL",
+            "OTHER"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pagesToDiscard": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "isScanned": {
+          "type": "boolean"
+        },
+        "issuedAt": {
+          "$ref": "#/$defs/fieldDate"
+        },
+        "issuedPlace": {
+          "$ref": "#/$defs/fieldStr"
+        },
+        "disclaimers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confidence": {
+          "type": "number"
+        }
+      }
+    },
+    "issuer": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/entity"
+        }
+      ],
+      "description": "Entity that issues/signs the document"
+    },
+    "insurer": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/entity"
+        }
+      ],
+      "description": "Risk carrier named in the document (may differ from issuer)"
+    },
+    "coInsurers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sharePercent": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "signed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "source": {
+            "$ref": "#/$defs/source"
+          }
+        }
+      }
+    },
+    "brokerMentions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "policyholder": {
+      "$ref": "#/$defs/entity"
+    },
+    "namedInsureds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "additionalInsureds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "policyNumbers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fieldStr"
+      }
+    },
+    "period": {
+      "type": "object",
+      "required": [
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/fieldDate"
+        },
+        "to": {
+          "$ref": "#/$defs/fieldDate"
+        },
+        "statement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tacitRenewal": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "certificateValidity": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "when the certificate states its own validity distinct from the policy period"
+        }
+      }
+    },
+    "coverTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fieldStr"
+      }
+    },
+    "activities": {
+      "$ref": "#/$defs/fieldStr"
+    },
+    "guarantees": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/amount"
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "text",
+          "source"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "textEnglish": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isTerritorial": {
+            "type": "boolean"
+          },
+          "appliesTo": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "$ref": "#/$defs/source"
+          }
+        }
+      }
+    },
+    "territory": {
+      "type": "object",
+      "properties": {
+        "statement": {
+          "$ref": "#/$defs/fieldStr"
+        },
+        "usaCanada": {
+          "enum": [
+            "INCLUDED",
+            "EXCLUDED",
+            "PARTIAL_EXCLUDED",
+            "UNCLEAR"
+          ]
+        }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "enum": [
+            "OCCURRENCE",
+            "CLAIMS_MADE",
+            "UNSTATED"
+          ]
+        },
+        "retroactiveDate": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "premiumMentioned": {
+      "type": "boolean",
+      "description": "Quotes mention premiums; certificates rarely do"
+    },
+    "signatureBlocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "entityName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "personNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "statement": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "e.g. 'Signed on behalf of', 'does not require signature', 'ppa.', 'i.A.'"
+          }
+        }
+      }
+    },
+    "personalData": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "EMAIL",
+              "PHONE",
+              "PERSON_NAME"
+            ]
+          },
+          "value": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Anything unusual the extractor noticed, in English, factual"
+    },
+    "hints": {
+      "type": "array",
+      "description": "Pointers to catalogue checks (data/checks/check_catalogue.json) the extractor noticed. Hints are evidence for the rules engine, never decisions.",
+      "items": {
+        "type": "object",
+        "required": [
+          "checkId",
+          "quote",
+          "page",
+          "confidence"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "checkId": {
+            "type": "string",
+            "pattern": "^[A-H][0-9]{2}$"
+          },
+          "quote": {
+            "type": "string",
+            "description": "verbatim substring of the page text"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,3483 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-08-20",
+  "generatedBy": "tools/build_check_catalogue.py",
+  "outcomeVocabulary": [
+    "NO_GO_STRUCTURAL",
+    "NO_GO_FORMAL",
+    "REQUEST_CHANGES",
+    "PENALTY",
+    "SECONDARY",
+    "REVIEW",
+    "INFO",
+    "OK"
+  ],
+  "severityVocabulary": [
+    "BLOCKING",
+    "MAJOR",
+    "MINOR",
+    "INFO"
+  ],
+  "count": 122,
+  "checks": [
+    {
+      "id": "A01",
+      "category": "A. Document nature & admissibility",
+      "title": "Document is a quote / proposal, not a certificate",
+      "check": "Is the document a binding confirmation of cover in force, or an offer/quotation?",
+      "cues": {
+        "en": [
+          "quote",
+          "quotation",
+          "proposal",
+          "premium quoted",
+          "this quote is valid until",
+          "subject to acceptance",
+          "offer"
+        ],
+        "fr": [
+          "devis",
+          "proposition",
+          "projet de contrat",
+          "offre valable jusqu'au"
+        ],
+        "de": [
+          "Angebot",
+          "Prämienangebot",
+          "unverbindlich",
+          "Offerte"
+        ],
+        "es": [
+          "cotización",
+          "propuesta",
+          "oferta",
+          "prima estimada"
+        ],
+        "it": [
+          "preventivo",
+          "quotazione",
+          "proposta",
+          "offerta"
+        ]
+      },
+      "reading": "A quote proves nothing: the supplier may never have bound the policy. Quotes carry words like quote, proposal, premium, validity of offer, 'subject to'. A genuine certificate states that a policy IS in force with a policy number and period.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "sample 05 (ICICI Lombard / Naxnova)",
+        "text": "Title 'Commercial General Liability Quote'; premium shown; 'ICICI Lombard capacity (20%)'."
+      },
+      "explain": "The document is a quotation, not a certificate of insurance in force.",
+      "fix": "Please provide a certificate of insurance issued by the insurer confirming the policy in force (policy number, period, limits).",
+      "tags": [
+        "classifier"
+      ]
+    },
+    {
+      "id": "A02",
+      "category": "A. Document nature & admissibility",
+      "title": "Draft / specimen / 'for information only'",
+      "check": "Watermarks or notes indicating the document is not the final signed version.",
+      "cues": {
+        "en": [
+          "draft",
+          "specimen",
+          "sample",
+          "for information only",
+          "void",
+          "not valid"
+        ],
+        "fr": [
+          "projet",
+          "spécimen",
+          "pour information",
+          "non contractuel"
+        ],
+        "de": [
+          "Entwurf",
+          "Muster",
+          "unverbindlich",
+          "zur Information"
+        ],
+        "es": [
+          "borrador",
+          "muestra",
+          "solo informativo"
+        ],
+        "it": [
+          "bozza",
+          "fac-simile",
+          "a titolo informativo"
+        ]
+      },
+      "reading": "Drafts and specimens are not evidence. Also catch 'projet', 'Entwurf', 'Muster', 'sample', 'void'.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "synthetic",
+        "text": "Diagonal watermark 'DRAFT – NOT VALID' on every page."
+      },
+      "explain": "The document is marked as a draft or specimen and cannot be relied upon.",
+      "fix": "Please provide the final, signed and stamped certificate.",
+      "tags": []
+    },
+    {
+      "id": "A03",
+      "category": "A. Document nature & admissibility",
+      "title": "Policy schedule / excerpt of general conditions instead of a certificate",
+      "check": "The supplier sent pages of the policy wording (conditions, schedule) rather than a certificate addressed to a third party.",
+      "cues": {
+        "en": [
+          "general conditions",
+          "policy wording",
+          "schedule",
+          "section",
+          "article",
+          "definitions"
+        ],
+        "fr": [
+          "conditions générales",
+          "conditions particulières",
+          "article",
+          "dispositions"
+        ],
+        "de": [
+          "Allgemeine Versicherungsbedingungen",
+          "AHB",
+          "Besondere Bedingungen",
+          "Versicherungsschein"
+        ],
+        "es": [
+          "condiciones generales",
+          "condiciones particulares"
+        ],
+        "it": [
+          "condizioni generali",
+          "condizioni particolari",
+          "polizza"
+        ]
+      },
+      "reading": "A policy excerpt can contain the right numbers but is not a certification by the insurer that the cover is in force today. Treat as structural; data may still be extracted for information.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "synthetic",
+        "text": "12-page PDF starting with 'Allgemeine Versicherungsbedingungen für die Haftpflichtversicherung (AHB)'."
+      },
+      "explain": "The document is an excerpt of the policy, not a certificate confirming the cover in force.",
+      "fix": "Please ask your insurer to issue a certificate of insurance (attestation) summarising the cover in force.",
+      "tags": []
+    },
+    {
+      "id": "A04",
+      "category": "A. Document nature & admissibility",
+      "title": "Cover letter / email only, certificate missing",
+      "check": "A broker or insurer letter says 'please find attached the certificate' but the attachment is absent.",
+      "cues": {
+        "en": [
+          "please find attached",
+          "enclosed",
+          "herewith"
+        ],
+        "fr": [
+          "veuillez trouver ci-joint",
+          "ci-après"
+        ],
+        "de": [
+          "anbei",
+          "in der Anlage",
+          "beigefügt"
+        ],
+        "es": [
+          "adjunto"
+        ],
+        "it": [
+          "in allegato"
+        ]
+      },
+      "reading": "Classify as EMAIL/COVER_LETTER. If the same file also contains the certificate (sample 09), keep only the certificate pages and record the letter as context.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "sample 09 (Allianz / Beyer Polyvlies)",
+        "text": "Page 1 is a personal cover letter from the insurer's contact ('anbei erhalten Sie…'); the certificate follows on page 2."
+      },
+      "explain": "Only a cover letter was received; the certificate itself is missing.",
+      "fix": "Please send the certificate referred to in your letter.",
+      "tags": []
+    },
+    {
+      "id": "A05",
+      "category": "A. Document nature & admissibility",
+      "title": "Renewal notice, invoice or premium statement",
+      "check": "Financial documents mention the policy but do not certify the cover.",
+      "cues": {
+        "en": [
+          "invoice",
+          "premium due",
+          "renewal notice",
+          "amount payable"
+        ],
+        "fr": [
+          "avis d'échéance",
+          "appel de prime",
+          "facture"
+        ],
+        "de": [
+          "Beitragsrechnung",
+          "Prämienrechnung",
+          "fällig"
+        ],
+        "es": [
+          "recibo de prima",
+          "factura"
+        ],
+        "it": [
+          "quietanza",
+          "avviso di scadenza"
+        ]
+      },
+      "reading": "Premium invoices prove a payment, not the scope of cover, and often pre-date the period. Reject.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "synthetic",
+        "text": "'Avis d'échéance – prime annuelle TTC 12 340 €' with bank details."
+      },
+      "explain": "The document is a premium invoice / renewal notice, not a certificate.",
+      "fix": "Please provide the certificate of insurance, not the premium invoice.",
+      "tags": []
+    },
+    {
+      "id": "A06",
+      "category": "A. Document nature & admissibility",
+      "title": "Editable office file (DOCX/XLSX) instead of PDF/image",
+      "check": "File format received via Ariba.",
+      "cues": {},
+      "reading": "An editable file can be altered after issuance (Q31: DOCX = red flag). Block at ingestion without analysis.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "FILE_FORMAT_OK",
+      "example": {
+        "source": "synthetic",
+        "text": "attestation_RC_2025.docx uploaded in Ariba."
+      },
+      "explain": "Editable file formats are not accepted for certificates.",
+      "fix": "Please upload the certificate as a PDF (or scanned image) exactly as issued by the insurer.",
+      "tags": []
+    },
+    {
+      "id": "A07",
+      "category": "A. Document nature & admissibility",
+      "title": "Screenshot / photo of a screen, cropped or partial",
+      "check": "Image shows a browser window, phone UI, or only part of the page.",
+      "cues": {},
+      "reading": "Partial captures hide sub-limits and signatures. Route to review if most fields extract; block if key zones are missing.",
+      "severity": "MAJOR",
+      "outcome": "REVIEW",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "synthetic",
+        "text": "PNG 1080×1920 showing a phone screen with the top half of a certificate."
+      },
+      "explain": "The file is a partial screenshot; parts of the certificate (signature zone, sub-limits) may be missing.",
+      "fix": "Please upload the full certificate as a PDF.",
+      "tags": []
+    },
+    {
+      "id": "A08",
+      "category": "A. Document nature & admissibility",
+      "title": "Multi-document file (several certificates, several policies, attachments)",
+      "check": "One PDF contains more than one distinct document.",
+      "cues": {},
+      "reading": "Split by document; analyse each; link them. Do not sum limits across different policies unless one document explicitly states it is an excess layer of the other (E20).",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "sample 09",
+        "text": "Cover letter + certificate in one PDF."
+      },
+      "explain": "The file contains several documents; each has been analysed separately.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "A09",
+      "category": "A. Document nature & admissibility",
+      "title": "Certificate references limits 'as per policy' without stating them",
+      "check": "Amounts are replaced by a reference to the policy or to general conditions.",
+      "cues": {
+        "en": [
+          "as per policy",
+          "per the policy terms",
+          "in accordance with the policy"
+        ],
+        "fr": [
+          "selon conditions particulières",
+          "conformément au contrat"
+        ],
+        "de": [
+          "gemäß Versicherungsschein",
+          "laut Vertrag"
+        ],
+        "es": [
+          "según póliza"
+        ],
+        "it": [
+          "come da polizza"
+        ]
+      },
+      "reading": "Unverifiable. Critical guarantees → REQUEST_CHANGES (need figures).",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {
+        "source": "synthetic",
+        "text": "'Limits of indemnity: as per policy schedule.'"
+      },
+      "explain": "The certificate refers to the policy limits without stating amounts, which cannot be verified.",
+      "fix": "Please ask your insurer to state the limit of indemnity for each guarantee (amount, currency, basis).",
+      "tags": []
+    },
+    {
+      "id": "A10",
+      "category": "A. Document nature & admissibility",
+      "title": "Blank template / unfilled fields",
+      "check": "Placeholder fields left empty or with brackets.",
+      "cues": {
+        "en": [
+          "[insert",
+          "______",
+          "xxx",
+          "TBD",
+          "N/A"
+        ],
+        "fr": [
+          "à compléter"
+        ],
+        "de": [
+          "[bitte eintragen]"
+        ]
+      },
+      "reading": "A template with empty insured name, dates or amounts is not a certificate.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "synthetic",
+        "text": "'Policyholder: ______________ Policy No.: XXXXXXX'."
+      },
+      "explain": "The certificate contains unfilled template fields.",
+      "fix": "Please provide the completed certificate issued by your insurer.",
+      "tags": []
+    },
+    {
+      "id": "A11",
+      "category": "A. Document nature & admissibility",
+      "title": "Document not about liability insurance (property, motor fleet, D&O, transport)",
+      "check": "The certificate covers another line of business.",
+      "cues": {
+        "en": [
+          "property all risks",
+          "motor fleet",
+          "directors and officers",
+          "marine cargo",
+          "workers compensation"
+        ],
+        "fr": [
+          "multirisque",
+          "flotte automobile",
+          "RC mandataires sociaux",
+          "marchandises transportées"
+        ],
+        "de": [
+          "Sachversicherung",
+          "Kfz-Flotte",
+          "D&O",
+          "Transportversicherung"
+        ],
+        "es": [
+          "daños materiales",
+          "flota",
+          "transporte"
+        ],
+        "it": [
+          "all risks",
+          "flotta",
+          "trasporti"
+        ]
+      },
+      "reading": "Correctly identify the line. A motor or property certificate is structurally wrong for this request.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {
+        "source": "synthetic",
+        "text": "'Certificate of Insurance – Property Damage and Business Interruption'."
+      },
+      "explain": "The certificate relates to a different line of insurance (e.g. property / motor) and does not evidence liability cover.",
+      "fix": "Please provide the general & product liability certificate.",
+      "tags": []
+    },
+    {
+      "id": "A12",
+      "category": "A. Document nature & admissibility",
+      "title": "Undated certificate",
+      "check": "No issue date and no period dates.",
+      "cues": {},
+      "reading": "Without a date the certificate cannot be placed in time. DATES_PRESENT fails.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "DATES_PRESENT",
+      "example": {
+        "source": "synthetic",
+        "text": "No 'Fait à… le', no period, only 'valid for the current insurance year'."
+      },
+      "explain": "The certificate is undated and states no period of insurance.",
+      "fix": "Please provide a dated certificate stating the period of insurance (from / to).",
+      "tags": []
+    },
+    {
+      "id": "B01",
+      "category": "B. Authenticity & issuer",
+      "title": "No insurer stamp / seal",
+      "check": "Presence of a stamp (ink or printed seal) attributable to the issuing insurer.",
+      "cues": {
+        "en": [
+          "stamp",
+          "seal",
+          "company seal"
+        ],
+        "fr": [
+          "cachet",
+          "tampon"
+        ],
+        "de": [
+          "Stempel",
+          "Firmenstempel"
+        ],
+        "es": [
+          "sello"
+        ],
+        "it": [
+          "timbro"
+        ]
+      },
+      "reading": "Richard: without a stamp the insurer can later deny having validated the document. Formal defect: the same certificate can be re-issued stamped. Detection = presence & attribution, not forgery detection.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_FORMAL",
+      "ruleRef": "STAMP_PRESENT",
+      "example": {
+        "source": "samples 02, 03, 07, 08, 09, 10",
+        "text": "Printed letterhead and signature, no stamp."
+      },
+      "explain": "No insurer stamp was found on the certificate.",
+      "fix": "Please provide the certificate stamped by the insurer.",
+      "tags": []
+    },
+    {
+      "id": "B02",
+      "category": "B. Authenticity & issuer",
+      "title": "No handwritten signature",
+      "check": "A handwritten-style signature of a person acting for the issuer.",
+      "cues": {},
+      "reading": "Typed name only, or nothing. Formal defect.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_FORMAL",
+      "ruleRef": "SIGNATURE_PRESENT",
+      "example": {
+        "source": "sample 05",
+        "text": "Quote ends with 'Authorised Signatory' and no signature."
+      },
+      "explain": "The certificate is not signed.",
+      "fix": "Please provide the certificate signed by an authorised representative of the insurer.",
+      "tags": []
+    },
+    {
+      "id": "B03",
+      "category": "B. Authenticity & issuer",
+      "title": "'Electronically generated – no signature required' disclaimer",
+      "check": "A printed note replacing the signature.",
+      "cues": {
+        "en": [
+          "electronically generated",
+          "valid without signature",
+          "no signature required"
+        ],
+        "fr": [
+          "document généré électroniquement",
+          "valable sans signature"
+        ],
+        "de": [
+          "maschinell erstellt",
+          "auch ohne Unterschrift gültig",
+          "ohne Unterschrift gültig"
+        ],
+        "es": [
+          "generado electrónicamente",
+          "válido sin firma"
+        ],
+        "it": [
+          "generato elettronicamente",
+          "valido senza firma"
+        ]
+      },
+      "reading": "Common in DE/UK. Under the strict profile it fails SIGNATURE_PRESENT (formal). Profile switch `acceptElectronicSignatureNote` may allow it if a qualified e-signature (eIDAS) is embedded — check PDF signature field.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_FORMAL",
+      "ruleRef": "SIGNATURE_PRESENT",
+      "example": {
+        "source": "synthetic",
+        "text": "'Dieses Schreiben wurde maschinell erstellt und ist auch ohne Unterschrift gültig.'"
+      },
+      "explain": "The certificate carries no handwritten signature; it states that it was generated electronically.",
+      "fix": "Please provide a signed certificate, or a PDF carrying a qualified electronic signature.",
+      "tags": []
+    },
+    {
+      "id": "B04",
+      "category": "B. Authenticity & issuer",
+      "title": "Signature present but signer not named / no function",
+      "check": "A scribble without printed name or title.",
+      "cues": {},
+      "reading": "Lower attribution confidence; route to review rather than block.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "SIGNATURE_PRESENT",
+      "example": {
+        "source": "sample 06 (Zurich ES / COPO)",
+        "text": "Stamp plus an illegible initial; no printed name."
+      },
+      "explain": "A signature is present but the signatory is not identified.",
+      "fix": "Please ask your insurer to add the name and function of the signatory.",
+      "tags": []
+    },
+    {
+      "id": "B05",
+      "category": "B. Authenticity & issuer",
+      "title": "Issued and signed by a broker (courtier / Makler / broker)",
+      "check": "Who signs: an insurer, or an intermediary?",
+      "cues": {
+        "en": [
+          "broker",
+          "insurance broker",
+          "intermediary",
+          "on behalf of our client"
+        ],
+        "fr": [
+          "courtier",
+          "assureur conseil",
+          "agent général",
+          "ORIAS",
+          "cabinet",
+          "intermédiaire en assurance"
+        ],
+        "de": [
+          "Versicherungsmakler",
+          "Makler",
+          "Vermittler",
+          "Agentur"
+        ],
+        "es": [
+          "corredor",
+          "correduría",
+          "mediador"
+        ],
+        "it": [
+          "broker",
+          "intermediario",
+          "agenzia"
+        ]
+      },
+      "reading": "A broker certifies what it believes; only the insurer binds itself. Richard: Marron & Associés → 'refus total'. Detect ORIAS numbers, 'courtier', 'assureur conseil', 'agent général', 'Makler', 'corredor', 'broker'. Profile option `allowAuthorisedBroker` (default false).",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "ISSUER_IS_INSURER",
+      "example": {
+        "source": "sample 04 (Marron & Associés / MTS)",
+        "text": "'Agent Général MMA… immatriculé à l'ORIAS'; signed by the agency."
+      },
+      "explain": "The certificate is issued by an intermediary (broker/agent), not by the insurer.",
+      "fix": "Please provide a certificate issued and signed by the insurer itself (the broker may forward it).",
+      "tags": []
+    },
+    {
+      "id": "B06",
+      "category": "B. Authenticity & issuer",
+      "title": "Broker letterhead but insurer stamp and signature present",
+      "check": "Mixed case: broker template, insurer authenticates.",
+      "cues": {},
+      "reading": "Acceptable if the stamp and signature belong to the insurer and the insurer is named as issuer. Attribute the stamp; if stamp entity ≠ issuer → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "ISSUER_IS_INSURER",
+      "example": {
+        "source": "synthetic",
+        "text": "Broker logo top-left, 'Pour l'assureur: AXA France IARD' with AXA stamp and signature bottom-right."
+      },
+      "explain": "The certificate is on broker letterhead; the insurer's stamp and signature were verified.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "B07",
+      "category": "B. Authenticity & issuer",
+      "title": "Insurer not found in the registry",
+      "check": "Issuer name resolved against the insurer registry (ACPR/EIOPA/BaFin/NAIC… curated JSON in POC).",
+      "cues": {},
+      "reading": "Unknown carrier = cannot assess solidity. Block when no match and no regulator id on the document; review when fuzzy.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "INSURER_IDENTIFIED",
+      "example": {
+        "source": "synthetic",
+        "text": "'Global Trust Underwriters Ltd' – no match in EIOPA, no regulator number."
+      },
+      "explain": "The issuing insurer could not be identified in the insurer registry.",
+      "fix": "Please confirm the full legal name and regulator registration of the insurer.",
+      "tags": []
+    },
+    {
+      "id": "B08",
+      "category": "B. Authenticity & issuer",
+      "title": "Insurer rating below floor / in run-off / captive",
+      "check": "Financial strength rating vs profile floor (default A- AM Best / BBB+ S&P).",
+      "cues": {
+        "en": [
+          "captive",
+          "fronted by",
+          "run-off"
+        ],
+        "fr": [
+          "captive"
+        ],
+        "de": [
+          "Captive",
+          "Abwicklung"
+        ]
+      },
+      "reading": "Weak or unrated carriers (Q19). Captive not fronted by a rated insurer → block (Q20). Mutual without rating → review.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "INSURER_RATING_FLOOR",
+      "example": {
+        "source": "synthetic",
+        "text": "Issuer 'XYZ Captive Re Ltd (Guernsey)' without fronting insurer."
+      },
+      "explain": "The insurer's financial strength rating is below the required floor.",
+      "fix": "Please provide cover from an insurer rated at least A- (AM Best) or equivalent.",
+      "tags": []
+    },
+    {
+      "id": "B09",
+      "category": "B. Authenticity & issuer",
+      "title": "Policy number missing",
+      "check": "Presence of a policy / contract number.",
+      "cues": {
+        "en": [
+          "policy no",
+          "policy number",
+          "contract no"
+        ],
+        "fr": [
+          "police n°",
+          "contrat n°",
+          "n° de contrat"
+        ],
+        "de": [
+          "Versicherungsschein-Nr",
+          "Policen-Nr",
+          "Vertrags-Nr"
+        ],
+        "es": [
+          "número de póliza",
+          "póliza nº"
+        ],
+        "it": [
+          "polizza n",
+          "n. polizza"
+        ]
+      },
+      "reading": "Every genuine certificate carries one (Richard). Needed in a claim. Formal defect.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_FORMAL",
+      "ruleRef": "POLICY_NUMBER_PRESENT",
+      "example": {
+        "source": "synthetic",
+        "text": "Certificate with all limits but no contract reference anywhere."
+      },
+      "explain": "No policy number is stated.",
+      "fix": "Please provide a certificate stating the policy number.",
+      "tags": []
+    },
+    {
+      "id": "B10",
+      "category": "B. Authenticity & issuer",
+      "title": "Policy number is a placeholder or inconsistent across pages",
+      "check": "Format check and cross-page consistency.",
+      "cues": {},
+      "reading": "'XXXXXX', '0000000', or header number ≠ stamp number → review (possible tampering or mixed documents).",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "POLICY_NUMBER_PRESENT",
+      "example": {
+        "source": "synthetic",
+        "text": "Header: 'Policy 7854-221-A'; page 3 footer: 'Policy 7854-219-A'."
+      },
+      "explain": "The policy number looks like a placeholder or differs between pages.",
+      "fix": "Please confirm the correct policy number.",
+      "tags": []
+    },
+    {
+      "id": "B11",
+      "category": "B. Authenticity & issuer",
+      "title": "Co-insurance: capacity share < 100 % from the signing insurer",
+      "check": "'Capacity x %', 'quota-part', 'Anteil', 'share', 'leader'.",
+      "cues": {
+        "en": [
+          "capacity",
+          "share",
+          "quota share",
+          "leader",
+          "following insurers"
+        ],
+        "fr": [
+          "quote-part",
+          "apériteur",
+          "coassurance"
+        ],
+        "de": [
+          "Anteil",
+          "führender Versicherer",
+          "Mitversicherer",
+          "Beteiligung"
+        ],
+        "es": [
+          "cuota",
+          "coaseguro",
+          "abridora"
+        ],
+        "it": [
+          "quota",
+          "delegataria",
+          "coassicurazione"
+        ]
+      },
+      "reading": "The signing insurer only carries its share. Forvia needs the whole tower evidenced: all co-insurers named and signed/stamped (Q14), shares summing to 100 %.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "COINSURANCE_COMPLETE",
+      "example": {
+        "source": "sample 05",
+        "text": "'ICICI Lombard capacity (20%)'."
+      },
+      "explain": "The certificate is issued by one co-insurer carrying only part of the limit; the other co-insurers are not evidenced.",
+      "fix": "Please provide a certificate listing all co-insurers and their shares (100 %), signed by each, or issued by the leader on behalf of all.",
+      "tags": []
+    },
+    {
+      "id": "B12",
+      "category": "B. Authenticity & issuer",
+      "title": "Co-insurers listed but only the leader signed",
+      "check": "Signature/stamp of each co-insurer, or a clause 'the leader signs on behalf of all'.",
+      "cues": {},
+      "reading": "Block unless the leader's mandate is stated on the document.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "COINSURANCE_COMPLETE",
+      "example": {
+        "source": "synthetic",
+        "text": "'Allianz 60 % – HDI 25 % – Helvetia 15 %' with one Allianz signature only."
+      },
+      "explain": "Co-insurers are listed but have not signed or stamped the certificate.",
+      "fix": "Please have each co-insurer sign/stamp, or state the leader's authority to sign for all.",
+      "tags": []
+    },
+    {
+      "id": "B13",
+      "category": "B. Authenticity & issuer",
+      "title": "Insurer contact is a generic webmail / no professional identifiers",
+      "check": "Email domain, phone, company registration numbers.",
+      "cues": {},
+      "reading": "A certificate signed from gmail.com is suspicious. Review. Mask personal data in exports (GDPR).",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "ISSUER_IS_INSURER",
+      "example": {
+        "source": "synthetic",
+        "text": "'For Allianz: j.muster@gmail.com'."
+      },
+      "explain": "The issuer's contact details are not professional identifiers of the insurer.",
+      "fix": "Please provide a certificate issued from the insurer's official channels.",
+      "tags": []
+    },
+    {
+      "id": "B14",
+      "category": "B. Authenticity & issuer",
+      "title": "Standard disclaimer 'confers no rights on the certificate holder'",
+      "check": "Legal boilerplate.",
+      "cues": {
+        "en": [
+          "confers no rights",
+          "does not amend, extend or alter",
+          "information only"
+        ],
+        "fr": [
+          "ne saurait engager",
+          "ne peut engager l'assureur au-delà"
+        ],
+        "de": [
+          "begründet keine Rechte",
+          "dient nur zur Information"
+        ]
+      },
+      "reading": "Normal on certificates worldwide (ACORD, DE, FR). Do not penalise. Record as INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "—",
+      "example": {
+        "source": "sample 01 (Chubb / Air Products)",
+        "text": "'This certificate is issued as a matter of information only…'"
+      },
+      "explain": "Standard disclaimer noted; no impact.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "B15",
+      "category": "B. Authenticity & issuer",
+      "title": "Stamp belongs to a different entity than the issuer",
+      "check": "Stamp text vs issuer name.",
+      "cues": {},
+      "reading": "Broker stamp on an insurer letter, or group stamp on a local entity. Review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "STAMP_PRESENT",
+      "example": {
+        "source": "synthetic",
+        "text": "Letter from 'Zurich Insurance plc, Niederlassung Deutschland', stamp 'Müller Versicherungsmakler GmbH'."
+      },
+      "explain": "The stamp does not match the issuing entity.",
+      "fix": "Please confirm which entity issued the certificate.",
+      "tags": []
+    },
+    {
+      "id": "B16",
+      "category": "B. Authenticity & issuer",
+      "title": "Pasted / low-resolution stamp image",
+      "check": "Visual: stamp with uniform background rectangle, JPEG artefacts, identical pixel stamp on every page.",
+      "cues": {},
+      "reading": "Not a forgery verdict (out of scope) — lower STAMP confidence → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "STAMP_PRESENT",
+      "example": {
+        "source": "synthetic",
+        "text": "Pixel-identical stamp at the same coordinates on pages 1–4, with a white rectangle behind it."
+      },
+      "explain": "The stamp appears as a pasted image; authenticity could not be confirmed visually.",
+      "fix": "Please provide the original certificate (scan of the stamped original or the insurer's signed PDF).",
+      "tags": []
+    },
+    {
+      "id": "C01",
+      "category": "C. Insured entity",
+      "title": "Insured name ≠ supplier legal entity in Ariba",
+      "check": "Normalised fuzzy match between Ariba supplier (legal name, country) and policyholder / named / additional / co-insured.",
+      "cues": {},
+      "reading": "Q26: certificate must name the contracting entity; otherwise blocking (formal: the insurer can add the entity). Ignore legal-form noise (GmbH vs GmbH & Co. KG) only within the review band.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_FORMAL",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "synthetic",
+        "text": "Ariba: 'Beyer Polyvlies Franz Beyer GmbH & Co. KG'; certificate: 'Beyer Holding GmbH'."
+      },
+      "explain": "The certificate does not name the contracting supplier entity.",
+      "fix": "Please provide a certificate naming {supplierLegalName} as policyholder or insured.",
+      "tags": []
+    },
+    {
+      "id": "C02",
+      "category": "C. Insured entity",
+      "title": "Only the parent / group is named; supplier is a subsidiary",
+      "check": "Group master policy.",
+      "cues": {
+        "en": [
+          "subsidiaries",
+          "group companies",
+          "affiliated companies",
+          "master policy"
+        ],
+        "fr": [
+          "filiales",
+          "sociétés du groupe"
+        ],
+        "de": [
+          "Tochtergesellschaften",
+          "Konzernunternehmen",
+          "mitversicherte Unternehmen"
+        ],
+        "es": [
+          "filiales",
+          "empresas del grupo"
+        ],
+        "it": [
+          "società controllate",
+          "società del gruppo",
+          "polizza master"
+        ]
+      },
+      "reading": "Acceptable only if the supplier is listed as co-insured/insured subsidiary (sample 10: Metraton under Landi Renzo master policy). Otherwise formal block.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_FORMAL",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "sample 10 (Generali IT / Metraton)",
+        "text": "Policyholder Landi Renzo S.p.A.; Metraton listed as insured company."
+      },
+      "explain": "Only the parent company is insured; the supplier entity is not listed.",
+      "fix": "Please provide a certificate confirming that {supplierLegalName} is an insured under the group policy.",
+      "tags": []
+    },
+    {
+      "id": "C03",
+      "category": "C. Insured entity",
+      "title": "Supplier appears only as 'additional insured' added for a customer",
+      "check": "Role of the supplier on the certificate.",
+      "cues": {},
+      "reading": "Additional insured status is acceptable (profile acceptAs). But if the supplier is added only for one project/contract, check scope wording.",
+      "severity": "MINOR",
+      "outcome": "INFO",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "synthetic",
+        "text": "'Additional insured: XYZ S.r.l. in respect of contract no. 4711 only.'"
+      },
+      "explain": "The supplier is covered as additional insured.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "C04",
+      "category": "C. Insured entity",
+      "title": "FORVIA entity named as additional insured",
+      "check": "A FORVIA company appears on the certificate.",
+      "cues": {},
+      "reading": "Positive, not required. Record as OK; useful for buyers.",
+      "severity": "INFO",
+      "outcome": "OK",
+      "ruleRef": "—",
+      "example": {
+        "source": "sample 06",
+        "text": "A FORVIA subsidiary listed as additional insured."
+      },
+      "explain": "A FORVIA entity is named as additional insured on this policy.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "C05",
+      "category": "C. Insured entity",
+      "title": "Shared limit across many co-insured companies",
+      "check": "Group certificate with N insured entities and one aggregate.",
+      "cues": {},
+      "reading": "Limit is shared group-wide (sample 07: 16 entities). Not a breach, but reduces effective capacity. Display as INFO with the count.",
+      "severity": "MINOR",
+      "outcome": "INFO",
+      "ruleRef": "AGGREGATE_BASIS",
+      "example": {
+        "source": "sample 07 (Zurich DE / IMI)",
+        "text": "16 co-insured companies share €5M combined."
+      },
+      "explain": "The annual aggregate is shared between {n} insured companies.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "C06",
+      "category": "C. Insured entity",
+      "title": "Certificate addressed to another customer (another OEM)",
+      "check": "'To: Stellantis Purchasing' style addressee.",
+      "cues": {},
+      "reading": "Still evidence of cover if not restricted to that customer's contract. Review wording; INFO otherwise.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "synthetic",
+        "text": "'Certificate holder: Volkswagen AG, Konzerneinkauf'."
+      },
+      "explain": "The certificate was issued for another customer; the cover described is not customer-specific.",
+      "fix": "Please provide a certificate addressed to FORVIA or 'to whom it may concern'.",
+      "tags": []
+    },
+    {
+      "id": "C07",
+      "category": "C. Insured entity",
+      "title": "Trading name / brand instead of legal name",
+      "check": "'XYZ Automotive' vs 'XYZ Automotive Components S.A.S.'.",
+      "cues": {},
+      "reading": "Review band; ask for legal name if ambiguous.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "synthetic",
+        "text": "Insured: 'AutoSeal' (brand); Ariba: 'Dichtungstechnik Müller GmbH'."
+      },
+      "explain": "The insured is identified by a trading name; legal identity could not be confirmed.",
+      "fix": "Please confirm the legal name of the insured entity.",
+      "tags": []
+    },
+    {
+      "id": "C08",
+      "category": "C. Insured entity",
+      "title": "Post-merger / renamed entity",
+      "check": "Insured name is the former name of the supplier.",
+      "cues": {},
+      "reading": "Legal continuity usually preserves cover, but the certificate should be updated. Review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "synthetic",
+        "text": "Certificate: 'Faurecia Interior Systems'; Ariba: 'FORVIA Interior Systems'."
+      },
+      "explain": "The certificate names a former legal name of the supplier.",
+      "fix": "Please provide an updated certificate with the current legal name.",
+      "tags": []
+    },
+    {
+      "id": "C09",
+      "category": "C. Insured entity",
+      "title": "Insured address / country differs from supplier",
+      "check": "Same name, different country (homonyms).",
+      "cues": {},
+      "reading": "Review: could be a sister company.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "synthetic",
+        "text": "'Copo Ibérica S.A.' (Spain) vs supplier 'Copo Brasil Ltda.'."
+      },
+      "explain": "The insured entity is registered in a different country than the supplier.",
+      "fix": "Please confirm that the certificate covers {supplierLegalName}, {supplierCountry}.",
+      "tags": []
+    },
+    {
+      "id": "C10",
+      "category": "C. Insured entity",
+      "title": "Entity named only in the cover letter, not on the certificate",
+      "check": "Letter says 'for our client X'; certificate names Y.",
+      "cues": {},
+      "reading": "Only the certificate counts.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_FORMAL",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {
+        "source": "synthetic",
+        "text": "Letter: 'Bestätigung für Beyer Polyvlies GmbH & Co. KG'; certificate: 'Beyer Holding'."
+      },
+      "explain": "The supplier is mentioned only in the cover letter; the certificate names a different entity.",
+      "fix": "Please provide a certificate naming {supplierLegalName}.",
+      "tags": []
+    },
+    {
+      "id": "D01",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Product liability missing (certificate covers recall only)",
+      "check": "Is PRODUCT_LIABILITY (after delivery) stated?",
+      "cues": {
+        "en": [
+          "products liability",
+          "products/completed operations",
+          "product liability"
+        ],
+        "fr": [
+          "RC produits",
+          "RC après livraison",
+          "responsabilité civile produits"
+        ],
+        "de": [
+          "Produkthaftpflicht",
+          "Produkthaftpflichtversicherung"
+        ],
+        "es": [
+          "RC productos",
+          "responsabilidad civil de productos"
+        ],
+        "it": [
+          "RC prodotti",
+          "responsabilità civile prodotti",
+          "RCP"
+        ]
+      },
+      "reading": "German recall-only certificates (Kfz-Rückruf) are common: they evidence recall, not product liability. The main GPTC guarantee (≥ €20M) is absent → REQUEST_CHANGES (ask for the general/product liability certificate too).",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {
+        "source": "samples 02, 08",
+        "text": "Titles 'Rückrufkostenversicherung' / 'Kfz-Rückruf' only."
+      },
+      "explain": "Product liability cover is not evidenced; the certificate only covers recall.",
+      "fix": "Please provide the general & product liability certificate (≥ €20M per occurrence and in the aggregate).",
+      "tags": []
+    },
+    {
+      "id": "D02",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Product recall missing",
+      "check": "Is PRODUCT_RECALL or AUTOMOTIVE_RECALL stated?",
+      "cues": {
+        "en": [
+          "product recall",
+          "recall expenses",
+          "recall costs",
+          "withdrawal"
+        ],
+        "fr": [
+          "frais de rappel",
+          "frais de retrait",
+          "rappel de produits"
+        ],
+        "de": [
+          "Rückrufkosten",
+          "Produktrückruf",
+          "Kfz-Rückruf",
+          "Rückrufkostenversicherung"
+        ],
+        "es": [
+          "retirada de productos",
+          "gastos de retirada",
+          "recall"
+        ],
+        "it": [
+          "richiamo prodotti",
+          "ritiro prodotti",
+          "spese di ritiro"
+        ]
+      },
+      "reading": "Recall is the #1 automotive risk (Ferrari case: €5M paid by FORVIA). Missing → REQUEST_CHANGES.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {
+        "source": "sample 07",
+        "text": "GL/PL combined €5M, no recall line."
+      },
+      "explain": "Product recall cover is not evidenced.",
+      "fix": "Please provide evidence of product recall cover (≥ €15M).",
+      "tags": []
+    },
+    {
+      "id": "D03",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "'Withdrawal costs' (frais de retrait) is not a full recall cover",
+      "check": "FR wording: 'frais de retrait' vs 'frais de rappel'.",
+      "cues": {
+        "fr": [
+          "frais de retrait",
+          "retrait de produits"
+        ],
+        "en": [
+          "withdrawal costs",
+          "market withdrawal"
+        ],
+        "de": [
+          "Rücknahmekosten"
+        ],
+        "it": [
+          "ritiro dal mercato"
+        ]
+      },
+      "reading": "Withdrawal = removing the product from the market/stock; recall = locating, removing from vehicles, replacing. Map 'frais de retrait' to PRODUCT_RECALL with flag `scope=WITHDRAWAL_ONLY`; compare amount to recall threshold; explain the nuance.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {
+        "source": "sample 04",
+        "text": "'Frais de retrait : 305 000 €' under a €10M general limit."
+      },
+      "explain": "Only withdrawal costs are covered; full recall costs (including removal from vehicles) are not evidenced.",
+      "fix": "Please confirm product recall cover including costs of locating, removing and replacing defective parts.",
+      "tags": []
+    },
+    {
+      "id": "D04",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Pure financial loss (DINC) missing",
+      "check": "PURE_FINANCIAL_LOSS explicitly stated?",
+      "cues": {
+        "en": [
+          "pure financial loss",
+          "pure economic loss",
+          "financial loss not consequent upon"
+        ],
+        "fr": [
+          "dommages immatériels non consécutifs",
+          "DINC",
+          "préjudice financier pur"
+        ],
+        "de": [
+          "reine Vermögensschäden",
+          "echte Vermögensschäden",
+          "Vermögensschäden"
+        ],
+        "es": [
+          "daños patrimoniales puros",
+          "perjuicios patrimoniales puros"
+        ],
+        "it": [
+          "danni patrimoniali puri",
+          "perdite pecuniarie pure"
+        ]
+      },
+      "reading": "Loss with no prior material damage (line stop). GPTC ≥ €15M. Often absent or tiny in DE (Vermögensschäden 100k). Missing → REQUEST_CHANGES.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PURE_FINANCIAL_LOSS",
+      "example": {
+        "source": "sample 07",
+        "text": "No financial-loss line."
+      },
+      "explain": "Pure financial loss cover is not evidenced.",
+      "fix": "Please provide evidence of pure financial loss cover (≥ €15M).",
+      "tags": []
+    },
+    {
+      "id": "D05",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "DIC vs DINC confusion (FR)",
+      "check": "'Dommages immatériels consécutifs' (DIC) ≠ 'non consécutifs' (DINC).",
+      "cues": {
+        "fr": [
+          "dommages immatériels consécutifs",
+          "DIC",
+          "dommages immatériels non consécutifs",
+          "DINC",
+          "dommages immatériels"
+        ]
+      },
+      "reading": "DIC follows a covered material damage; DINC is standalone. Many FR certificates show DIC only. Do NOT map DIC to PURE_FINANCIAL_LOSS. 'Dommages immatériels' without qualifier → UNCLEAR, review.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PURE_FINANCIAL_LOSS",
+      "example": {
+        "source": "sample 01",
+        "text": "'Dommages immatériels non consécutifs : 200 000 USD'; DIC not stated."
+      },
+      "explain": "Only consequential immaterial damage (DIC) is covered; non-consequential (DINC) is not evidenced.",
+      "fix": "Please confirm cover for non-consequential immaterial damage (dommages immatériels non consécutifs).",
+      "tags": []
+    },
+    {
+      "id": "D06",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "German 'Vermögensschäden': which kind?",
+      "check": "'Vermögensschäden' may mean pure financial loss or be a small sub-cover in Betriebshaftpflicht.",
+      "cues": {
+        "de": [
+          "Vermögensschäden",
+          "reine Vermögensschäden",
+          "echte Vermögensschäden",
+          "unechte Vermögensschäden"
+        ]
+      },
+      "reading": "Map to PURE_FINANCIAL_LOSS; amounts are usually 100k–1M, far below €15M → BELOW_MINIMUM. Check 'echte/reine' qualifier; 'unechte Vermögensschäden' = consequential (DIC).",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PURE_FINANCIAL_LOSS",
+      "example": {
+        "source": "synthetic",
+        "text": "'Vermögensschäden: 250.000 EUR' in a Betriebshaftpflicht certificate."
+      },
+      "explain": "Financial loss cover is limited to {amount}, below the €15M requirement.",
+      "fix": "Please increase pure financial loss cover to ≥ €15M or provide the extended product liability schedule showing the applicable limit.",
+      "tags": []
+    },
+    {
+      "id": "D07",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Extended product liability (erweiterte Produkthaftpflicht) bundle",
+      "check": "German schedule listing: Verbindungs-/Vermischungs-/Verarbeitungsschäden, Weiterverarbeitung, Aus- und Einbaukosten, Prüf- und Sortierkosten, Maschinenklausel.",
+      "cues": {
+        "de": [
+          "erweiterte Produkthaftpflicht",
+          "Produkthaftpflicht-Modell",
+          "Verbindungs-, Vermischungs- und Verarbeitungsschäden",
+          "Weiterverarbeitungsschäden",
+          "Aus- und Einbaukosten",
+          "Prüf- und Sortierkosten",
+          "Maschinenklausel"
+        ],
+        "en": [
+          "extended product liability",
+          "mixing and blending",
+          "further processing",
+          "inspection and sorting costs"
+        ]
+      },
+      "reading": "This bundle IS the automotive supplier cover. Map the bundle to EXTENDED_PRODUCT_LIABILITY and each listed item to its own code (DISMANTLING_REFITTING, etc.). Bundle limit may be a sub-limit of the main PL limit.",
+      "severity": "MINOR",
+      "outcome": "SECONDARY",
+      "ruleRef": "EXTENDED_PRODUCT_LIABILITY",
+      "example": {
+        "source": "sample 09 (Allianz / Beyer)",
+        "text": "Extended product liability €20M as part of the schedule."
+      },
+      "explain": "Extended product liability is covered ({amount}).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D08",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Dismantling & refitting / removal & reinstallation not stated",
+      "check": "DISMANTLING_REFITTING present?",
+      "cues": {
+        "en": [
+          "dismantling",
+          "removal and reinstallation",
+          "removal and replacement",
+          "refitting"
+        ],
+        "fr": [
+          "frais de dépose et repose",
+          "dépose-repose",
+          "démontage et remontage"
+        ],
+        "de": [
+          "Aus- und Einbaukosten",
+          "Ein- und Ausbaukosten"
+        ],
+        "es": [
+          "desmontaje y montaje",
+          "costes de retirada e instalación"
+        ],
+        "it": [
+          "smontaggio e rimontaggio",
+          "costi di rimozione e reinstallazione"
+        ]
+      },
+      "reading": "GPTC critical keyword. Cost of removing the defective part from vehicles. Secondary criterion (5 pts) — but if recall is present and dismantling absent, explain.",
+      "severity": "MINOR",
+      "outcome": "SECONDARY",
+      "ruleRef": "DISMANTLING_REFITTING",
+      "example": {},
+      "explain": "Dismantling and refitting costs are not evidenced.",
+      "fix": "Please confirm whether dismantling/refitting (removal and reinstallation) costs are covered.",
+      "tags": []
+    },
+    {
+      "id": "D09",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Assembly / disassembly wording",
+      "check": "GPTC keyword close to D08.",
+      "cues": {
+        "en": [
+          "assembly and disassembly",
+          "assembly/disassembly"
+        ],
+        "fr": [
+          "montage et démontage"
+        ],
+        "de": [
+          "Montage und Demontage"
+        ]
+      },
+      "reading": "Treat as synonym group of DISMANTLING_REFITTING; report separately if labelled separately.",
+      "severity": "INFO",
+      "outcome": "SECONDARY",
+      "ruleRef": "ASSEMBLY_DISASSEMBLY",
+      "example": {},
+      "explain": "Assembly/disassembly costs are covered.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D10",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "'Covered' / 'included' without an amount",
+      "check": "A guarantee marked as covered but no limit stated.",
+      "cues": {
+        "en": [
+          "covered",
+          "included",
+          "insured",
+          "yes"
+        ],
+        "fr": [
+          "couvert",
+          "inclus",
+          "acquis",
+          "oui"
+        ],
+        "de": [
+          "mitversichert",
+          "eingeschlossen",
+          "ja"
+        ],
+        "es": [
+          "cubierto",
+          "incluido",
+          "sí"
+        ],
+        "it": [
+          "compreso",
+          "incluso",
+          "sì"
+        ]
+      },
+      "reading": "Cannot compare to threshold → COVERED_NO_AMOUNT. For critical guarantees → REQUEST_CHANGES (state the limit). Frequently the cover is 'included in the general limit' — if explicit, inherit (E07).",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {
+        "source": "sample 01",
+        "text": "'Product recall: Covered' without amount."
+      },
+      "explain": "{guarantee} is marked as covered but no limit is stated.",
+      "fix": "Please state the limit of indemnity applicable to {guarantee}.",
+      "tags": []
+    },
+    {
+      "id": "D11",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "'Available on request' / optional cover not taken",
+      "check": "Menu-style certificates listing optional extensions.",
+      "cues": {
+        "en": [
+          "on request",
+          "optional",
+          "not insured",
+          "not selected",
+          "available"
+        ],
+        "fr": [
+          "sur demande",
+          "option non souscrite",
+          "en option"
+        ],
+        "de": [
+          "optional",
+          "nicht versichert",
+          "auf Anfrage",
+          "nicht vereinbart"
+        ],
+        "es": [
+          "opcional",
+          "no contratado"
+        ],
+        "it": [
+          "opzionale",
+          "non operante",
+          "non prestata"
+        ]
+      },
+      "reading": "'On request', 'optional', 'can be added', 'not selected' = NOT covered.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {
+        "source": "synthetic",
+        "text": "'Garantie rappel de produits : non souscrite'."
+      },
+      "explain": "{guarantee} is listed as optional and has not been taken out.",
+      "fix": "Please subscribe the {guarantee} extension and provide an updated certificate.",
+      "tags": []
+    },
+    {
+      "id": "D12",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Combined single limit (GL + PL, sometimes + PFL)",
+      "check": "One limit for several guarantees.",
+      "cues": {
+        "en": [
+          "combined single limit",
+          "public and products liability",
+          "any one occurrence"
+        ],
+        "fr": [
+          "tous dommages confondus",
+          "RC exploitation et produits"
+        ],
+        "de": [
+          "Betriebs- und Produkthaftpflicht",
+          "pauschal",
+          "Personen-, Sach- und Vermögensschäden pauschal"
+        ],
+        "es": [
+          "límite único combinado",
+          "RC explotación y productos"
+        ],
+        "it": [
+          "massimale unico",
+          "RCT/RCO"
+        ]
+      },
+      "reading": "Map to COMBINED_GL_PL; allocate to PRODUCT_LIABILITY per profile `cslAllocation` (default FULL; Q13 open). Display 'inherited from CSL' badge.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "COMBINED_GL_PL",
+      "example": {
+        "source": "samples 01, 03, 07, 09",
+        "text": "Single figure for general + product liability."
+      },
+      "explain": "Product liability is inherited from a combined general & product liability limit of {amount}.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D13",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Automotive recall (Kfz-Rückruf) vs generic recall",
+      "check": "German specialty cover for recall of vehicles by OEM/authority.",
+      "cues": {
+        "de": [
+          "Kfz-Rückrufkosten",
+          "Kfz-Rückruf",
+          "Rückruf von Kraftfahrzeugen",
+          "Eigenrückruf",
+          "Fremdrückruf",
+          "Drittrückruf"
+        ],
+        "en": [
+          "automotive recall",
+          "vehicle recall",
+          "recall liability for automotive component suppliers"
+        ]
+      },
+      "reading": "AUTOMOTIVE_RECALL counts toward PRODUCT_RECALL (max of both). Usually better suited than generic recall. Check whether it covers 'Eigenrückruf' (own) and 'Fremdrückruf' (third-party recall costs).",
+      "severity": "INFO",
+      "outcome": "OK",
+      "ruleRef": "AUTOMOTIVE_RECALL",
+      "example": {
+        "source": "sample 08 (Allianz AGCS / CeramTec)",
+        "text": "'Kfz-Rückruf 5 Mio. EUR'."
+      },
+      "explain": "Automotive recall liability of {amount} counts toward the recall requirement.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D14",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Recall: own costs vs third-party costs",
+      "check": "Does the recall cover pay the insured's own recall (first party) and/or recall costs claimed by customers (third party)?",
+      "cues": {
+        "en": [
+          "first party recall",
+          "own recall costs",
+          "third party recall",
+          "recall liability"
+        ],
+        "de": [
+          "Eigenrückruf",
+          "Fremdrückruf",
+          "Rückrufkosten-Haftpflicht"
+        ],
+        "fr": [
+          "frais de rappel engagés par les tiers",
+          "rappel propre"
+        ]
+      },
+      "reading": "For FORVIA (the customer) the third-party/liability side matters. Many 'recall expenses' products are first-party only. Flag `recallScope`.",
+      "severity": "MAJOR",
+      "outcome": "REVIEW",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {
+        "source": "synthetic",
+        "text": "'Product Recall Expense – first party only'."
+      },
+      "explain": "The recall cover appears to be first-party only; recall costs claimed by customers may not be covered.",
+      "fix": "Please confirm that recall costs incurred by your customers (third-party recall liability) are covered.",
+      "tags": []
+    },
+    {
+      "id": "D15",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Inspection & sorting costs (Prüf- und Sortierkosten)",
+      "check": "Costs of checking/sorting suspected batches.",
+      "cues": {
+        "de": [
+          "Prüf- und Sortierkosten"
+        ],
+        "en": [
+          "inspection and sorting costs",
+          "testing costs"
+        ],
+        "fr": [
+          "frais de tri et de contrôle"
+        ],
+        "it": [
+          "costi di selezione e controllo"
+        ]
+      },
+      "reading": "Part of extended product liability; frequent claim in automotive. INFO/secondary.",
+      "severity": "INFO",
+      "outcome": "SECONDARY",
+      "ruleRef": "EXTENDED_PRODUCT_LIABILITY",
+      "example": {},
+      "explain": "Inspection and sorting costs are covered ({amount}).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D16",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Professional indemnity / E&O confused with product liability",
+      "check": "'RC professionnelle' in FR is often used loosely for general liability; E&O ≠ PL.",
+      "cues": {
+        "en": [
+          "professional indemnity",
+          "errors and omissions",
+          "E&O"
+        ],
+        "fr": [
+          "RC professionnelle",
+          "responsabilité civile professionnelle"
+        ],
+        "de": [
+          "Berufshaftpflicht",
+          "Vermögensschadenhaftpflicht"
+        ],
+        "es": [
+          "RC profesional"
+        ],
+        "it": [
+          "RC professionale"
+        ]
+      },
+      "reading": "Map by content, not label. If the certificate only evidences PI/E&O → product liability missing.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {
+        "source": "sample 04",
+        "text": "Titled 'Attestation RC professionnelle' but content is general liability + products."
+      },
+      "explain": "The certificate evidences professional indemnity, not product liability.",
+      "fix": "Please provide the product liability certificate.",
+      "tags": []
+    },
+    {
+      "id": "D17",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Employer's liability, motor, environmental lines listed — irrelevant to the request",
+      "check": "Extra lines on a multi-line certificate.",
+      "cues": {},
+      "reading": "Keep as OTHER/INFO. Do not let them inflate scores. Pollution is secondary (not scored in POC).",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "OTHER",
+      "example": {
+        "source": "sample 05",
+        "text": "Long list: tenants liability, valet parking, terrorism…"
+      },
+      "explain": "Additional lines of cover noted (no impact).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D18",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Goods in custody / tooling (biens confiés)",
+      "check": "FORVIA-owned tooling at the supplier's site.",
+      "cues": {
+        "en": [
+          "care custody and control",
+          "goods in custody",
+          "property in the insured's care"
+        ],
+        "fr": [
+          "biens confiés"
+        ],
+        "de": [
+          "Obhutsschäden",
+          "Bearbeitungsschäden"
+        ],
+        "es": [
+          "bienes confiados"
+        ],
+        "it": [
+          "cose in consegna e custodia"
+        ]
+      },
+      "reading": "Nice to have. INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "GOODS_IN_CUSTODY",
+      "example": {},
+      "explain": "Goods in care, custody and control are covered ({amount}).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D19",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Product guarantee / efficacy (performance) cover",
+      "check": "Product does not perform (no damage).",
+      "cues": {
+        "en": [
+          "product guarantee",
+          "efficacy",
+          "failure to perform"
+        ],
+        "de": [
+          "Produktgarantie",
+          "Erfüllungsschaden"
+        ]
+      },
+      "reading": "Rare; not required. INFO. Do not confuse with PFL.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "OTHER",
+      "example": {},
+      "explain": "Product efficacy cover noted.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D20",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "Serial loss clause",
+      "check": "Several claims from the same cause treated as one occurrence.",
+      "cues": {
+        "en": [
+          "serial loss",
+          "series of losses",
+          "batch clause"
+        ],
+        "fr": [
+          "sinistre sériel",
+          "dommages sériels"
+        ],
+        "de": [
+          "Serienschaden",
+          "Serienschadenklausel"
+        ],
+        "it": [
+          "sinistro in serie"
+        ]
+      },
+      "reading": "Matters for recall/PL: a serial defect counts as one claim (one limit, one deductible). INFO; show to expert.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {},
+      "explain": "Serial loss clause present: related claims are aggregated as one occurrence.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "D21",
+      "category": "D. Guarantees — presence & mapping",
+      "title": "USA / Canada extension explicitly included",
+      "check": "Territorial extension for North America with its own limit.",
+      "cues": {
+        "en": [
+          "including USA/Canada",
+          "worldwide including USA and Canada",
+          "North America"
+        ],
+        "fr": [
+          "y compris USA/Canada",
+          "monde entier y compris"
+        ],
+        "de": [
+          "einschließlich USA/Kanada",
+          "weltweit inklusive USA/Kanada",
+          "USA-Deckung"
+        ],
+        "es": [
+          "incluido EE.UU. y Canadá"
+        ],
+        "it": [
+          "inclusi USA e Canada"
+        ]
+      },
+      "reading": "Positive (secondary criterion TERRITORY_USA_CANADA). If the USA/Canada limit is lower than the main limit, display both (E19).",
+      "severity": "INFO",
+      "outcome": "SECONDARY",
+      "ruleRef": "TERRITORY_USA_CANADA",
+      "example": {
+        "source": "sample 09",
+        "text": "USA/Canada included in the German schedule."
+      },
+      "explain": "Cover extends to USA/Canada ({amount}).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E01",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Headline limit high, recall/withdrawal sub-limit tiny",
+      "check": "Compare each sub-limit to its own threshold, never to the headline.",
+      "cues": {
+        "en": [
+          "sublimit",
+          "sub-limit",
+          "limited to",
+          "up to"
+        ],
+        "fr": [
+          "sous-limite",
+          "dans la limite de",
+          "à concurrence de"
+        ],
+        "de": [
+          "Sublimit",
+          "begrenzt auf",
+          "maximal"
+        ],
+        "es": [
+          "sublímite",
+          "hasta"
+        ],
+        "it": [
+          "sottolimite",
+          "fino a",
+          "con il limite di"
+        ]
+      },
+      "reading": "THE trap (Richard). €10M general, €305k withdrawal → recall compliance = BELOW_MINIMUM at €305k. Gap bar must show 305k vs 15M.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {
+        "source": "sample 04",
+        "text": "'Tous dommages confondus 10 000 000 € … dont frais de retrait 305 000 €'."
+      },
+      "explain": "Recall/withdrawal is sub-limited to {amount}, far below the €15M requirement, despite a {headline} general limit.",
+      "fix": "Please increase the recall sub-limit to ≥ €15M.",
+      "tags": []
+    },
+    {
+      "id": "E02",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Recall sub-limit inside a combined single limit",
+      "check": "CSL with internal sub-limit.",
+      "cues": {},
+      "reading": "Sample 03: CHF 20M CSL, recall sub-limited to CHF 5M. Recall = 5M, not 20M.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {
+        "source": "sample 03 (Swiss Mobiliar / Ekko-Meister)",
+        "text": "CHF 20M CSL; 'Rückrufkosten CHF 5'000'000'."
+      },
+      "explain": "Recall is sub-limited to {amount} within the {headline} combined limit.",
+      "fix": "Please increase the recall sub-limit to ≥ €15M.",
+      "tags": []
+    },
+    {
+      "id": "E03",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Per occurrence vs annual aggregate — which figure to compare",
+      "check": "Basis of each amount.",
+      "cues": {
+        "en": [
+          "per occurrence",
+          "any one occurrence",
+          "any one claim",
+          "each and every loss",
+          "in the aggregate",
+          "annual aggregate",
+          "per policy year"
+        ],
+        "fr": [
+          "par sinistre",
+          "par année d'assurance",
+          "par an"
+        ],
+        "de": [
+          "je Versicherungsfall",
+          "je Schadenereignis",
+          "je Versicherungsjahr",
+          "Jahreshöchstentschädigung",
+          "Jahresmaximierung",
+          "-fach maximiert"
+        ],
+        "es": [
+          "por siniestro",
+          "por anualidad",
+          "agregado anual"
+        ],
+        "it": [
+          "per sinistro",
+          "per anno",
+          "e.e.l.",
+          "a.a.",
+          "in aggregato annuo"
+        ]
+      },
+      "reading": "Profile `amountBasis` (default: prefer annual aggregate when both exist, Q12). If only per-occurrence is stated → use it and flag `basis=PER_OCCURRENCE_ONLY` (secondary AGGREGATE_BASIS not earned).",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "AGGREGATE_BASIS",
+      "example": {},
+      "explain": "Limits are stated per occurrence only; no annual aggregate is evidenced.",
+      "fix": "Please state the annual aggregate limit.",
+      "tags": []
+    },
+    {
+      "id": "E04",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "'5,000,000 / 10,000,000' = per claim / aggregate",
+      "check": "Two figures separated by a slash or 'and'.",
+      "cues": {},
+      "reading": "First = per claim, second = annual aggregate (DE/FR convention). Do not read as a range.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "AGGREGATE_BASIS",
+      "example": {
+        "source": "sample 09",
+        "text": "'5.000.000 / 10.000.000 EUR'."
+      },
+      "explain": "Limit {perClaim} per claim / {aggregate} per year.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E05",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "German 'x-fach maximiert' (maximisation multiplier)",
+      "check": "'2-fach maximiert' = annual aggregate is twice the per-claim limit.",
+      "cues": {
+        "de": [
+          "2-fach maximiert",
+          "zweifach maximiert",
+          "Maximierung",
+          "Jahreshöchstleistung"
+        ]
+      },
+      "reading": "Compute aggregate = multiplier × per-claim. Record the multiplier.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "AGGREGATE_BASIS",
+      "example": {
+        "source": "synthetic",
+        "text": "'Deckungssumme 10 Mio. EUR je Versicherungsfall, 2-fach maximiert'."
+      },
+      "explain": "Annual aggregate = {multiplier} × per-claim limit.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E06",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Limit 'inclusive of defence costs' / 'costs inclusive'",
+      "check": "Whether defence costs erode the limit.",
+      "cues": {
+        "en": [
+          "costs inclusive",
+          "inclusive of defence costs",
+          "defense costs within limits"
+        ],
+        "fr": [
+          "frais de défense inclus"
+        ],
+        "de": [
+          "einschließlich Kosten"
+        ],
+        "it": [
+          "spese di resistenza comprese"
+        ]
+      },
+      "reading": "Common in US/UK/IN forms. Weaker than 'in addition'. INFO; expert may care.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {},
+      "explain": "Defence costs are included within the limit.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E07",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "'Included in the general limit' — inherit or not?",
+      "check": "Guarantee explicitly stated as included within the main limit, no own figure.",
+      "cues": {
+        "en": [
+          "within the above limit",
+          "included in the limit of indemnity",
+          "part of"
+        ],
+        "fr": [
+          "inclus dans le plafond",
+          "compris dans la garantie"
+        ],
+        "de": [
+          "im Rahmen der Deckungssumme",
+          "innerhalb der Deckungssumme"
+        ],
+        "es": [
+          "dentro del límite"
+        ],
+        "it": [
+          "nell'ambito del massimale"
+        ]
+      },
+      "reading": "If the wording explicitly says 'within the above limit', inherit the main limit with flag INHERITED. If it just says 'covered', do not inherit (D10).",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {},
+      "explain": "{guarantee} is included within the {headline} limit (inherited).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E08",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Very high deductible / self-insured retention",
+      "check": "Deductible vs limit.",
+      "cues": {
+        "en": [
+          "deductible",
+          "excess",
+          "self-insured retention",
+          "SIR",
+          "retention"
+        ],
+        "fr": [
+          "franchise"
+        ],
+        "de": [
+          "Selbstbehalt",
+          "Selbstbeteiligung",
+          "SB"
+        ],
+        "es": [
+          "franquicia"
+        ],
+        "it": [
+          "franchigia",
+          "scoperto"
+        ]
+      },
+      "reading": "Q15 open: no points in POC. Report; flag if deductible ≥ 5 % of limit or ≥ €500k. SIR means the insured pays first.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "DEDUCTIBLE",
+      "example": {
+        "source": "sample 01",
+        "text": "'claims paid in excess of the SIR'."
+      },
+      "explain": "Deductible of {amount} per claim ({pct} of the limit).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E09",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Deductible expressed as a percentage ('scoperto')",
+      "check": "Italian 'scoperto 10 % con il minimo di…'.",
+      "cues": {
+        "it": [
+          "scoperto",
+          "con il minimo di",
+          "con il massimo di"
+        ],
+        "es": [
+          "franquicia del",
+          "% del siniestro"
+        ]
+      },
+      "reading": "Record pct + minimum + maximum. INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "DEDUCTIBLE",
+      "example": {},
+      "explain": "Deductible: {pct} of each loss, minimum {min}.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E10",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Foreign currency — convert at ECB rate of the reference date",
+      "check": "USD, CHF, GBP, INR, PLN, CZK, HUF, RON, TRY, BRL, MXN, CNY, JPY, KRW…",
+      "cues": {},
+      "reading": "Convert once, persist rate + date (Q28-29). Show original and EUR. Near-threshold results within ±3 % → REVIEW (FX drift).",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "FX",
+      "example": {
+        "source": "sample 01",
+        "text": "USD 5,000,000 → ≈ €4.6M (April 2025)."
+      },
+      "explain": "{amountOriginal} converted to {amountEur} at ECB rate {rate} on {date}.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E11",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Indian lakh / crore notation",
+      "check": "'Rs. 100 Cr', '1,00,00,00,000', 'INR 10 Lakhs'.",
+      "cues": {
+        "en": [
+          "crore",
+          "Cr",
+          "lakh",
+          "lac",
+          "Rs.",
+          "INR"
+        ]
+      },
+      "reading": "1 lakh = 100,000; 1 crore = 10,000,000. Indian digit grouping (2-2-3). Parse before converting.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "FX",
+      "example": {
+        "source": "sample 05",
+        "text": "'INR 1,00,00,00,000' = INR 1 billion."
+      },
+      "explain": "Amount stated in crore/lakh notation ({amountOriginal}).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E12",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "European vs Anglo-Saxon thousand/decimal separators",
+      "check": "'1.000.000,00' vs '1,000,000.00'; Swiss '1'000'000'; French '1 000 000'.",
+      "cues": {},
+      "reading": "Parse per locale of the document, never by global regex. Sanity check: PL limits < 10,000 are almost certainly mis-parsed.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "AMOUNT_PARSING",
+      "example": {
+        "source": "samples 03, 09",
+        "text": "CHF 20'000'000 ; 5.000.000 EUR."
+      },
+      "explain": "—",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E13",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Abbreviations: Mio., M€, k€, Mn, MM, bn, Md",
+      "check": "Scale words and symbols.",
+      "cues": {
+        "de": [
+          "Mio.",
+          "TEUR",
+          "Mrd."
+        ],
+        "fr": [
+          "M€",
+          "k€",
+          "Md€"
+        ],
+        "en": [
+          "Mn",
+          "MM",
+          "bn"
+        ],
+        "it": [
+          "Mln",
+          "Mld"
+        ],
+        "es": [
+          "MM",
+          "millones"
+        ]
+      },
+      "reading": "Mio./M/Mn/MM = 10^6; k/T (DE 'TEUR') = 10^3; bn/Md/Mrd = 10^9. Currency may precede or follow.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "AMOUNT_PARSING",
+      "example": {
+        "source": "sample 08",
+        "text": "'5 Mio. EUR'."
+      },
+      "explain": "—",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E14",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Amount written in words differs from figures",
+      "check": "'Five million' vs '5.000.000' vs '500.000'.",
+      "cues": {},
+      "reading": "Words prevail legally; flag mismatch → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "AMOUNT_PARSING",
+      "example": {
+        "source": "synthetic",
+        "text": "'EUR 5.000.000 (cinq cent mille euros)'."
+      },
+      "explain": "The amount in words ({words}) differs from the figure ({figure}).",
+      "fix": "Please confirm the correct limit.",
+      "tags": []
+    },
+    {
+      "id": "E15",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Per-guarantee sub-limit table with 'per claim / per year' columns",
+      "check": "Tabular certificates (IT, ES).",
+      "cues": {},
+      "reading": "Extract row × column faithfully; keep basis per cell.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "AMOUNT_PARSING",
+      "example": {
+        "source": "sample 10",
+        "text": "Italian table 'per sinistro / per anno'."
+      },
+      "explain": "—",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E16",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Capacity share applied to limits",
+      "check": "Co-insurer's % share.",
+      "cues": {},
+      "reading": "Effective limit carried by the signing insurer = share × limit; but FORVIA needs 100 % evidenced (B11). Do not silently scale the limit: show both.",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "COINSURANCE_COMPLETE",
+      "example": {
+        "source": "sample 05",
+        "text": "20 % of INR 1bn."
+      },
+      "explain": "Only {share} of the {limit} limit is carried by the signing insurer.",
+      "fix": "Please provide evidence for the full limit from all co-insurers.",
+      "tags": []
+    },
+    {
+      "id": "E17",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Limit shared across several guarantees and insureds (aggregate erosion)",
+      "check": "One aggregate for GL + PL + recall + 16 companies.",
+      "cues": {},
+      "reading": "Compliant on paper, weaker in practice. INFO with explicit statement.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "AGGREGATE_BASIS",
+      "example": {
+        "source": "sample 07",
+        "text": ""
+      },
+      "explain": "A single annual aggregate is shared across guarantees and insured companies.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E18",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Sub-limit for USA/Canada lower than main limit",
+      "check": "Separate reduced limit for North America.",
+      "cues": {
+        "en": [
+          "USA/Canada sublimit",
+          "North America limit"
+        ],
+        "de": [
+          "USA/Kanada Sublimit"
+        ],
+        "fr": [
+          "sous-limite USA/Canada"
+        ]
+      },
+      "reading": "Record both; USA/Canada secondary criterion earned only if ≥ profile `usaCanadaMin` (default: presence).",
+      "severity": "INFO",
+      "outcome": "SECONDARY",
+      "ruleRef": "TERRITORY_USA_CANADA",
+      "example": {
+        "source": "synthetic",
+        "text": "'Worldwide €20M; USA/Canada €5M'."
+      },
+      "explain": "USA/Canada cover is limited to {amount} (main limit {headline}).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E19",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Primary + excess / umbrella layers",
+      "check": "Two documents or two lines: primary €5M + excess €15M.",
+      "cues": {
+        "en": [
+          "excess of",
+          "umbrella",
+          "excess layer",
+          "in excess of primary"
+        ],
+        "fr": [
+          "en excédent de",
+          "ligne excédentaire"
+        ],
+        "de": [
+          "Exzedent",
+          "Excedenten",
+          "Umbrella"
+        ],
+        "es": [
+          "en exceso de"
+        ],
+        "it": [
+          "in eccesso a",
+          "secondo rischio"
+        ]
+      },
+      "reading": "Sum only if the excess certificate names the same insured, the same underlying policy and period. Otherwise treat separately.",
+      "severity": "INFO",
+      "outcome": "REVIEW",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {
+        "source": "synthetic",
+        "text": "'Excess Liability €15,000,000 xs €5,000,000 primary (Policy 123)'."
+      },
+      "explain": "Primary {primary} plus excess layer {excess} = {total} (tower evidenced).",
+      "fix": "Please provide the excess/umbrella certificate referencing the primary policy.",
+      "tags": []
+    },
+    {
+      "id": "E20",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Amount threshold exactly at the limit after FX rounding",
+      "check": "€19.97M after conversion vs €20M threshold.",
+      "cues": {},
+      "reading": "Binary rule says BELOW_MINIMUM; route to REVIEW when within ±3 % of threshold and the original currency ≠ EUR.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "FX",
+      "example": {
+        "source": "synthetic",
+        "text": "USD 22,000,000 → €19,850,000."
+      },
+      "explain": "The converted amount ({amountEur}) is within 3 % of the threshold due to exchange rate.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E21",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Unlimited / 'no limit' / 'illimité' statements",
+      "check": "Some jurisdictions (e.g. motor) state unlimited; rare in PL.",
+      "cues": {
+        "en": [
+          "unlimited",
+          "no limit"
+        ],
+        "fr": [
+          "illimité",
+          "sans limitation de somme"
+        ],
+        "de": [
+          "unbegrenzt"
+        ],
+        "es": [
+          "ilimitado"
+        ],
+        "it": [
+          "illimitato"
+        ]
+      },
+      "reading": "Treat as COMPLIANT with flag UNLIMITED; verify not a parsing error.",
+      "severity": "INFO",
+      "outcome": "OK",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {},
+      "explain": "Limit stated as unlimited.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E22",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Limit expressed per person / per property (BI/PD split)",
+      "check": "Separate limits for bodily injury and property damage.",
+      "cues": {
+        "en": [
+          "bodily injury",
+          "property damage",
+          "BI/PD"
+        ],
+        "fr": [
+          "dommages corporels",
+          "dommages matériels"
+        ],
+        "de": [
+          "Personenschäden",
+          "Sachschäden"
+        ],
+        "es": [
+          "daños personales",
+          "daños materiales"
+        ],
+        "it": [
+          "danni a persone",
+          "danni a cose"
+        ]
+      },
+      "reading": "Product liability for FORVIA is mainly PD + financial. Use the PD figure (or combined if stated); record the split.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {
+        "source": "sample 04",
+        "text": "Separate lines for corporels / matériels / immatériels."
+      },
+      "explain": "Limits are split: bodily injury {bi}, property damage {pd}.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E23",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Recall limit stated per 'campaign' or per 'recall event'",
+      "check": "Non-standard basis.",
+      "cues": {
+        "en": [
+          "per recall",
+          "per campaign"
+        ],
+        "de": [
+          "je Rückrufaktion"
+        ],
+        "fr": [
+          "par campagne de rappel"
+        ]
+      },
+      "reading": "Map as per occurrence; note basis.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {},
+      "explain": "Recall limit is per recall campaign.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E24",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Small 'typical' sub-limits that are NOT critical",
+      "check": "Pollution €500k–1M, goods in custody, keys, tenants' liability.",
+      "cues": {},
+      "reading": "Do not let many small sub-limits trigger alarms. Only the three critical guarantees are thresholded.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "OTHER",
+      "example": {
+        "source": "sample 04",
+        "text": "'Atteintes à l'environnement 500 000 €' (Richard: 'a bit low' but secondary)."
+      },
+      "explain": "—",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "E25",
+      "category": "E. Amounts, basis & sub-limits",
+      "title": "Limit conditional on a clause ('subject to', 'provided that')",
+      "check": "Conditions attached to the figure.",
+      "cues": {
+        "en": [
+          "subject to",
+          "provided that",
+          "conditional upon"
+        ],
+        "fr": [
+          "sous réserve",
+          "à condition que"
+        ],
+        "de": [
+          "vorbehaltlich",
+          "unter der Voraussetzung"
+        ],
+        "it": [
+          "a condizione che"
+        ]
+      },
+      "reading": "Extract the condition verbatim; route to review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {},
+      "explain": "The limit is conditional: \"{condition}\".",
+      "fix": "Please clarify the condition attached to the limit.",
+      "tags": []
+    },
+    {
+      "id": "F01",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "USA / Canada excluded",
+      "check": "Territorial scope excludes North America.",
+      "cues": {
+        "en": [
+          "excluding USA/Canada",
+          "excluding North America",
+          "worldwide excluding",
+          "except USA"
+        ],
+        "fr": [
+          "hors USA/Canada",
+          "à l'exclusion des USA",
+          "monde entier sauf"
+        ],
+        "de": [
+          "ohne USA/Kanada",
+          "ausgenommen USA/Kanada",
+          "weltweit ohne"
+        ],
+        "es": [
+          "excepto EE.UU. y Canadá"
+        ],
+        "it": [
+          "esclusi USA e Canada",
+          "mondo intero esclusi"
+        ]
+      },
+      "reading": "Red flag for an automotive supplier (exports, OEM plants in US/MX). Critical exclusion → −10 points; expert may escalate. Not blocking under GPTC default (Q16 open).",
+      "severity": "MAJOR",
+      "outcome": "PENALTY",
+      "ruleRef": "TERRITORY_USA_CANADA",
+      "example": {
+        "source": "sample 04",
+        "text": "'Monde entier hors USA/Canada'."
+      },
+      "explain": "Cover excludes claims in USA/Canada.",
+      "fix": "Please confirm whether USA/Canada cover can be added (extension and limit).",
+      "tags": []
+    },
+    {
+      "id": "F02",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Territory limited to Europe / home country",
+      "check": "'Europe only', 'territoire national', 'Deutschland'.",
+      "cues": {
+        "en": [
+          "Europe only",
+          "EU/EEA",
+          "territory of"
+        ],
+        "fr": [
+          "France métropolitaine",
+          "Union européenne",
+          "territoire national"
+        ],
+        "de": [
+          "Europa",
+          "Deutschland",
+          "örtlicher Geltungsbereich: Europa"
+        ],
+        "es": [
+          "territorio español",
+          "Unión Europea"
+        ],
+        "it": [
+          "Italia",
+          "Unione Europea"
+        ]
+      },
+      "reading": "Same family as F01, more severe in practice. Penalty; show scope.",
+      "severity": "MAJOR",
+      "outcome": "PENALTY",
+      "ruleRef": "TERRITORY_USA_CANADA",
+      "example": {},
+      "explain": "Territorial scope is limited to {territory}.",
+      "fix": "Please confirm worldwide cover (FORVIA plants and customers worldwide).",
+      "tags": []
+    },
+    {
+      "id": "F03",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Claims-made trigger",
+      "check": "Occurrence vs claims-made.",
+      "cues": {
+        "en": [
+          "claims made",
+          "claims-made",
+          "claims first made",
+          "reported during the policy period"
+        ],
+        "fr": [
+          "base réclamation",
+          "réclamation"
+        ],
+        "de": [
+          "Claims-made",
+          "Anspruchserhebung"
+        ],
+        "es": [
+          "claims made",
+          "base reclamación"
+        ],
+        "it": [
+          "claims made",
+          "in base alla richiesta di risarcimento"
+        ]
+      },
+      "reading": "Claims-made is weaker for a buyer (cover ends when the policy ends, unless run-off). −5 points; show retroactive date (F04).",
+      "severity": "MINOR",
+      "outcome": "PENALTY",
+      "ruleRef": "TRIGGER",
+      "example": {
+        "source": "sample 05",
+        "text": "'Claims made basis'."
+      },
+      "explain": "Policy is written on a claims-made basis.",
+      "fix": "Please confirm the retroactive date and any extended reporting period.",
+      "tags": []
+    },
+    {
+      "id": "F04",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Retroactive date / extended reporting period",
+      "check": "Dates attached to claims-made.",
+      "cues": {
+        "en": [
+          "retroactive date",
+          "extended reporting period",
+          "ERP",
+          "tail"
+        ],
+        "fr": [
+          "date de reprise du passé",
+          "garantie subséquente"
+        ],
+        "de": [
+          "Rückwärtsversicherung",
+          "Nachhaftung",
+          "Nachmeldefrist"
+        ],
+        "it": [
+          "retroattività",
+          "postuma"
+        ],
+        "es": [
+          "retroactividad",
+          "periodo adicional de notificación"
+        ]
+      },
+      "reading": "Retroactive date after the start of supply = gap. Review when retroactive date > FORVIA relationship start.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "TRIGGER",
+      "example": {},
+      "explain": "Retroactive date {date}; extended reporting period {erp}.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F05",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Exclusion of automotive safety-critical components",
+      "check": "Brakes, steering, airbags, seatbelts, tyres, fuel systems excluded.",
+      "cues": {
+        "en": [
+          "brakes",
+          "steering",
+          "airbags",
+          "seat belts",
+          "tyres",
+          "safety critical",
+          "critical automobile parts",
+          "automotive parts exclusion"
+        ],
+        "fr": [
+          "pièces de sécurité",
+          "freinage",
+          "direction"
+        ],
+        "de": [
+          "sicherheitsrelevante Teile",
+          "Bremsen",
+          "Lenkung",
+          "Airbags"
+        ]
+      },
+      "reading": "Fatal for a Tier-2 automotive supplier: the parts FORVIA buys may be exactly those. Critical exclusion → −10; expert: block. Flag `criticalExclusion=AUTOMOTIVE_PARTS`.",
+      "severity": "MAJOR",
+      "outcome": "PENALTY",
+      "ruleRef": "CRITICAL_EXCLUSION",
+      "example": {
+        "source": "sample 05",
+        "text": "'Excluding: automobile critical parts – steering, brakes, tyres, seat belts, airbags…'"
+      },
+      "explain": "The policy excludes safety-critical automotive components ({list}).",
+      "fix": "Please confirm that the parts supplied to FORVIA are not within the excluded categories, or obtain removal of the exclusion.",
+      "tags": []
+    },
+    {
+      "id": "F06",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Exclusion of products for the automotive / aerospace industry",
+      "check": "Industry-wide exclusion.",
+      "cues": {
+        "en": [
+          "automotive industry excluded",
+          "aviation",
+          "aerospace",
+          "aircraft products"
+        ],
+        "fr": [
+          "industrie automobile exclue",
+          "aéronautique"
+        ],
+        "de": [
+          "Kfz-Industrie ausgeschlossen",
+          "Luftfahrt"
+        ],
+        "it": [
+          "settore automotive escluso",
+          "aeronautico"
+        ]
+      },
+      "reading": "If automotive is excluded, the certificate is useless for FORVIA — treat as product liability MISSING. Aerospace exclusion is INFO.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_LIABILITY",
+      "example": {},
+      "explain": "Products supplied to the automotive industry are excluded.",
+      "fix": "Please provide cover that includes products supplied to the automotive industry.",
+      "tags": []
+    },
+    {
+      "id": "F07",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Pure financial loss explicitly excluded",
+      "check": "Exclusion clause for financial loss.",
+      "cues": {
+        "en": [
+          "excluding pure financial loss",
+          "financial loss excluded"
+        ],
+        "fr": [
+          "dommages immatériels non consécutifs exclus",
+          "exclusion des pertes financières"
+        ],
+        "de": [
+          "Vermögensschäden ausgeschlossen",
+          "ohne Vermögensschäden"
+        ],
+        "it": [
+          "esclusi i danni patrimoniali puri"
+        ]
+      },
+      "reading": "Contradicts any PFL line → PFL = EXCLUDED (worse than missing).",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PURE_FINANCIAL_LOSS",
+      "example": {},
+      "explain": "Pure financial loss is expressly excluded.",
+      "fix": "Please obtain an endorsement covering pure financial loss (≥ €15M).",
+      "tags": []
+    },
+    {
+      "id": "F08",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Recall excluded",
+      "check": "Exclusion clause for recall/withdrawal.",
+      "cues": {
+        "en": [
+          "recall excluded",
+          "excluding recall expenses"
+        ],
+        "fr": [
+          "frais de rappel exclus"
+        ],
+        "de": [
+          "Rückrufkosten ausgeschlossen",
+          "ohne Rückruf"
+        ],
+        "it": [
+          "esclusi i costi di ritiro"
+        ],
+        "es": [
+          "excluidos gastos de retirada"
+        ]
+      },
+      "reading": "PRODUCT_RECALL = EXCLUDED.",
+      "severity": "MAJOR",
+      "outcome": "REQUEST_CHANGES",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {},
+      "explain": "Recall costs are expressly excluded.",
+      "fix": "Please obtain recall cover (≥ €15M).",
+      "tags": []
+    },
+    {
+      "id": "F09",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Contractual liability exclusion",
+      "check": "'Liability assumed under contract' excluded.",
+      "cues": {
+        "en": [
+          "contractual liability",
+          "liability assumed under contract"
+        ],
+        "fr": [
+          "responsabilité contractuelle au-delà",
+          "engagements contractuels"
+        ],
+        "de": [
+          "vertragliche Haftung über die gesetzliche hinaus"
+        ],
+        "it": [
+          "responsabilità contrattuale"
+        ]
+      },
+      "reading": "Standard in most wordings (liability beyond law). Not critical per se, but FORVIA GPTC are contractual obligations. INFO; expert review if broad.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "EXCLUSION",
+      "example": {},
+      "explain": "Standard contractual liability exclusion noted.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F10",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Product efficacy / failure-to-perform exclusion",
+      "check": "Product does not do what it should, without damage.",
+      "cues": {
+        "en": [
+          "efficacy",
+          "failure to perform",
+          "fitness for purpose"
+        ],
+        "de": [
+          "Erfüllungsansprüche",
+          "Nachbesserung"
+        ],
+        "fr": [
+          "défaut de performance",
+          "inexécution"
+        ]
+      },
+      "reading": "Standard; the gap is covered by PFL in part. INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "EXCLUSION",
+      "example": {},
+      "explain": "Efficacy exclusion noted (standard).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F11",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Known circumstances / prior claims exclusion",
+      "check": "Standard clause.",
+      "cues": {
+        "en": [
+          "known circumstances",
+          "prior claims"
+        ],
+        "fr": [
+          "sinistres connus"
+        ],
+        "de": [
+          "bekannte Umstände"
+        ]
+      },
+      "reading": "INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "EXCLUSION",
+      "example": {},
+      "explain": "Known circumstances exclusion noted (standard).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F12",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Sanctions, war, terrorism, nuclear, asbestos exclusions",
+      "check": "Market-standard exclusions.",
+      "cues": {
+        "en": [
+          "sanctions",
+          "war",
+          "terrorism",
+          "nuclear",
+          "asbestos",
+          "radioactive"
+        ],
+        "fr": [
+          "sanctions",
+          "guerre",
+          "terrorisme",
+          "nucléaire",
+          "amiante"
+        ],
+        "de": [
+          "Sanktionsklausel",
+          "Krieg",
+          "Terror",
+          "Kernenergie",
+          "Asbest"
+        ],
+        "es": [
+          "sanciones",
+          "guerra",
+          "terrorismo",
+          "nuclear",
+          "amianto"
+        ],
+        "it": [
+          "sanzioni",
+          "guerra",
+          "terrorismo",
+          "nucleare",
+          "amianto"
+        ]
+      },
+      "reading": "Never penalise. INFO only. Do not list them in the supplier email.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "EXCLUSION",
+      "example": {},
+      "explain": "Market-standard exclusions noted.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F13",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Cyber / data exclusion",
+      "check": "Cyber exclusion on liability policies (LMA5400 style).",
+      "cues": {
+        "en": [
+          "cyber",
+          "data",
+          "electronic data",
+          "software"
+        ],
+        "de": [
+          "Cyber",
+          "Daten"
+        ],
+        "fr": [
+          "cyber",
+          "données"
+        ]
+      },
+      "reading": "INFO for parts; relevant if the supplier delivers software/ECUs — flag `softwareSupplier` in Ariba data if available.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "EXCLUSION",
+      "example": {},
+      "explain": "Cyber exclusion noted.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F14",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Punitive / exemplary damages excluded",
+      "check": "US-style damages.",
+      "cues": {
+        "en": [
+          "punitive",
+          "exemplary damages"
+        ],
+        "fr": [
+          "dommages punitifs"
+        ],
+        "de": [
+          "Strafschadenersatz",
+          "punitive damages"
+        ]
+      },
+      "reading": "Common, low impact. INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "EXCLUSION",
+      "example": {},
+      "explain": "Punitive damages exclusion noted.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F15",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Exclusion of recall ordered by authority vs voluntary",
+      "check": "Scope of recall trigger.",
+      "cues": {
+        "en": [
+          "ordered by a government authority",
+          "mandatory recall only",
+          "voluntary recall"
+        ],
+        "de": [
+          "behördlich angeordnet",
+          "freiwilliger Rückruf"
+        ],
+        "fr": [
+          "rappel ordonné par une autorité",
+          "rappel volontaire"
+        ]
+      },
+      "reading": "If only authority-ordered recalls are covered, OEM-initiated recalls (the common case) are not. Review.",
+      "severity": "MAJOR",
+      "outcome": "REVIEW",
+      "ruleRef": "PRODUCT_RECALL",
+      "example": {},
+      "explain": "Recall cover applies only to recalls ordered by an authority.",
+      "fix": "Please confirm that customer-initiated (voluntary) recalls are covered.",
+      "tags": []
+    },
+    {
+      "id": "F16",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Exclusion of pure financial loss from 'loss of use'",
+      "check": "US forms: 'loss of use of tangible property not physically injured' sub-clause.",
+      "cues": {
+        "en": [
+          "loss of use",
+          "impaired property"
+        ]
+      },
+      "reading": "Partial PFL via 'loss of use' exception; never count it as €15M PFL. UNCLEAR → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "PURE_FINANCIAL_LOSS",
+      "example": {},
+      "explain": "Only limited 'loss of use' cover is evidenced; it does not equate to pure financial loss cover.",
+      "fix": "Please confirm explicit pure financial loss cover.",
+      "tags": []
+    },
+    {
+      "id": "F17",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Exclusion of damage to the insured's own product / work",
+      "check": "'Damage to your product', 'Eigenschaden'.",
+      "cues": {
+        "en": [
+          "damage to your product",
+          "your work"
+        ],
+        "de": [
+          "Eigenschäden",
+          "Schäden am eigenen Produkt"
+        ],
+        "fr": [
+          "dommages au produit livré lui-même"
+        ]
+      },
+      "reading": "Standard; recall/dismantling covers the gap partly. INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "EXCLUSION",
+      "example": {},
+      "explain": "Own-product damage exclusion noted (standard).",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "F18",
+      "category": "F. Exclusions, trigger & territory",
+      "title": "Jurisdiction clause (courts) vs territory",
+      "check": "Where claims may be brought vs where damage occurs.",
+      "cues": {
+        "en": [
+          "jurisdiction",
+          "courts of",
+          "judgments rendered in"
+        ],
+        "fr": [
+          "juridiction",
+          "tribunaux"
+        ],
+        "de": [
+          "Gerichtsstand",
+          "Ansprüche vor Gerichten"
+        ],
+        "it": [
+          "giurisdizione"
+        ]
+      },
+      "reading": "Distinguish 'territorial scope' (damage location) from 'jurisdiction' (court). A 'worldwide except US courts' clause is a USA exclusion in disguise.",
+      "severity": "MAJOR",
+      "outcome": "PENALTY",
+      "ruleRef": "TERRITORY_USA_CANADA",
+      "example": {},
+      "explain": "Claims brought before USA/Canada courts are excluded (jurisdiction clause).",
+      "fix": "Please confirm whether USA/Canada jurisdiction can be included.",
+      "tags": []
+    },
+    {
+      "id": "G01",
+      "category": "G. Period & timing",
+      "title": "Certificate expired at reference date",
+      "check": "period.to < referenceDate.",
+      "cues": {},
+      "reading": "Structural block. Demo clock = 2025-04-15 (samples are 2024-25 certificates).",
+      "severity": "BLOCKING",
+      "outcome": "NO_GO_STRUCTURAL",
+      "ruleRef": "NOT_EXPIRED",
+      "example": {
+        "source": "synthetic",
+        "text": "Period 01/01/2024 – 31/12/2024, received 15/04/2025."
+      },
+      "explain": "The certificate expired on {dateTo}.",
+      "fix": "Please provide the current certificate.",
+      "tags": []
+    },
+    {
+      "id": "G02",
+      "category": "G. Period & timing",
+      "title": "Expires within the renewal window (e.g. < 60 days)",
+      "check": "period.to − referenceDate < profile `renewalWindowDays`.",
+      "cues": {},
+      "reading": "Not a defect, but schedule a reminder / request renewal now. INFO + task.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "NOT_EXPIRED",
+      "example": {
+        "source": "sample 03",
+        "text": "Swiss certificate with end-of-year expiry."
+      },
+      "explain": "The certificate expires in {days} days.",
+      "fix": "Please send the renewed certificate as soon as available.",
+      "tags": []
+    },
+    {
+      "id": "G03",
+      "category": "G. Period & timing",
+      "title": "Period starts in the future",
+      "check": "period.from > referenceDate.",
+      "cues": {},
+      "reading": "Cover not yet in force today (renewal certificate sent early). Accept if gap ≤ 30 days and a current certificate exists; else review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "DATES_PRESENT",
+      "example": {
+        "source": "synthetic",
+        "text": "Received 20 Nov 2025, period 01/01/2026 – 31/12/2026."
+      },
+      "explain": "The cover starts on {dateFrom}, after the reference date.",
+      "fix": "Please also provide the certificate for the current period.",
+      "tags": []
+    },
+    {
+      "id": "G04",
+      "category": "G. Period & timing",
+      "title": "Period shorter than 12 months / short-term policy",
+      "check": "Duration.",
+      "cues": {},
+      "reading": "Unusual; may indicate a project policy. INFO.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "DATES_PRESENT",
+      "example": {},
+      "explain": "Policy period is {months} months.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "G05",
+      "category": "G. Period & timing",
+      "title": "Only 'valid until further notice' / tacit renewal, no end date",
+      "check": "Open-ended statements.",
+      "cues": {
+        "en": [
+          "until further notice",
+          "tacitly renewed",
+          "automatically renewed"
+        ],
+        "fr": [
+          "tacite reconduction",
+          "jusqu'à dénonciation"
+        ],
+        "de": [
+          "verlängert sich stillschweigend",
+          "bis auf Weiteres"
+        ],
+        "es": [
+          "prórroga tácita"
+        ],
+        "it": [
+          "tacito rinnovo"
+        ]
+      },
+      "reading": "DE/FR: 'verlängert sich stillschweigend'. Need a validity date for the certificate itself. If the certificate states its own validity (e.g. 'valid until 31/12/2025') use it; otherwise DATES_PRESENT → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "DATES_PRESENT",
+      "example": {
+        "source": "sample 02",
+        "text": "German tacit-renewal wording alongside the period."
+      },
+      "explain": "No end date is stated; the certificate refers to tacit renewal.",
+      "fix": "Please state the current insurance period (from / to).",
+      "tags": []
+    },
+    {
+      "id": "G06",
+      "category": "G. Period & timing",
+      "title": "Issue date much older than the period / stale certificate",
+      "check": "issueDate < referenceDate − 12 months.",
+      "cues": {},
+      "reading": "Even if the period is still open, an old certificate may not reflect mid-term changes. INFO; expert option to require ≤ 12-month-old certificates.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "DATES_PRESENT",
+      "example": {},
+      "explain": "Certificate issued {months} months ago.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "G07",
+      "category": "G. Period & timing",
+      "title": "Issue date after the start of the period (normal) vs before (check)",
+      "check": "Consistency of issue date.",
+      "cues": {},
+      "reading": "Issuing after inception is normal. Issued before the policy even existed → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "DATES_PRESENT",
+      "example": {},
+      "explain": "The issue date precedes the policy inception by {days} days.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "G08",
+      "category": "G. Period & timing",
+      "title": "Date format ambiguity (DD/MM vs MM/DD)",
+      "check": "'04/08/2025'.",
+      "cues": {},
+      "reading": "Resolve by document locale/language; if both readings are plausible and change the expiry verdict → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "DATES_PRESENT",
+      "example": {
+        "source": "sample 05",
+        "text": "Indian document with US-style dates."
+      },
+      "explain": "The date format is ambiguous.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "G09",
+      "category": "G. Period & timing",
+      "title": "Cancellation clause ('may be cancelled at any time')",
+      "check": "Standard notice clause.",
+      "cues": {
+        "en": [
+          "cancelled",
+          "notice of cancellation",
+          "30 days notice"
+        ],
+        "fr": [
+          "résiliation",
+          "préavis"
+        ],
+        "de": [
+          "Kündigung",
+          "Kündigungsfrist"
+        ]
+      },
+      "reading": "Normal. INFO. Some certificates promise notice to the certificate holder — positive.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "—",
+      "example": {},
+      "explain": "Cancellation notice clause noted.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "H01",
+      "category": "H. Consistency & data quality",
+      "title": "Bilingual certificate: figures differ between languages",
+      "check": "FR/EN or DE/EN columns.",
+      "cues": {},
+      "reading": "Extract both; if they differ → review; the original-language version usually prevails (check 'prevailing language' clause).",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "AMOUNT_PARSING",
+      "example": {
+        "source": "samples 01, 07",
+        "text": "Bilingual layouts."
+      },
+      "explain": "The two language versions state different figures.",
+      "fix": "Please confirm the correct limits.",
+      "tags": []
+    },
+    {
+      "id": "H02",
+      "category": "H. Consistency & data quality",
+      "title": "Summary table vs narrative text disagree",
+      "check": "Same guarantee, two amounts.",
+      "cues": {},
+      "reading": "Review; prefer the more specific statement; show both.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "AMOUNT_PARSING",
+      "example": {},
+      "explain": "The summary table and the text state different amounts for {guarantee}.",
+      "fix": "Please confirm the applicable limit.",
+      "tags": []
+    },
+    {
+      "id": "H03",
+      "category": "H. Consistency & data quality",
+      "title": "Text layer garbled / absent → OCR fallback",
+      "check": "Text extraction yields noise or nothing.",
+      "cues": {},
+      "reading": "Run OCR (tesseract) and vision extraction; lower IAS; route to review if critical fields < 0.6.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "IAS",
+      "example": {
+        "source": "sample 06 (Zurich ES / COPO)",
+        "text": "Corrupted text layer."
+      },
+      "explain": "The PDF text layer was unusable; values were read by OCR and may need confirmation.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "H04",
+      "category": "H. Consistency & data quality",
+      "title": "Low-resolution or skewed scan",
+      "check": "Image quality.",
+      "cues": {},
+      "reading": "Deskew, upscale; lower confidence. If signature/stamp zones unreadable → formal gates to review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "IAS",
+      "example": {
+        "source": "sample 04",
+        "text": "Scanned certificate."
+      },
+      "explain": "Scan quality is low; some values have reduced confidence.",
+      "fix": "Please upload a higher-quality scan.",
+      "tags": []
+    },
+    {
+      "id": "H05",
+      "category": "H. Consistency & data quality",
+      "title": "Handwritten amendments on a printed certificate",
+      "check": "Ink corrections.",
+      "cues": {},
+      "reading": "Suspicious unless initialled and stamped. Review.",
+      "severity": "MAJOR",
+      "outcome": "REVIEW",
+      "ruleRef": "STAMP_PRESENT",
+      "example": {},
+      "explain": "The certificate contains handwritten amendments.",
+      "fix": "Please provide a clean re-issued certificate.",
+      "tags": []
+    },
+    {
+      "id": "H06",
+      "category": "H. Consistency & data quality",
+      "title": "Page missing ('page 2 of 3' but 2 pages)",
+      "check": "Page numbering.",
+      "cues": {},
+      "reading": "Incomplete document → review (sub-limits often on the last page).",
+      "severity": "MAJOR",
+      "outcome": "REVIEW",
+      "ruleRef": "DOCUMENT_IS_CERTIFICATE",
+      "example": {},
+      "explain": "The document appears incomplete ({have} of {total} pages).",
+      "fix": "Please upload the complete certificate.",
+      "tags": []
+    },
+    {
+      "id": "H07",
+      "category": "H. Consistency & data quality",
+      "title": "Insured name spelled differently across pages",
+      "check": "Cross-page consistency.",
+      "cues": {},
+      "reading": "Minor typos → ignore; different entities → review.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "ENTITY_MATCH",
+      "example": {},
+      "explain": "The insured name varies across pages.",
+      "fix": "Please confirm the legal name of the insured.",
+      "tags": []
+    },
+    {
+      "id": "H08",
+      "category": "H. Consistency & data quality",
+      "title": "Personal data present (names, emails, phone numbers)",
+      "check": "GDPR hygiene.",
+      "cues": {},
+      "reading": "Mask in exports, logs and emails; keep in the stored document. Not a defect.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "GDPR",
+      "example": {
+        "source": "sample 09",
+        "text": "Insurer employee's direct email on the cover letter."
+      },
+      "explain": "Personal data detected and masked in exports.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "H09",
+      "category": "H. Consistency & data quality",
+      "title": "Multiple currencies on one certificate",
+      "check": "E.g. limits in EUR, deductible in CHF.",
+      "cues": {},
+      "reading": "Convert each with its own currency; never assume one currency per document.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "FX",
+      "example": {},
+      "explain": "The certificate uses several currencies.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "H10",
+      "category": "H. Consistency & data quality",
+      "title": "Language not in the supported set / mixed scripts",
+      "check": "E.g. Turkish, Polish, Chinese certificates.",
+      "cues": {},
+      "reading": "Extraction still attempted (LLM multilingual); IAS lowered; route to review if < 0.75.",
+      "severity": "MINOR",
+      "outcome": "REVIEW",
+      "ruleRef": "IAS",
+      "example": {},
+      "explain": "Document language ({lang}) has limited validation coverage; values should be confirmed.",
+      "fix": "—",
+      "tags": []
+    },
+    {
+      "id": "H11",
+      "category": "H. Consistency & data quality",
+      "title": "Certificate for the right supplier but the wrong FORVIA request (duplicate / re-upload)",
+      "check": "Same file hash already analysed.",
+      "cues": {},
+      "reading": "Deduplicate by hash; link to the previous analysis; do not re-bill the LLM.",
+      "severity": "INFO",
+      "outcome": "INFO",
+      "ruleRef": "—",
+      "example": {},
+      "explain": "This document was already analysed on {date}.",
+      "fix": "—",
+      "tags": []
+    }
+  ]
+}

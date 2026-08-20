@@ -1,0 +1,261 @@
+{
+  "profile": "FORVIA_GPTC_DEFAULT",
+  "demoClock": "2025-04-15",
+  "id": "05_icici-lombard_naxnova_IN",
+  "file": "CGL_QUOTE_Naxnova_Technologies_Private_Limited75.pdf",
+  "language": [
+    "en"
+  ],
+  "pages": 5,
+  "format": "PDF_TEXT",
+  "documentType": "QUOTE",
+  "supplierMaster": {
+    "name": "Naxnova Technologies Private Limited",
+    "country": "IN",
+    "ariba_id": "S-000105"
+  },
+  "issuer": {
+    "name": "ICICI Lombard General Insurance",
+    "type": "INSURER",
+    "country": "IN",
+    "regulator": "IRDAI",
+    "ratingIndicative": "domestic AAA (CRISIL); international rating to verify",
+    "note": "Capacity (20%) — ICICI Lombard carries only 20% of the risk; co-insurers unknown"
+  },
+  "policyholder": "Naxnova Technologies Private Limited",
+  "additionalInsureds": [],
+  "policyNumber": null,
+  "period": {
+    "from": null,
+    "to": null,
+    "statement": "12 months from policy inception date"
+  },
+  "issuedAt": "2025-04-29",
+  "issuedPlace": "Mumbai",
+  "receivedAt": "2025-05-06",
+  "fx": {
+    "INR": 95.5
+  },
+  "visual": {
+    "stamp": {
+      "present": false,
+      "confidence": 0.95
+    },
+    "signature": {
+      "present": false,
+      "confidence": 0.98,
+      "note": "'This is a computer generated letter and does not require signature'"
+    },
+    "logo": {
+      "present": false
+    }
+  },
+  "territory": {
+    "statement": "General: India; Products/Completed operations: Worldwide incl. USA & Canada",
+    "usaCanada": "INCLUDED"
+  },
+  "trigger": "CLAIMS_MADE",
+  "basisSummary": "BOTH",
+  "guarantees": [
+    {
+      "code": "COMBINED_GL_PL",
+      "labelOriginal": "Limit of Indemnity INR 1,000,000,000 per occurrence and in the aggregate",
+      "page": 1,
+      "amountOriginal": 1000000000,
+      "currency": "INR",
+      "fxRate": 95.5,
+      "amountEur": 10471204,
+      "basis": "PER_OCCURRENCE_AND_AGGREGATE",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": "Only 20% capacity from this insurer"
+    },
+    {
+      "code": "PRODUCT_LIABILITY",
+      "labelOriginal": "Product & Completed Operations — Policy Limits",
+      "page": 1,
+      "amountOriginal": 1000000000,
+      "currency": "INR",
+      "fxRate": 95.5,
+      "amountEur": 10471204,
+      "basis": "PER_OCCURRENCE_AND_AGGREGATE",
+      "deductible": "INR 250,000 India / 350,000 USA-Canada / 500,000 ROW",
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PRODUCT_RECALL",
+      "labelOriginal": "Product Recall — INR 1,000,000,000 Per Accident and in Aggregate",
+      "page": 1,
+      "amountOriginal": 1000000000,
+      "currency": "INR",
+      "fxRate": 95.5,
+      "amountEur": 10471204,
+      "basis": "PER_ACCIDENT_AND_AGGREGATE",
+      "deductible": "INR 3,500,000",
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PURE_FINANCIAL_LOSS",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "INR",
+      "fxRate": 95.5,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "POLLUTION_ACCIDENTAL",
+      "labelOriginal": "72 hours Sudden & Accidental Pollution — Sub Limit: Policy Limit",
+      "page": 1,
+      "amountOriginal": null,
+      "currency": "INR",
+      "fxRate": 95.5,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "COVERED_NO_AMOUNT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "GOODS_IN_CUSTODY",
+      "labelOriginal": "Care, Custody and control",
+      "page": 3,
+      "amountOriginal": 50000000,
+      "currency": "INR",
+      "fxRate": 95.5,
+      "amountEur": 523560,
+      "basis": "PER_OCCURRENCE_AND_AGGREGATE",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    }
+  ],
+  "exclusions": [
+    {
+      "text": "No cover for Automobile Critical Components: steering, brakes, wheel, tyres, seatbelts & airbags (except sub-components)",
+      "critical": true
+    },
+    {
+      "text": "Failure to supply exclusion",
+      "critical": true
+    },
+    {
+      "text": "Cyber risk exclusion; Electronic data exclusion; Professional liability exclusion; Punitive damages; Unapproved product; Aircraft products; Offshore/Aviation/Defence/Railways",
+      "critical": false
+    }
+  ],
+  "deductibles": "INR 85,000 general; recall INR 3,500,000",
+  "gates": {
+    "DOCUMENT_IS_CERTIFICATE": "FAIL",
+    "ISSUER_IS_INSURER": "PASS",
+    "INSURER_IDENTIFIED": "PASS",
+    "INSURER_RATING_FLOOR": "REVIEW",
+    "STAMP_PRESENT": "FAIL",
+    "SIGNATURE_PRESENT": "FAIL",
+    "POLICY_NUMBER_PRESENT": "FAIL",
+    "DATES_PRESENT": "FAIL",
+    "NOT_EXPIRED": "REVIEW",
+    "ENTITY_MATCH": "PASS",
+    "COINSURANCE_COMPLETE": "FAIL",
+    "CAPTIVE_FRONTED": "PASS",
+    "FILE_FORMAT_OK": "PASS"
+  },
+  "accuracyScore": 0.91,
+  "expert": {
+    "reviewedInSession": true,
+    "verdict": "NO_GO",
+    "quotes": [
+      "Pas de signature écrite — je veux les deux (tampon + signature)",
+      "Ils ont 1 milliard — mais ça veut dire quoi en euros ? Il faut convertir",
+      "Je pose quand même des questions sur l'assureur, je ne le connais pas — savoir s'il a une notation AM Best",
+      "Pour moi elle n'est pas conforme"
+    ]
+  },
+  "demoAngle": "Not a certificate but a QUOTE; no signature/stamp/policy no./dates; 20% capacity; claims-made; INR conversion; critical automotive exclusion on page 4.",
+  "computed": {
+    "profile": "FORVIA_GPTC_DEFAULT",
+    "riskScore": null,
+    "riskScoreProvisional": 22,
+    "breakdown": {
+      "PRODUCT_LIABILITY": {
+        "required": 20000000,
+        "found": 10471204,
+        "status": "BELOW_MINIMUM",
+        "points": 15.7,
+        "max": 30
+      },
+      "PRODUCT_RECALL": {
+        "required": 15000000,
+        "found": 10471204,
+        "status": "BELOW_MINIMUM",
+        "points": 20.9,
+        "max": 30
+      },
+      "PURE_FINANCIAL_LOSS": {
+        "required": 15000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 15
+      },
+      "CONSEQUENTIAL_FINANCIAL_LOSS": {
+        "required": 1000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 5
+      },
+      "DISMANTLING_REFITTING": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "EXTENDED_PRODUCT_LIABILITY": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "TERRITORY_USA_CANADA": {
+        "status": "INCLUDED",
+        "points": 5,
+        "max": 5
+      },
+      "AGGREGATE_BASIS": {
+        "status": "BOTH",
+        "points": 5,
+        "max": 5
+      },
+      "_penalties": -25
+    },
+    "decision": "NO_GO",
+    "noGoSubtype": "STRUCTURAL",
+    "failedGates": [
+      "DOCUMENT_IS_CERTIFICATE",
+      "STAMP_PRESENT",
+      "SIGNATURE_PRESENT",
+      "POLICY_NUMBER_PRESENT",
+      "DATES_PRESENT",
+      "COINSURANCE_COMPLETE"
+    ],
+    "reviewGates": [
+      "INSURER_RATING_FLOOR",
+      "NOT_EXPIRED"
+    ],
+    "needsHumanReview": true,
+    "matchesExpert": true
+  }
+}

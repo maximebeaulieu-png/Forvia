@@ -1,0 +1,217 @@
+{
+  "profile": "FORVIA_GPTC_DEFAULT",
+  "demoClock": "2025-04-15",
+  "id": "08_allianz-agcs_ctec-ceramtec_DE",
+  "file": "VB_2025_Haft_CTEC_I__Kfz_RR_5_Mio.pdf",
+  "language": [
+    "de",
+    "en"
+  ],
+  "pages": 2,
+  "format": "PDF_TEXT",
+  "documentType": "CERTIFICATE",
+  "supplierMaster": {
+    "name": "CeramTec GmbH",
+    "country": "DE",
+    "ariba_id": "S-000108"
+  },
+  "issuer": {
+    "name": "Allianz Global Corporate & Specialty SE",
+    "type": "INSURER",
+    "country": "DE",
+    "regulator": "BaFin",
+    "ratingIndicative": "AA (S&P)"
+  },
+  "policyholder": "CTEC I GmbH",
+  "additionalInsureds": [
+    "CeramTec GmbH, Deutschland"
+  ],
+  "policyNumber": "DEL006608250M",
+  "period": {
+    "from": "2025-01-01",
+    "to": "2026-01-01"
+  },
+  "issuedAt": "2024-11-29",
+  "issuedPlace": "Köln",
+  "receivedAt": "2024-12-06",
+  "fx": {},
+  "visual": {
+    "stamp": {
+      "present": false,
+      "confidence": 0.93
+    },
+    "signature": {
+      "present": true,
+      "page": 2,
+      "confidence": 0.95,
+      "note": "two handwritten signatures (Dr. Vogler, Williams)"
+    },
+    "logo": {
+      "present": true,
+      "page": 1
+    }
+  },
+  "territory": {
+    "statement": "weltweit/worldwide",
+    "usaCanada": "INCLUDED"
+  },
+  "trigger": "UNSTATED",
+  "basisSummary": "BOTH",
+  "guarantees": [
+    {
+      "code": "AUTOMOTIVE_RECALL",
+      "labelOriginal": "Rückrufkosten-Haftpflichtversicherung für Kfz-Teile-Zulieferer / Recall Liability Insurance for Automotive Component Suppliers — pure financial loss",
+      "page": 2,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_OCCURRENCE_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PRODUCT_RECALL",
+      "labelOriginal": "(automotive recall counts toward product recall)",
+      "page": 2,
+      "amountOriginal": 5000000,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": 5000000,
+      "basis": "PER_OCCURRENCE_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PRODUCT_LIABILITY",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": "Recall-only certificate"
+    },
+    {
+      "code": "PURE_FINANCIAL_LOSS",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "EUR",
+      "fxRate": 1.0,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": "Restricted to enumerated recall expenses"
+    }
+  ],
+  "exclusions": [
+    {
+      "text": "No coverage for bodily injury or property damage as such",
+      "critical": false
+    }
+  ],
+  "deductibles": null,
+  "gates": {
+    "DOCUMENT_IS_CERTIFICATE": "PASS",
+    "ISSUER_IS_INSURER": "PASS",
+    "INSURER_IDENTIFIED": "PASS",
+    "INSURER_RATING_FLOOR": "PASS",
+    "STAMP_PRESENT": "FAIL",
+    "SIGNATURE_PRESENT": "PASS",
+    "POLICY_NUMBER_PRESENT": "PASS",
+    "DATES_PRESENT": "PASS",
+    "NOT_EXPIRED": "PASS",
+    "ENTITY_MATCH": "PASS",
+    "COINSURANCE_COMPLETE": "PASS",
+    "CAPTIVE_FRONTED": "PASS",
+    "FILE_FORMAT_OK": "PASS"
+  },
+  "accuracyScore": 0.96,
+  "expert": {
+    "reviewedInSession": true,
+    "verdict": "REQUEST_CHANGES",
+    "quotes": [
+      "Elle n'est pas trop mal : il n'y a pas le tampon, mais à part le tampon, en termes de garantie ça va, tout y est",
+      "L'acheteur doit renvoyer l'attestation en disant : merci de mettre le tampon"
+    ],
+    "conflict": "Richard considers €5M recall sufficient (his ~5M habit); GPTC requires €15M → profile calibration needed (Q08/Q44)"
+  },
+  "demoAngle": "Shows the GPTC-vs-expert threshold conflict and the 'formal defect' No-Go sub-type (stamp only). Switch profile live to 'Expert' and watch the decision change.",
+  "computed": {
+    "profile": "FORVIA_GPTC_DEFAULT",
+    "riskScore": null,
+    "riskScoreProvisional": 20,
+    "breakdown": {
+      "PRODUCT_LIABILITY": {
+        "required": 20000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 30
+      },
+      "PRODUCT_RECALL": {
+        "required": 15000000,
+        "found": 5000000,
+        "status": "BELOW_MINIMUM",
+        "points": 10.0,
+        "max": 30
+      },
+      "PURE_FINANCIAL_LOSS": {
+        "required": 15000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 15
+      },
+      "CONSEQUENTIAL_FINANCIAL_LOSS": {
+        "required": 1000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 5
+      },
+      "DISMANTLING_REFITTING": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "EXTENDED_PRODUCT_LIABILITY": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "TERRITORY_USA_CANADA": {
+        "status": "INCLUDED",
+        "points": 5,
+        "max": 5
+      },
+      "AGGREGATE_BASIS": {
+        "status": "BOTH",
+        "points": 5,
+        "max": 5
+      },
+      "_penalties": 0
+    },
+    "decision": "NO_GO",
+    "noGoSubtype": "FORMAL_DEFECT",
+    "failedGates": [
+      "STAMP_PRESENT"
+    ],
+    "reviewGates": [],
+    "needsHumanReview": false,
+    "matchesExpert": false
+  }
+}

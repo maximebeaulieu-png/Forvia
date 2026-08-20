@@ -1,0 +1,272 @@
+{
+  "profile": "FORVIA_GPTC_DEFAULT",
+  "demoClock": "2025-04-15",
+  "id": "01_chubb_air-products_FR",
+  "file": "20240419__FR__AO__ADMIN__ATTEST__Assurance_RC.pdf",
+  "language": [
+    "fr",
+    "en"
+  ],
+  "pages": 2,
+  "format": "PDF_TEXT",
+  "documentType": "CERTIFICATE",
+  "supplierMaster": {
+    "name": "AIR PRODUCTS SAS",
+    "country": "FR",
+    "ariba_id": "S-000101"
+  },
+  "issuer": {
+    "name": "Chubb European Group SE",
+    "type": "INSURER",
+    "country": "FR",
+    "regulator": "ACPR",
+    "ratingIndicative": "AA (S&P)"
+  },
+  "policyholder": "AIR PRODUCTS SAS",
+  "additionalInsureds": [],
+  "policyNumber": "FRCANA00801",
+  "period": {
+    "from": "2024-06-01",
+    "to": "2025-05-31"
+  },
+  "issuedAt": "2024-04-19",
+  "issuedPlace": "Courbevoie",
+  "receivedAt": "2024-04-26",
+  "fx": {
+    "USD": 1.07
+  },
+  "visual": {
+    "stamp": {
+      "present": true,
+      "page": 2,
+      "confidence": 0.8,
+      "note": "faint company seal over signature block"
+    },
+    "signature": {
+      "present": true,
+      "page": 2,
+      "confidence": 0.65,
+      "note": "'Signed on behalf of Chubb' with scribble inside seal — ambiguous, route to review"
+    },
+    "logo": {
+      "present": true,
+      "page": 1
+    }
+  },
+  "territory": {
+    "statement": null,
+    "usaCanada": "UNCLEAR"
+  },
+  "trigger": "UNSTATED",
+  "basisSummary": "BOTH",
+  "guarantees": [
+    {
+      "code": "COMBINED_GL_PL",
+      "labelOriginal": "Responsabilité Civile Exploitation et Produit combinés / Public and Product Liability combined limit",
+      "page": 1,
+      "amountOriginal": 5000000,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": 4672897,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": "Claims paid excess of SIR"
+    },
+    {
+      "code": "PRODUCT_LIABILITY",
+      "labelOriginal": "Responsabilité Civile Produit — 'Covered' (no own amount; combined limit applies)",
+      "page": 1,
+      "amountOriginal": 5000000,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": 4672897,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": "Line says 'Covered' without amount → COVERED_NO_AMOUNT; amount inherited from combined limit"
+    },
+    {
+      "code": "GENERAL_LIABILITY",
+      "labelOriginal": "Responsabilité Civile Exploitation — Covered",
+      "page": 1,
+      "amountOriginal": null,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": null,
+      "basis": "PER_CLAIM",
+      "deductible": null,
+      "status": "COVERED_NO_AMOUNT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "EMPLOYERS_LIABILITY",
+      "labelOriginal": "Faute Inexcusable / Employer's Liability – Gross Negligence",
+      "page": 1,
+      "amountOriginal": 1000000,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": 934579,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "POLLUTION_ACCIDENTAL",
+      "labelOriginal": "Pollution Accidentelle / Sudden and Accidental Pollution",
+      "page": 1,
+      "amountOriginal": 500000,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": 467290,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": null,
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "note": null
+    },
+    {
+      "code": "PURE_FINANCIAL_LOSS",
+      "labelOriginal": "Dommages Immatériels Non Consécutifs / Pure Financial Losses",
+      "page": 1,
+      "amountOriginal": 200000,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": 186916,
+      "basis": "PER_CLAIM_AND_ANNUAL",
+      "deductible": null,
+      "status": "BELOW_MINIMUM",
+      "confidence": 0.95,
+      "note": "Listed twice (under GL and under PL), same amount"
+    },
+    {
+      "code": "CONSEQUENTIAL_FINANCIAL_LOSS",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": "DIC not mentioned — Richard: 'il manque les DIC' → alert"
+    },
+    {
+      "code": "PRODUCT_RECALL",
+      "labelOriginal": null,
+      "page": null,
+      "amountOriginal": null,
+      "currency": "USD",
+      "fxRate": 1.07,
+      "amountEur": null,
+      "basis": null,
+      "deductible": null,
+      "status": "MISSING",
+      "confidence": 0.95,
+      "note": null
+    }
+  ],
+  "exclusions": [],
+  "deductibles": "SIR (self-insured retention) mentioned, amount not stated",
+  "gates": {
+    "DOCUMENT_IS_CERTIFICATE": "PASS",
+    "ISSUER_IS_INSURER": "PASS",
+    "INSURER_IDENTIFIED": "PASS",
+    "INSURER_RATING_FLOOR": "PASS",
+    "STAMP_PRESENT": "PASS",
+    "SIGNATURE_PRESENT": "REVIEW",
+    "POLICY_NUMBER_PRESENT": "PASS",
+    "DATES_PRESENT": "PASS",
+    "NOT_EXPIRED": "PASS",
+    "ENTITY_MATCH": "PASS",
+    "COINSURANCE_COMPLETE": "PASS",
+    "CAPTIVE_FRONTED": "PASS",
+    "FILE_FORMAT_OK": "PASS"
+  },
+  "accuracyScore": 0.9,
+  "expert": {
+    "reviewedInSession": true,
+    "verdict": "REQUEST_CHANGES",
+    "quotes": [
+      "C'est la mieux… un vrai certificat d'assurance (logo Chubb, tampon page 2)",
+      "5 millions de dollars… ça fait 4 millions d'euros — alerte",
+      "Dommages immatériels non consécutifs 200 000 € — absolument pas suffisant, on demandera 500 000 ou 1 million",
+      "Il manque les DIC — alerte, blocage",
+      "Elle passe à la rigueur avec des demandes d'amélioration"
+    ]
+  },
+  "demoAngle": "Best of the batch and still far below GPTC. Shows currency conversion, 'Covered' without amount, missing DIC/recall.",
+  "computed": {
+    "profile": "FORVIA_GPTC_DEFAULT",
+    "riskScore": 12,
+    "riskScoreProvisional": 12,
+    "breakdown": {
+      "PRODUCT_LIABILITY": {
+        "required": 20000000,
+        "found": 4672897,
+        "status": "BELOW_MINIMUM",
+        "points": 7.0,
+        "max": 30
+      },
+      "PRODUCT_RECALL": {
+        "required": 15000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 30
+      },
+      "PURE_FINANCIAL_LOSS": {
+        "required": 15000000,
+        "found": 186916,
+        "status": "BELOW_MINIMUM",
+        "points": 0.2,
+        "max": 15
+      },
+      "CONSEQUENTIAL_FINANCIAL_LOSS": {
+        "required": 1000000,
+        "found": null,
+        "status": "MISSING",
+        "points": 0.0,
+        "max": 5
+      },
+      "DISMANTLING_REFITTING": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "EXTENDED_PRODUCT_LIABILITY": {
+        "required": "PRESENT",
+        "status": "MISSING",
+        "points": 0,
+        "max": 5
+      },
+      "TERRITORY_USA_CANADA": {
+        "status": "UNCLEAR",
+        "points": 0,
+        "max": 5
+      },
+      "AGGREGATE_BASIS": {
+        "status": "BOTH",
+        "points": 5,
+        "max": 5
+      },
+      "_penalties": 0
+    },
+    "decision": "REQUEST_CHANGES",
+    "noGoSubtype": null,
+    "failedGates": [],
+    "reviewGates": [
+      "SIGNATURE_PRESENT"
+    ],
+    "needsHumanReview": true,
+    "matchesExpert": true
+  }
+}

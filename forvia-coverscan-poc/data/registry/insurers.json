@@ -1,0 +1,26 @@
+{
+  "_note": "POC registry. Types: INSURER | MUTUAL | CAPTIVE | BROKER | AGENT. Ratings are INDICATIVE from public knowledge at time of writing and MUST be verified/licensed before any report. Aliases are matched after normalization (lowercase, no accents/punctuation, legal forms stripped).",
+  "version": "0.1.0",
+  "entries": [
+    { "canonicalName": "Chubb European Group SE", "aliases": ["Chubb", "Chubb European Group", "ACE European Group"], "type": "INSURER", "country": "FR", "regulator": "ACPR", "regulatorId": "RCS Nanterre 450 327 374", "rating": "AA", "ratingAgency": "S&P" },
+    { "canonicalName": "Generali Deutschland Versicherung AG", "aliases": ["Generali Deutschland", "Generali Global Corporate & Commercial Deutschland"], "type": "INSURER", "country": "DE", "regulator": "BaFin", "regulatorId": "HRB 250638", "rating": "A+", "ratingAgency": "AM Best" },
+    { "canonicalName": "Generali Italia S.p.A.", "aliases": ["Generali Italia", "Assicurazioni Generali"], "type": "INSURER", "country": "IT", "regulator": "IVASS", "regulatorId": "Albo 1.00021", "rating": "A", "ratingAgency": "AM Best" },
+    { "canonicalName": "Swiss Mobiliar Insurance Company Ltd.", "aliases": ["la Mobilière", "Die Mobiliar", "Schweizerische Mobiliar", "Swiss Mobiliar"], "type": "MUTUAL", "country": "CH", "regulator": "FINMA", "rating": "A+", "ratingAgency": "S&P" },
+    { "canonicalName": "MMA IARD", "aliases": ["MMA", "MMA Entreprise", "MMA IARD Assurances Mutuelles", "Covéa"], "type": "INSURER", "country": "FR", "regulator": "ACPR", "rating": "A", "ratingAgency": "S&P" },
+    { "canonicalName": "SARL MARRON & ASSOCIÉS", "aliases": ["Marron & Associés", "Marron et Associés", "Marron Associes"], "type": "AGENT", "country": "FR", "regulator": "ORIAS", "regulatorId": "07 002 497", "rating": null, "ratingAgency": null, "note": "Agent général exclusif MMA et courtier — intermediary, cannot issue a valid certificate on its own" },
+    { "canonicalName": "ICICI Lombard General Insurance Company Ltd.", "aliases": ["ICICI Lombard"], "type": "INSURER", "country": "IN", "regulator": "IRDAI", "rating": "AAA (domestic, CRISIL)", "ratingAgency": "CRISIL", "note": "International rating to verify" },
+    { "canonicalName": "Zurich Insurance Europe AG", "aliases": ["Zurich", "Zurich Insurance Europe AG Spanish Branch", "Zurich Insurance Europe AG Sucursal en España", "Zurich Insurance Europe AG Niederlassung für Deutschland", "Zurich Insurance plc"], "type": "INSURER", "country": "DE", "regulator": "BaFin (EU branches: DGSFP ES)", "regulatorId": "HRB 133359", "rating": "AA-", "ratingAgency": "S&P" },
+    { "canonicalName": "Allianz Global Corporate & Specialty SE", "aliases": ["AGCS", "Allianz Commercial", "Allianz Global Corporate and Specialty"], "type": "INSURER", "country": "DE", "regulator": "BaFin", "regulatorId": "HRB 208312", "rating": "AA", "ratingAgency": "S&P" },
+    { "canonicalName": "Allianz Versicherungs-AG", "aliases": ["Allianz Versicherungs-Aktiengesellschaft", "Allianz Versicherung", "Allianz"], "type": "INSURER", "country": "DE", "regulator": "BaFin", "regulatorId": "HRB 75727", "rating": "AA", "ratingAgency": "S&P" },
+    { "canonicalName": "AXA France IARD", "aliases": ["AXA", "AXA XL", "AXA Corporate Solutions"], "type": "INSURER", "country": "FR", "regulator": "ACPR", "rating": "AA-", "ratingAgency": "S&P" },
+    { "canonicalName": "HDI Global SE", "aliases": ["HDI", "HDI Gerling"], "type": "INSURER", "country": "DE", "regulator": "BaFin", "rating": "A+", "ratingAgency": "S&P" },
+    { "canonicalName": "Liberty Mutual Insurance Europe SE", "aliases": ["Liberty Mutual", "Liberty Specialty Markets"], "type": "INSURER", "country": "LU", "regulator": "CAA", "rating": "A", "ratingAgency": "S&P" },
+    { "canonicalName": "Protector Forsikring ASA", "aliases": ["Protector"], "type": "INSURER", "country": "NO", "regulator": "Finanstilsynet", "rating": "A-", "ratingAgency": "S&P", "note": "Cited by Richard as an example of a co-insurer that triggers an alert (Q14)" },
+    { "canonicalName": "Howden Schweiz AG", "aliases": ["Howden"], "type": "BROKER", "country": "CH", "regulator": "FINMA (intermediary)", "rating": null, "ratingAgency": null },
+    { "canonicalName": "Diot-Siaci", "aliases": ["Diot", "Siaci Saint Honoré"], "type": "BROKER", "country": "FR", "regulator": "ORIAS", "rating": null, "ratingAgency": null, "note": "Large French broker; FORVIA's broker context (transcript)" },
+    { "canonicalName": "Marsh", "aliases": ["Marsh SAS", "Marsh McLennan"], "type": "BROKER", "country": "FR", "regulator": "ORIAS", "rating": null, "ratingAgency": null },
+    { "canonicalName": "Aon", "aliases": ["Aon France"], "type": "BROKER", "country": "FR", "regulator": "ORIAS", "rating": null, "ratingAgency": null },
+    { "canonicalName": "WTW", "aliases": ["Willis Towers Watson", "Gras Savoye"], "type": "BROKER", "country": "FR", "regulator": "ORIAS", "rating": null, "ratingAgency": null },
+    { "canonicalName": "Example Captive Re Ltd", "aliases": [], "type": "CAPTIVE", "country": "LU", "regulator": "CAA", "rating": null, "ratingAgency": null, "note": "Synthetic entry for tests (captive not fronted → review)" }
+  ]
+}
