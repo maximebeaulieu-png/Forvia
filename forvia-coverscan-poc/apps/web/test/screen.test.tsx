@@ -1,8 +1,12 @@
 import * as React from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { CertificateView } from "../app/certificates/[id]/certificate-view";
+import { CertificateView } from "../app/(shell)/certificates/[id]/certificate-view";
 import { getCertificate } from "../lib/repository";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn(), back: vi.fn() }),
+}));
 
 afterEach(cleanup);
 
@@ -32,5 +36,19 @@ describe("Certificate analysis screen", () => {
   it("Approve is disabled when the decision is not GO", () => {
     render(<CertificateView cert={getCertificate("04")!} />);
     expect(screen.getByRole("button", { name: "Approve" })).toBeDisabled();
+  });
+
+  it("Reject is a plain button that records the rejection inline", () => {
+    render(<CertificateView cert={getCertificate("04")!} />);
+    const reject = screen.getByRole("button", { name: "Reject" });
+    expect(screen.queryByText("Rejected — reason recorded")).not.toBeInTheDocument();
+    fireEvent.click(reject);
+    expect(screen.getByRole("status")).toHaveTextContent("Rejected — reason recorded");
+  });
+
+  it("offers prev/next certificate navigation with accessible labels", () => {
+    render(<CertificateView cert={getCertificate("04")!} prevId="03" nextId="05" />);
+    expect(screen.getByRole("link", { name: "Previous certificate" })).toHaveAttribute("href", "/certificates/03");
+    expect(screen.getByRole("link", { name: "Next certificate" })).toHaveAttribute("href", "/certificates/05");
   });
 });

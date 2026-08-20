@@ -15,3 +15,10 @@ export function getCertificates(): CachedCertificateT[] {
 export function getCertificate(id: string): CachedCertificateT | undefined {
   return certificates.find((c) => c.id === id);
 }
+
+import aggregatesJson from "../data/aggregates.json";
+
+/** Portfolio / table aggregates from the design-system demo dataset (150 = 10 real + 140 synthetic). */
+export function getAggregates() {
+  return aggregatesJson;
+}

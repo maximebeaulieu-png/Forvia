@@ -1,0 +1,701 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Tabs as TabsPrimitive } from "radix-ui";
+import {
+  ArrowLeft,
+  Building2,
+  CalendarClock,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Clock,
+  ExternalLink,
+  Eye,
+  FileText,
+  Globe,
+  Hash,
+  Link2,
+  Minus,
+  PenLine,
+  ShieldAlert,
+  ShieldCheck,
+  ShieldX,
+  Table,
+  TriangleAlert,
+  type LucideIcon,
+} from "lucide-react";
+import type { CachedCertificateT } from "@coverscan/schemas";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  ConfidenceDot,
+  CoverageGrid, type CoverageRow,
+  DecisionChip,
+  DocumentViewer, type DocumentPage, type EvidenceHighlight,
+  FindingsList, type Finding,
+  MaskedText,
+  RequestEmailSheet, buildRequestEmail,
+  ScoreRing,
+  SEAL_GATES,
+  VerificationSeal, type SealGateState,
+} from "@/components/coverscan";
+import { formatEur } from "@/lib/format";
+import { REFERENCE_DATE } from "@/lib/config";
+
+/* The repository JSON is schema-validated at build time (scripts/build-cached-data.mjs).
+   This local shape narrows the passthrough fields the screen consumes.
+   NOTE: all amounts in the cached data are EUR MAJOR units — multiply by 100
+   before handing them to the minor-unit formatters/components. */
+interface DeepCert {
+  id: string;
+  supplier: string;
+  country?: string;
+  insurer?: string;
+  rating?: string;
+  policyNumber?: string;
+  decision: "GO" | "REQUEST_CHANGES" | "FORMAL_DEFECT" | "STRUCTURAL" | "NEEDS_REVIEW" | "PROCESSING" | "PENDING";
+  score?: number | null;
+  provisional?: boolean;
+  accuracy?: number;
+  currency?: string;
+  expiry?: string;
+  expiryDays?: number | null;
+  received?: string;
+  assignee?: string;
+  aribaId?: string;
+  entity?: string;
+  seconds?: number | null;
+  model?: string;
+  runId?: string;
+  needsReview?: boolean;
+  ocrUsed?: boolean;
+  summary?: string | null;
+  pages?: { n: number; imageUrl: string; lang?: string; ocrUsed?: boolean }[];
+  gates?: Record<string, SealGateState>;
+  coverage?: Array<{
+    id: string; guarantee: string; required?: number; foundOriginal?: string;
+    foundEur?: number | null; status: CoverageRow["status"]; basis?: string;
+    deductible?: string; territory?: string; territoryExcluded?: boolean;
+    confidence?: number; page?: number; quote?: string;
+  }>;
+  findings?: Finding[];
+  highlights?: Array<{ id: string; page: number; x: number; y: number; w: number; h: number }>;
+  email?: {
+    contact?: string; validUntil?: string; dueDate?: string;
+    formalPoints?: string[]; coveragePoints?: string[];
+  };
+  guarantees?: Array<{
+    code: string; labelOriginal?: string; page?: number; amountOriginal?: number | null;
+    currency?: string; amountEur?: number | null; basis?: string; deductible?: number | string | null;
+    status: string; confidence?: number; note?: string | null;
+  }>;
+  exclusions?: Array<{ text: string; critical?: boolean }> | string[] | null;
+  territory?: { statement?: string; usaCanada?: string };
+  trigger?: string;
+  basisSummary?: string;
+  fx?: { rate?: number; date?: string; from?: string } | Record<string, never>;
+  computed?: {
+    riskScore?: number | null;
+    breakdown?: Record<string, { required?: number | string; found?: number | null; status?: string; points?: number; max?: number }>;
+  };
+}
+
+const eur = (major: number) => formatEur(Math.round(major * 100));
+
+const BREAKDOWN_LABELS: Record<string, { label: string; group: CoverageRow["group"] }> = {
+  PRODUCT_LIABILITY: { label: "Product liability", group: "critical" },
+  PRODUCT_RECALL: { label: "Product recall / withdrawal costs", group: "critical" },
+  PURE_FINANCIAL_LOSS: { label: "Pure financial loss", group: "critical" },
+  CONSEQUENTIAL_FINANCIAL_LOSS: { label: "Consequential financial loss (DIC)", group: "secondary" },
+  DISMANTLING_REFITTING: { label: "Dismantling and refitting", group: "secondary" },
+  EXTENDED_PRODUCT_LIABILITY: { label: "Extended product liability", group: "secondary" },
+  TERRITORY_USA_CANADA: { label: "Territory incl. USA/Canada", group: "secondary" },
+  AGGREGATE_BASIS: { label: "Aggregate basis", group: "secondary" },
+};
+
+function coverageRows(c: DeepCert): CoverageRow[] {
+  if (c.coverage?.length) {
+    return c.coverage.map((r) => ({
+      ...r,
+      required: r.required != null ? Math.round(r.required * 100) : undefined,
+      foundEur: r.foundEur != null ? Math.round(r.foundEur * 100) : r.foundEur,
+      group: ["pl", "recall", "pfl"].includes(r.id) ? "critical" : "secondary",
+    }));
+  }
+  const rows: CoverageRow[] = [];
+  const bd = c.computed?.breakdown ?? {};
+  for (const [code, v] of Object.entries(bd)) {
+    if (code.startsWith("_")) continue;
+    const meta = BREAKDOWN_LABELS[code] ?? { label: code, group: "other" as const };
+    const requiredMajor = typeof v.required === "number" ? v.required : undefined;
+    rows.push({
+      id: code.toLowerCase(),
+      guarantee: meta.label,
+      required: requiredMajor != null ? Math.round(requiredMajor * 100) : undefined,
+      foundEur: v.found != null ? Math.round(v.found * 100) : v.found ?? null,
+      foundOriginal: v.found != null ? eur(v.found) : undefined,
+      status: (v.status ?? "UNCLEAR") as CoverageRow["status"],
+      group: meta.group,
+    });
+  }
+  for (const g of c.guarantees ?? []) {
+    if (BREAKDOWN_LABELS[g.code] || bd[g.code]) continue;
+    rows.push({
+      id: g.code.toLowerCase(),
+      guarantee: g.labelOriginal ?? g.code,
+      foundEur: g.amountEur != null ? Math.round(g.amountEur * 100) : null,
+      foundOriginal: g.amountOriginal != null && g.currency ? `${g.currency} ${g.amountOriginal.toLocaleString("en-US")}` : undefined,
+      status: (g.status === "PRESENT" ? "PRESENT" : g.status) as CoverageRow["status"],
+      basis: g.basis,
+      confidence: g.confidence,
+      page: g.page,
+      group: "other",
+    });
+  }
+  return rows;
+}
+
+function derivedFindings(c: DeepCert): Finding[] {
+  if (c.findings?.length) return c.findings;
+  const out: Finding[] = [];
+  for (const [gate, s] of Object.entries(c.gates ?? {})) {
+    if (s.state === "fail") out.push({ ruleId: `GATE_${gate.toUpperCase()}`, severity: "BLOCK", title: s.note ?? `${gate} check failed`, fix: `Resolve the ${gate} defect and resubmit the certificate.` });
+    else if (s.state === "review") out.push({ ruleId: `GATE_${gate.toUpperCase()}`, severity: "WARNING", title: s.note ?? `${gate} needs human review` });
+  }
+  for (const [code, v] of Object.entries(c.computed?.breakdown ?? {})) {
+    if (v.status === "BELOW_MINIMUM" && typeof v.required === "number") {
+      out.push({
+        ruleId: code, severity: "CRITICAL",
+        title: `${BREAKDOWN_LABELS[code]?.label ?? code}: ${v.found != null ? eur(v.found) : "n/a"} against ${eur(v.required)} required`,
+        fix: `Increase ${BREAKDOWN_LABELS[code]?.label ?? code} to at least ${eur(v.required)}.`,
+      });
+    } else if (v.status === "MISSING") {
+      out.push({ ruleId: code, severity: "CRITICAL", title: `${BREAKDOWN_LABELS[code]?.label ?? code} is not mentioned in the certificate`, fix: `Add ${BREAKDOWN_LABELS[code]?.label ?? code} cover${typeof v.required === "number" ? ` of at least ${eur(v.required)}` : ""}.` });
+    }
+  }
+  const order = { BLOCK: 0, CRITICAL: 1, WARNING: 2, INFO: 3 } as const;
+  return out.sort((a, b) => order[a.severity] - order[b.severity]);
+}
+
+function emailText(c: DeepCert, findings: Finding[]): string {
+  const gaps = findings.filter((f) => f.severity === "CRITICAL").map((f) => f.fix ?? f.title);
+  const formal = findings.filter((f) => f.severity === "BLOCK").map((f) => f.fix ?? f.title);
+  return buildRequestEmail({
+    supplier: c.supplier,
+    contact: c.email?.contact,
+    policyNumber: c.policyNumber,
+    insurer: c.insurer,
+    validUntil: c.email?.validUntil ?? c.expiry,
+    dueDate: c.email?.dueDate,
+    formalPoints: c.email?.formalPoints ?? formal,
+    coveragePoints: c.email?.coveragePoints ?? gaps,
+  });
+}
+
+/* ---------------------------------------------------------------- verdict */
+
+const DECISION_HERO: Record<string, { icon: LucideIcon; fg: string; bg: string }> = {
+  GO: { icon: ShieldCheck, fg: "var(--status-go)", bg: "var(--status-go-bg)" },
+  REQUEST_CHANGES: { icon: ShieldAlert, fg: "var(--status-amber)", bg: "var(--status-amber-bg)" },
+  FORMAL_DEFECT: { icon: ShieldX, fg: "var(--status-red)", bg: "var(--status-red-bg)" },
+  STRUCTURAL: { icon: ShieldX, fg: "var(--status-red)", bg: "var(--status-red-bg)" },
+};
+
+const FALLBACK_SUMMARY: Record<string, string> = {
+  GO: "This certificate meets FORVIA GPTC requirements.",
+  REQUEST_CHANGES: "This certificate needs corrections before it can be accepted under FORVIA GPTC. See the findings below for what to fix.",
+  FORMAL_DEFECT: "This certificate is not admissible as issued — a formal defect must be corrected and the certificate resubmitted. See the admissibility checks below for the exact defect.",
+  STRUCTURAL: "This certificate is not admissible for FORVIA. See the admissibility checks below for the exact defect.",
+};
+
+/* ------------------------------------------------------------------- tabs */
+
+const TAB_DEFS: Array<{ id: string; label: string; icon: LucideIcon; withCount?: boolean }> = [
+  { id: "summary", label: "Summary", icon: FileText },
+  { id: "extracted", label: "Extracted data", icon: Table, withCount: true },
+  { id: "exclusions", label: "Exclusions & territory", icon: Globe },
+  { id: "history", label: "History", icon: Clock },
+  { id: "audit", label: "Audit", icon: Eye },
+];
+
+const TERRITORY_CELLS: Array<{ key: string; label: string }> = [
+  { key: "worldwide", label: "Worldwide" },
+  { key: "usaCanada", label: "USA / Canada" },
+  { key: "other", label: "Other territories" },
+];
+
+const focusRing = "rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+
+export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertificateT; prevId?: string; nextId?: string }) {
+  const c = cert as unknown as DeepCert;
+  const router = useRouter();
+  const [tab, setTab] = React.useState("summary");
+  const [activePage, setActivePage] = React.useState(c.pages?.[0]?.n ?? 1);
+  const [activeHighlightId, setActiveHighlightId] = React.useState<string | undefined>();
+  const [showEvidence, setShowEvidence] = React.useState(true);
+  const [emailOpen, setEmailOpen] = React.useState(false);
+  const [email, setEmail] = React.useState<string | null>(null);
+  const [reviewed, setReviewed] = React.useState(false);
+  const [rejected, setRejected] = React.useState(false);
+  const [showMinors, setShowMinors] = React.useState(false);
+
+  const rows = React.useMemo(() => coverageRows(c), [c]);
+  const findings = React.useMemo(() => derivedFindings(c), [c]);
+  const highlights: EvidenceHighlight[] = (c.highlights ?? []) as EvidenceHighlight[];
+  const pages: DocumentPage[] = (c.pages ?? []) as DocumentPage[];
+  const provisional = c.provisional ?? (c.decision === "FORMAL_DEFECT" || c.decision === "STRUCTURAL");
+  const hero = DECISION_HERO[c.decision] ?? DECISION_HERO.REQUEST_CHANGES!;
+  const HeroIcon = hero.icon;
+
+  /* ← / → navigate between certificates — ignored while typing or on the tablist */
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
+      if (t?.closest?.('[role="tablist"]')) return;
+      if (e.key === "ArrowLeft" && prevId) router.push(`/certificates/${prevId}`);
+      else if (e.key === "ArrowRight" && nextId) router.push(`/certificates/${nextId}`);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [prevId, nextId, router]);
+
+  const jumpToEvidence = (id?: string, page?: number) => {
+    const h = id ? highlights.find((x) => x.id === id) : undefined;
+    if (h) { setActivePage(h.page); setActiveHighlightId(undefined); requestAnimationFrame(() => setActiveHighlightId(h.id)); }
+    else if (page) { setActivePage(page); setActiveHighlightId(undefined); }
+  };
+  const gateEvidence = (gateId: string) =>
+    jumpToEvidence(gateId, gateId === "stamp" ? 1 : pages[pages.length - 1]?.n ?? 1);
+
+  /* summary split — headline is everything up to the first ". " inclusive */
+  const sentences = (c.summary ?? FALLBACK_SUMMARY[c.decision] ?? "").split(/(?<=\.)\s+/);
+  const headline = sentences[0] ?? "";
+  const rest = sentences.slice(1).join(" ");
+
+  const gates = c.gates ?? {};
+  const failingGates = SEAL_GATES.filter((g) => { const s = gates[g.id]?.state; return s === "fail" || s === "review"; });
+  const passingGates = SEAL_GATES.filter((g) => { const s = gates[g.id]?.state; return s !== "fail" && s !== "review"; });
+  const passedCount = 8 - SEAL_GATES.filter((g) => gates[g.id]?.state === "fail").length;
+
+  const majors = findings.filter((f) => f.severity === "BLOCK" || f.severity === "CRITICAL");
+  const minors = findings.filter((f) => f.severity !== "BLOCK" && f.severity !== "CRITICAL");
+
+  const needsReview = !!c.needsReview && !reviewed;
+
+  const usaCanada = c.territory?.usaCanada ?? "UNCLEAR";
+  const cellState = (key: string) =>
+    key === "usaCanada"
+      ? usaCanada === "INCLUDED" ? "included" : usaCanada === "PARTIAL_EXCLUDED" ? "partially excluded" : usaCanada === "EXCLUDED" ? "excluded" : "unclear"
+      : key === "worldwide" ? "included" : "see wording";
+  const cellColor = (state: string) =>
+    state === "included" ? "var(--status-go)" : state.includes("exclu") ? "var(--status-red)" : "var(--status-review)";
+  const exclusionItems = (Array.isArray(c.exclusions) ? c.exclusions : []).map((e) =>
+    typeof e === "string" ? { text: e, critical: false } : e,
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", minHeight: 0, flex: 1, position: "relative", background: "var(--background)" }}>
+      {/* breadcrumb bar — back link left, prev/next cert right */}
+      <div style={{ height: 40, flex: "0 0 40px", display: "flex", alignItems: "center", gap: 8, padding: "0 16px", background: "var(--card)", borderBottom: "1px solid var(--border)" }}>
+        <Button size="sm" variant="ghost" asChild>
+          <Link href="/certificates"><ArrowLeft size={13} aria-hidden="true" />Certificates</Link>
+        </Button>
+        <span style={{ flex: 1 }} />
+        {prevId ? (
+          <Button size="icon-sm" variant="ghost" asChild aria-label="Previous certificate">
+            <Link href={`/certificates/${prevId}`}><ChevronLeft size={15} aria-hidden="true" /></Link>
+          </Button>
+        ) : (
+          <Button size="icon-sm" variant="ghost" disabled aria-label="Previous certificate"><ChevronLeft size={15} aria-hidden="true" /></Button>
+        )}
+        {nextId ? (
+          <Button size="icon-sm" variant="ghost" asChild aria-label="Next certificate">
+            <Link href={`/certificates/${nextId}`}><ChevronRight size={15} aria-hidden="true" /></Link>
+          </Button>
+        ) : (
+          <Button size="icon-sm" variant="ghost" disabled aria-label="Next certificate"><ChevronRight size={15} aria-hidden="true" /></Button>
+        )}
+      </div>
+
+      {/* certificate header */}
+      <div style={{ padding: "12px 24px", borderBottom: "1px solid var(--border)", background: "var(--card)", display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <h1 style={{ fontSize: "var(--text-h2)" }}>{c.supplier}</h1>
+            {c.country && <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>{c.country}</span>}
+            {c.aribaId && <span className="cs-code">{c.aribaId}</span>}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4, fontSize: 12, color: "var(--muted-foreground)", flexWrap: "wrap" }}>
+            {c.insurer && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                <Building2 size={12} aria-hidden="true" />{c.insurer}
+              </span>
+            )}
+            {c.rating && <Badge variant="outline" className="cs-num border-border text-foreground">{c.rating}</Badge>}
+            {c.policyNumber && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                <Hash size={12} aria-hidden="true" /><span className="cs-num">{c.policyNumber}</span>
+              </span>
+            )}
+            {c.expiry && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                <CalendarClock size={12} aria-hidden="true" /><span className="cs-num">{c.expiry}</span>
+                {c.expiryDays != null && (
+                  <span style={{ color: c.expiryDays < 0 ? "var(--status-red)" : undefined }}>
+                    · {c.expiryDays < 0 ? `expired ${Math.abs(c.expiryDays)} days ago` : `valid · ${c.expiryDays} days left`}
+                  </span>
+                )}
+              </span>
+            )}
+          </div>
+        </div>
+        <span style={{ flex: 1 }} />
+        <div
+          title={`Profile GPTC default v3 · reference date ${REFERENCE_DATE}${c.model ? ` · model ${c.model}` : ""}${c.runId ? ` · run ${c.runId}` : ""}`}
+          style={{ textAlign: "right", fontSize: 11, color: "var(--muted-foreground)", lineHeight: 1.4, maxWidth: 180 }}
+        >
+          {c.seconds != null && <>Analysed in <span className="cs-num">{c.seconds} s</span><br /></>}
+          GPTC default v3
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {c.accuracy != null && <ConfidenceDot value={c.accuracy} showValue />}
+          <DecisionChip decision={c.decision} size="lg" />
+          {needsReview && (
+            <Badge className="border-transparent bg-(--status-review-bg) text-(--status-review)">Needs review</Badge>
+          )}
+        </div>
+      </div>
+
+      {/* body — document left, analysis card right */}
+      <div style={{ display: "flex", gap: "var(--split-gutter)", flex: 1, minHeight: 0, padding: "14px 24px" }}>
+        <section aria-label="Document" style={{ flex: "0 0 46%", minWidth: 0, display: "flex" }}>
+          <DocumentViewer
+            pages={pages} activePage={activePage} onPageChange={setActivePage}
+            highlights={highlights} activeHighlightId={activeHighlightId}
+            showEvidence={showEvidence} onToggleEvidence={() => setShowEvidence((v) => !v)}
+            ocrUsed={c.ocrUsed} fileName={`${c.supplier}.pdf`} style={{ flex: 1, minWidth: 0 }}
+          />
+        </section>
+        <div aria-hidden="true" style={{ width: 6, flex: "0 0 6px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span style={{ width: 2, height: 28, background: "var(--border)", borderRadius: 1 }} />
+        </div>
+
+        <section
+          aria-label="Analysis"
+          style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", border: "1px solid var(--border)", borderRadius: "var(--radius)", background: "var(--card)", overflow: "hidden" }}
+        >
+          <TabsPrimitive.Root value={tab} onValueChange={setTab} style={{ display: "flex", flexDirection: "column", minHeight: 0, flex: 1 }}>
+            <TabsPrimitive.List style={{ display: "flex", alignItems: "center", gap: 2, borderBottom: "1px solid var(--border)", paddingLeft: 4, flex: "0 0 auto" }}>
+              {TAB_DEFS.map((t) => {
+                const active = t.id === tab;
+                const TabIcon = t.icon;
+                return (
+                  <TabsPrimitive.Trigger
+                    key={t.id}
+                    value={t.id}
+                    aria-label={t.label}
+                    className="focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                    style={{
+                      appearance: "none", background: "transparent", cursor: "pointer",
+                      border: "none", borderBottom: `2px solid ${active ? "var(--primary)" : "transparent"}`,
+                      padding: "0 10px", height: 38, fontSize: 13, fontFamily: "var(--font-sans)",
+                      fontWeight: active ? 600 : 500, color: active ? "var(--primary)" : "var(--muted-foreground)",
+                      display: "inline-flex", alignItems: "center", gap: 6, marginBottom: -1,
+                      transition: "color 120ms var(--ease-standard)",
+                    }}
+                  >
+                    <TabIcon size={14} aria-hidden="true" />
+                    {t.label}
+                    {t.withCount && (
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--muted-foreground)" }}>{rows.length}</span>
+                    )}
+                  </TabsPrimitive.Trigger>
+                );
+              })}
+            </TabsPrimitive.List>
+
+            <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
+              {/* ------------------------------------------------ Summary */}
+              <TabsPrimitive.Content value="summary" className="outline-none">
+                <div style={{ padding: 20, display: "grid", gap: 20 }}>
+                  {/* verdict callout */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 24, alignItems: "center", padding: "18px 20px", borderRadius: "var(--radius-lg)", background: hero.bg, border: `1px solid color-mix(in oklch, ${hero.fg} 18%, transparent)` }}>
+                    <div style={{ display: "flex", gap: 14, alignItems: "flex-start", minWidth: 0 }}>
+                      <span style={{ width: 44, height: 44, borderRadius: 12, background: "var(--card)", color: hero.fg, display: "inline-flex", alignItems: "center", justifyContent: "center", flex: "0 0 44px", boxShadow: "var(--shadow-sm)" }}>
+                        <HeroIcon size={22} aria-hidden="true" />
+                      </span>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.45, color: "var(--foreground)", textWrap: "pretty", maxWidth: "58ch" }}>{headline}</div>
+                        {rest && <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--muted-foreground)", marginTop: 6, textWrap: "pretty", maxWidth: "66ch" }}>{rest}</div>}
+                      </div>
+                    </div>
+                    {c.score != null && <ScoreRing value={c.score} provisional={provisional} size={104} />}
+                  </div>
+
+                  {/* admissibility */}
+                  <div style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: 20, alignItems: "center", padding: "16px 20px", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", background: "var(--card)" }}>
+                    <VerificationSeal gates={gates} size={96} onGateClick={gateEvidence} />
+                    <div style={{ minWidth: 0, display: "grid", gap: 10 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--muted-foreground)" }}>
+                        Admissibility · {passedCount} of 8 checks passed
+                      </div>
+                      {failingGates.length > 0 && (
+                        <div style={{ display: "grid", gap: 8 }}>
+                          {failingGates.map((g) => {
+                            const e = gates[g.id] ?? { state: "na" as const };
+                            const review = e.state === "review";
+                            return (
+                              <button
+                                key={g.id}
+                                type="button"
+                                onClick={() => gateEvidence(g.id)}
+                                className={focusRing}
+                                style={{ display: "flex", gap: 8, alignItems: "baseline", background: "transparent", border: "none", padding: 0, cursor: "pointer", font: "inherit", textAlign: "left" }}
+                              >
+                                <span aria-hidden="true" style={{ color: review ? "var(--status-review)" : "var(--status-red)", fontFamily: "var(--font-mono)", fontWeight: 600, flex: "0 0 12px" }}>{review ? "?" : "✗"}</span>
+                                <span style={{ fontSize: 13, fontWeight: 600, flex: "0 0 auto" }}>{g.label}</span>
+                                {e.note && <span style={{ fontSize: 13, color: "var(--muted-foreground)", minWidth: 0 }}>— {e.note}</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                      <TooltipProvider>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                          {passingGates.map((g) => {
+                            const e = gates[g.id] ?? { state: "na" as const };
+                            const na = (e.state ?? "na") === "na";
+                            return (
+                              <Tooltip key={g.id}>
+                                <TooltipTrigger asChild>
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5, height: 24, padding: "0 10px", borderRadius: "var(--radius-full)", background: "var(--muted)", color: "var(--muted-foreground)", fontSize: 12, cursor: "default" }}>
+                                    {na
+                                      ? <Minus size={12} aria-hidden="true" />
+                                      : <Check size={12} aria-hidden="true" color="var(--status-go)" />}
+                                    {g.label}
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent>{e.note ?? (na ? "Not applicable to this certificate" : "Verified")}</TooltipContent>
+                              </Tooltip>
+                            );
+                          })}
+                        </div>
+                      </TooltipProvider>
+                    </div>
+                  </div>
+
+                  {/* coverage */}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 10 }}>
+                      <h2 style={{ fontSize: "var(--text-h3)", display: "inline-flex", alignItems: "center", gap: 7 }}>
+                        <Link2 size={15} color="var(--primary)" aria-hidden="true" />Coverage against FORVIA GPTC
+                      </h2>
+                      <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>Click a figure to see it on the document</span>
+                    </div>
+                    <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
+                      <CoverageGrid rows={rows} activeId={activeHighlightId} onEvidenceClick={(r) => jumpToEvidence(r.id, r.page)} />
+                    </div>
+                  </div>
+
+                  {/* findings */}
+                  <div>
+                    <h2 style={{ fontSize: "var(--text-h3)", marginBottom: 6, display: "inline-flex", alignItems: "center", gap: 7 }}>
+                      <TriangleAlert size={15} color="var(--primary)" aria-hidden="true" />What to fix
+                    </h2>
+                    <FindingsList findings={majors} onEvidenceClick={(f) => jumpToEvidence(f.ruleId, f.page)} />
+                    {minors.length > 0 && !showMinors && (
+                      <button
+                        type="button"
+                        onClick={() => setShowMinors(true)}
+                        className={focusRing}
+                        style={{ marginTop: 8, background: "transparent", border: "none", cursor: "pointer", font: "inherit", fontSize: 12, fontWeight: 500, color: "var(--primary)", display: "inline-flex", alignItems: "center", gap: 5, padding: 0 }}
+                      >
+                        <ChevronDown size={13} aria-hidden="true" />Show {minors.length} minor finding{minors.length > 1 ? "s" : ""}
+                      </button>
+                    )}
+                    {showMinors && (
+                      <>
+                        <FindingsList findings={minors} onEvidenceClick={(f) => jumpToEvidence(f.ruleId, f.page)} style={{ marginTop: 8 }} />
+                        <button
+                          type="button"
+                          onClick={() => setShowMinors(false)}
+                          className={focusRing}
+                          style={{ marginTop: 8, background: "transparent", border: "none", cursor: "pointer", font: "inherit", fontSize: 12, fontWeight: 500, color: "var(--primary)", display: "inline-flex", alignItems: "center", gap: 5, padding: 0 }}
+                        >
+                          <ChevronUp size={13} aria-hidden="true" />Hide minor finding{minors.length > 1 ? "s" : ""}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </TabsPrimitive.Content>
+
+              {/* ----------------------------------------- Extracted data */}
+              <TabsPrimitive.Content value="extracted" className="outline-none">
+                <div style={{ padding: 16, display: "grid", gap: 12 }}>
+                  <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+                    Every field with its original text, the normalised value, the page and the confidence.
+                  </div>
+                  <table style={{ width: "100%", fontSize: 13 }}>
+                    <thead>
+                      <tr>
+                        {["Original label", "Original value", "EUR", "Basis", "Page", "Conf."].map((h) => (
+                          <th key={h} style={{ textAlign: "left", fontSize: 11, fontWeight: 500, color: "var(--muted-foreground)", padding: "0 8px 6px", borderBottom: "1px solid var(--border)" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(c.guarantees ?? []).map((g, i) => (
+                        <tr key={i} style={{ height: 40 }}>
+                          <td style={{ padding: "6px 8px", borderBottom: "1px solid var(--border)", maxWidth: 260 }}>{g.labelOriginal ?? g.code}</td>
+                          <td style={{ padding: "6px 8px", borderBottom: "1px solid var(--border)" }}>
+                            <span className="cs-num">{g.amountOriginal != null ? `${g.currency ?? ""} ${g.amountOriginal.toLocaleString("en-US")}` : "—"}</span>
+                          </td>
+                          <td style={{ padding: "6px 8px", borderBottom: "1px solid var(--border)" }}>
+                            <span className="cs-num">{g.amountEur != null ? eur(g.amountEur) : "—"}</span>
+                          </td>
+                          <td style={{ padding: "6px 8px", borderBottom: "1px solid var(--border)", color: "var(--muted-foreground)" }}>{g.basis ?? "—"}</td>
+                          <td className="cs-num" style={{ padding: "6px 8px", borderBottom: "1px solid var(--border)", color: "var(--muted-foreground)" }}>
+                            {g.page != null ? (
+                              <button type="button" onClick={() => jumpToEvidence(undefined, g.page)} className={focusRing} style={{ background: "transparent", border: "none", cursor: "pointer", font: "inherit", color: "var(--primary)", padding: 0 }}>p.{g.page}</button>
+                            ) : "—"}
+                          </td>
+                          <td style={{ padding: "6px 8px", borderBottom: "1px solid var(--border)" }}>
+                            {g.confidence != null ? <ConfidenceDot value={g.confidence} page={g.page} /> : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+                    {c.fx && "rate" in c.fx && c.fx.rate !== 1
+                      ? <><span className="cs-num">{c.fx.from ?? c.currency}→EUR {c.fx.rate}</span> · ECB {c.fx.date ?? REFERENCE_DATE} — applied to every amount on this certificate</>
+                      : <>All amounts in EUR — no conversion applied · reference date {REFERENCE_DATE}</>}
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+                    Inline field editing with instant re-score arrives with the rules engine (Sprint 1).
+                  </div>
+                </div>
+              </TabsPrimitive.Content>
+
+              {/* --------------------------------- Exclusions & territory */}
+              <TabsPrimitive.Content value="exclusions" className="outline-none">
+                <div style={{ padding: 16, display: "grid", gap: 16 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+                    {TERRITORY_CELLS.map((cell) => {
+                      const state = cellState(cell.key);
+                      return (
+                        <div key={cell.key} style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: 12, background: "var(--card)" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--muted-foreground)", marginBottom: 6 }}>
+                            <Globe size={13} aria-hidden="true" />{cell.label}
+                          </div>
+                          <div style={{ fontSize: 14, fontWeight: 500, color: cellColor(state), textTransform: "capitalize" }}>{state}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {c.territory?.statement && <p className="cs-quote">« {c.territory.statement} »</p>}
+                  <div>
+                    <h3 style={{ fontSize: "var(--text-h3)", marginBottom: 8 }}>Exclusions that matter</h3>
+                    {exclusionItems.length === 0 && (
+                      <div style={{ fontSize: 13, color: "var(--muted-foreground)" }}>No critical exclusion detected.</div>
+                    )}
+                    <div style={{ display: "grid", gap: 8 }}>
+                      {exclusionItems.map((item, i) => (
+                        <div key={i} style={{ display: "flex", gap: 10, alignItems: "baseline", fontSize: 13, paddingBottom: 8, borderBottom: "1px solid var(--border)" }}>
+                          {item.critical ? (
+                            <Badge className="border-transparent bg-(--status-red-bg) text-(--status-red)">Critical</Badge>
+                          ) : (
+                            <span aria-hidden="true" style={{ color: "var(--muted-foreground)" }}>–</span>
+                          )}
+                          <span style={{ flex: 1 }}>{item.text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </TabsPrimitive.Content>
+
+              {/* -------------------------------------------------- History */}
+              <TabsPrimitive.Content value="history" className="outline-none">
+                <div style={{ padding: 16, display: "grid", gap: 12 }}>
+                  <div style={{ display: "flex", gap: 10, alignItems: "center", padding: "10px 12px", border: "1px solid var(--status-amber)", background: "var(--status-amber-bg)", borderRadius: "var(--radius)", fontSize: 13, color: "var(--status-amber)" }}>
+                    <TriangleAlert size={15} aria-hidden="true" />
+                    <span>No previous certificates on file for {c.supplier}. Change detection across certificate years arrives with Supplier 360 (Sprint 3).</span>
+                  </div>
+                  {c.policyNumber && (
+                    <div style={{ fontSize: 13, color: "var(--muted-foreground)" }}>
+                      Policy numbers kept for claims: <span className="cs-num">{c.policyNumber}</span>
+                    </div>
+                  )}
+                </div>
+              </TabsPrimitive.Content>
+
+              {/* ---------------------------------------------------- Audit */}
+              <TabsPrimitive.Content value="audit" className="outline-none">
+                <div style={{ padding: 16 }}>
+                  <div style={{ display: "grid", gap: 0 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "132px 1fr", gap: 10, alignItems: "baseline", padding: "10px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
+                      <span className="cs-num" style={{ color: "var(--muted-foreground)", fontSize: 12 }}>{c.received ?? "—"}</span>
+                      <span>Certificate received and ingested</span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "132px 1fr", gap: 10, alignItems: "baseline", padding: "10px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
+                      <span className="cs-num" style={{ color: "var(--muted-foreground)", fontSize: 12 }}>{REFERENCE_DATE}</span>
+                      <span>
+                        Analysed in {c.seconds ?? "—"}s · model {c.model ?? "—"} · run <span className="cs-code">{c.runId ?? "—"}</span>
+                        {c.assignee ? <> · assigned to <MaskedText value={c.assignee} kind="name" /></> : null}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </TabsPrimitive.Content>
+            </div>
+          </TabsPrimitive.Root>
+        </section>
+      </div>
+
+      {/* full-width action bar */}
+      <div style={{ padding: "10px 16px", borderTop: "1px solid var(--border)", background: "var(--card)", boxShadow: "var(--shadow-sticky)", display: "flex", alignItems: "center", gap: 8 }}>
+        <Button size="lg" onClick={() => { setEmail((e) => e ?? emailText(c, findings)); setEmailOpen(true); }}>
+          <PenLine size={15} aria-hidden="true" />Request changes
+        </Button>
+        <Button size="lg" variant="outline" disabled={c.decision !== "GO"} title={c.decision !== "GO" ? "Approve requires a Compliant decision, or an override with justification" : undefined}>
+          Approve
+        </Button>
+        <Button size="lg" variant="ghost" onClick={() => setRejected(true)}>Reject</Button>
+        {rejected && (
+          <span role="status" style={{ display: "inline-flex", alignItems: "center", gap: 6, height: 28, padding: "0 12px", borderRadius: "var(--radius-full)", background: "var(--status-red-bg)", color: "var(--status-red)", fontSize: 12, fontWeight: 500 }}>
+            Rejected — reason recorded
+          </span>
+        )}
+        <span style={{ flex: 1 }} />
+        <Button size="lg" variant="secondary" disabled title="Sprint 2">
+          <ExternalLink size={14} aria-hidden="true" />Send to SAP Ariba
+        </Button>
+        <Button size="lg" variant="ghost" onClick={() => setReviewed((v) => !v)}>
+          <Check size={14} aria-hidden="true" />{reviewed ? "Reviewed ✓" : "Mark reviewed"}
+        </Button>
+      </div>
+
+      <RequestEmailSheet
+        open={emailOpen} onClose={() => setEmailOpen(false)}
+        supplier={c.supplier} email={email ?? ""}
+        onChange={(e) => setEmail(e.target.value)}
+        onCopy={() => navigator.clipboard?.writeText(email ?? "")}
+      />
+    </div>
+  );
+}

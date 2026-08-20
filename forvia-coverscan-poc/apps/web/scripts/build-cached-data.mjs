@@ -203,6 +203,21 @@ async function main() {
   console.log(
     `Wrote ${merged.length} certificates to ${path.relative(REPO_ROOT, OUT_FILE)}`,
   );
+
+  // Aggregates for the Portfolio / Certificates screens (window.CS extras).
+  const aggregates = {
+    REQUIRED: CS.REQUIRED,
+    portfolio: CS.portfolio,
+    byCountry: CS.byCountry,
+    gapByGuarantee: CS.gapByGuarantee,
+    expiring: CS.expiring,
+    profiles: CS.profiles,
+    topRisks: CS.topRisks,
+    audit: CS.audit,
+  };
+  const aggFile = path.join(WEB_ROOT, "data/aggregates.json");
+  await fs.writeFile(aggFile, `${JSON.stringify(aggregates, null, 2)}\n`, "utf8");
+  console.log(`Wrote aggregates to ${path.relative(REPO_ROOT, aggFile)}`);
 }
 
 await main();

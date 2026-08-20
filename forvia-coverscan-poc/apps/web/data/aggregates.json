@@ -1,0 +1,1106 @@
+{
+  "REQUIRED": {
+    "pl": 20000000,
+    "recall": 15000000,
+    "pfl": 15000000
+  },
+  "portfolio": {
+    "total": 150,
+    "compliant": 9,
+    "requestChanges": 61,
+    "notAdmissible": 64,
+    "formal": 41,
+    "structural": 23,
+    "needsReview": 16,
+    "expired": 12,
+    "expiring90": 23,
+    "avgSeconds": 18,
+    "fieldAccuracy": 0.93,
+    "reviewShare": 0.11,
+    "demoClock": "15 Apr 2025"
+  },
+  "byCountry": [
+    {
+      "country": "Germany",
+      "code": "DE",
+      "total": 44,
+      "go": 3,
+      "request": 18,
+      "nogo": 23
+    },
+    {
+      "country": "France",
+      "code": "FR",
+      "total": 31,
+      "go": 2,
+      "request": 13,
+      "nogo": 16
+    },
+    {
+      "country": "Spain",
+      "code": "ES",
+      "total": 22,
+      "go": 2,
+      "request": 11,
+      "nogo": 9
+    },
+    {
+      "country": "Italy",
+      "code": "IT",
+      "total": 18,
+      "go": 1,
+      "request": 8,
+      "nogo": 9
+    },
+    {
+      "country": "Czechia",
+      "code": "CZ",
+      "total": 14,
+      "go": 1,
+      "request": 5,
+      "nogo": 8
+    },
+    {
+      "country": "Switzerland",
+      "code": "CH",
+      "total": 11,
+      "go": 0,
+      "request": 4,
+      "nogo": 7
+    },
+    {
+      "country": "India",
+      "code": "IN",
+      "total": 10,
+      "go": 0,
+      "request": 2,
+      "nogo": 8
+    }
+  ],
+  "gapByGuarantee": [
+    {
+      "guarantee": "Product liability",
+      "required": 20000000,
+      "median": 5000000,
+      "compliantShare": 0.14
+    },
+    {
+      "guarantee": "Product recall / withdrawal",
+      "required": 15000000,
+      "median": 4000000,
+      "compliantShare": 0.06
+    },
+    {
+      "guarantee": "Pure financial loss",
+      "required": 15000000,
+      "median": 1500000,
+      "compliantShare": 0.09
+    },
+    {
+      "guarantee": "Dismantling and refitting",
+      "required": 15000000,
+      "median": 2000000,
+      "compliantShare": 0.11
+    }
+  ],
+  "expiring": [
+    {
+      "supplier": "Air Products SAS",
+      "date": "31 May 2025",
+      "days": 46,
+      "bucket": 60
+    },
+    {
+      "supplier": "Norgren GmbH (IMI)",
+      "date": "29 Jun 2025",
+      "days": 75,
+      "bucket": 90
+    },
+    {
+      "supplier": "Scherdel GmbH",
+      "date": "30 Apr 2025",
+      "days": 15,
+      "bucket": 30
+    },
+    {
+      "supplier": "EKKO-MEISTER AG",
+      "date": "31 Jan 2026",
+      "days": 291,
+      "bucket": 0
+    },
+    {
+      "supplier": "Metraton S.r.l.",
+      "date": "12 Jul 2025",
+      "days": 88,
+      "bucket": 90
+    },
+    {
+      "supplier": "Polyvlies Franz Beyer",
+      "date": "01 Apr 2025",
+      "days": -14,
+      "bucket": -1
+    }
+  ],
+  "profiles": [
+    {
+      "id": "gptc",
+      "label": "GPTC default",
+      "version": "v3",
+      "note": "PL €20M · recall and PFL €15M · missing stamp blocks"
+    },
+    {
+      "id": "expert",
+      "label": "Expert (R. Mekouar)",
+      "version": "v1",
+      "note": "Recall €5M accepted · missing stamp requests changes"
+    }
+  ],
+  "topRisks": [
+    {
+      "id": "01",
+      "supplier": "Air Products SAS",
+      "country": "France",
+      "code": "FR",
+      "insurer": "Chubb",
+      "rating": "A++ · AM Best",
+      "policyNumber": "FRBOPX 7654321",
+      "decision": "REQUEST_CHANGES",
+      "subtype": null,
+      "score": 12,
+      "provisional": false,
+      "accuracy": 0.9,
+      "currency": "USD",
+      "expiry": "31 May 2025",
+      "expiryDays": 46,
+      "received": "03 May 2024",
+      "assignee": "L. Fontaine",
+      "lastAction": "Analysed",
+      "aribaId": "SUP-0084219",
+      "entity": "Faurecia Systèmes d'Échappement",
+      "seconds": 18,
+      "model": "v0.4",
+      "runId": "8f21c",
+      "lang": "fr-en",
+      "needsReview": true,
+      "mini": {
+        "pl": "BELOW_MINIMUM",
+        "recall": "MISSING",
+        "pfl": "BELOW_MINIMUM"
+      },
+      "pages": [
+        {
+          "n": 1,
+          "imageUrl": "../../assets/pages/chubb_air-products_p1.jpeg",
+          "lang": "en"
+        }
+      ],
+      "summary": "Combined general and product liability of USD 5,000,000 converts to €4,672,897, about a quarter of the €20,000,000 required by FORVIA's purchasing terms. Product recall is not mentioned at all and pure financial loss is capped at USD 200,000. The signature could not be read with confidence, so the certificate is flagged for human review.",
+      "gates": {
+        "stamp": {
+          "state": "review",
+          "note": "faint stamp detected p.1, low contrast"
+        },
+        "signature": {
+          "state": "review",
+          "note": "signature present but not attributable"
+        },
+        "insurer": {
+          "state": "pass",
+          "note": "Chubb European Group SE — registry hit"
+        },
+        "policyNumber": {
+          "state": "pass",
+          "note": "FRBOPX 7654321"
+        },
+        "dates": {
+          "state": "pass",
+          "note": "01 Jun 2024 → 31 May 2025"
+        },
+        "entity": {
+          "state": "pass",
+          "note": "Faurecia Systèmes d'Échappement listed"
+        },
+        "coinsurance": {
+          "state": "na"
+        },
+        "documentType": {
+          "state": "pass",
+          "note": "certificate of insurance"
+        }
+      },
+      "coverage": [
+        {
+          "id": "pl",
+          "guarantee": "Product liability",
+          "required": 20000000,
+          "foundOriginal": "USD 5,000,000",
+          "foundEur": 4672897,
+          "status": "BELOW_MINIMUM",
+          "basis": "combined GL + PL, per occurrence",
+          "territory": "Worldwide",
+          "confidence": 0.9,
+          "page": 1,
+          "fxNote": "USD→EUR 1.07 · ECB 26 Apr 2024",
+          "quote": "Combined single limit USD 5,000,000"
+        },
+        {
+          "id": "recall",
+          "guarantee": "Product recall / withdrawal costs",
+          "required": 15000000,
+          "status": "MISSING",
+          "confidence": 0.88,
+          "page": 1
+        },
+        {
+          "id": "pfl",
+          "guarantee": "Pure financial loss",
+          "required": 15000000,
+          "foundOriginal": "USD 200,000",
+          "foundEur": 186916,
+          "status": "BELOW_MINIMUM",
+          "confidence": 0.85,
+          "page": 1,
+          "fxNote": "USD→EUR 1.07 · ECB 26 Apr 2024"
+        },
+        {
+          "id": "consequential",
+          "guarantee": "Consequential loss",
+          "required": null,
+          "status": "MISSING",
+          "group": "secondary",
+          "confidence": 0.8,
+          "page": 1
+        },
+        {
+          "id": "dic",
+          "guarantee": "Difference in conditions / limits",
+          "status": "MISSING",
+          "group": "secondary",
+          "confidence": 0.75
+        },
+        {
+          "id": "employers",
+          "guarantee": "Employer's liability",
+          "status": "COVERED_NO_AMOUNT",
+          "group": "other",
+          "confidence": 0.68,
+          "page": 1
+        }
+      ],
+      "findings": [
+        {
+          "ruleId": "PL_BELOW_MIN",
+          "severity": "CRITICAL",
+          "title": "Product liability at €4,672,897 against €20,000,000 required",
+          "quote": "Combined single limit USD 5,000,000",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request product liability of at least EUR 20,000,000, or a difference-in-limits cover on top of the current policy."
+        },
+        {
+          "ruleId": "RECALL_MISSING",
+          "severity": "CRITICAL",
+          "title": "Product recall and withdrawal costs are not covered",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request product recall / withdrawal costs of at least EUR 15,000,000, worldwide including USA and Canada."
+        },
+        {
+          "ruleId": "PFL_BELOW_MIN",
+          "severity": "CRITICAL",
+          "title": "Pure financial loss capped at €186,916 against €15,000,000 required",
+          "quote": "Pure financial loss USD 200,000",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request pure financial loss cover of at least EUR 15,000,000."
+        },
+        {
+          "ruleId": "SIGNATURE_AMBIGUOUS",
+          "severity": "WARNING",
+          "title": "Signature present but not attributable to the insurer",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request a certificate signed by a named representative of Chubb."
+        },
+        {
+          "ruleId": "EXPIRY_WINDOW",
+          "severity": "WARNING",
+          "title": "Certificate expires in 46 days",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request the renewal certificate before 31 May 2025."
+        },
+        {
+          "ruleId": "FX_APPLIED",
+          "severity": "INFO",
+          "title": "USD converted at ECB 1.07 on 26 April 2024",
+          "page": 1,
+          "lang": "en"
+        }
+      ],
+      "highlights": [
+        {
+          "id": "pl",
+          "page": 1,
+          "x": 0.1,
+          "y": 0.42,
+          "w": 0.8,
+          "h": 0.028
+        },
+        {
+          "id": "pfl",
+          "page": 1,
+          "x": 0.1,
+          "y": 0.5,
+          "w": 0.8,
+          "h": 0.026
+        }
+      ],
+      "worst": "Product liability at €4,672,897 against €20,000,000 required",
+      "spend": "Tier 1"
+    },
+    {
+      "id": "04",
+      "supplier": "M.T.S. SAS",
+      "country": "France",
+      "code": "FR",
+      "insurer": "MMA — issued by Marron & Associés",
+      "rating": "A · registry",
+      "policyNumber": "144 725 803",
+      "decision": "STRUCTURAL",
+      "subtype": "Broker-issued",
+      "score": 3,
+      "provisional": true,
+      "accuracy": 0.82,
+      "currency": "EUR",
+      "expiry": "31 Dec 2025",
+      "expiryDays": 260,
+      "received": "12 Jan 2025",
+      "assignee": "L. Fontaine",
+      "lastAction": "Analysed",
+      "aribaId": "SUP-0091774",
+      "entity": "Faurecia Intérieur Industrie",
+      "seconds": 18,
+      "model": "v0.4",
+      "runId": "3c7ab",
+      "lang": "fr",
+      "ocrUsed": true,
+      "needsReview": false,
+      "mini": {
+        "pl": "BELOW_MINIMUM",
+        "recall": "BELOW_MINIMUM",
+        "pfl": "MISSING"
+      },
+      "pages": [
+        {
+          "n": 1,
+          "imageUrl": "../../assets/pages/marron_mts_p1.jpeg",
+          "lang": "fr",
+          "ocrUsed": true
+        },
+        {
+          "n": 2,
+          "imageUrl": "../../assets/pages/marron_mts_p2.jpeg",
+          "lang": "fr",
+          "ocrUsed": true
+        }
+      ],
+      "summary": "This certificate was issued by a broker (Marron & Associés), not by the insurer, so it has no legal value for FORVIA. Even if reissued by MMA, recall/withdrawal costs are limited to €305,000 against €15M required and are excluded for USA/Canada. Recommended action: request a certificate issued and stamped by MMA with recall ≥ €15M worldwide.",
+      "gates": {
+        "stamp": {
+          "state": "fail",
+          "note": "broker's stamp found p.1, no insurer stamp"
+        },
+        "signature": {
+          "state": "fail",
+          "note": "no insurer signature"
+        },
+        "insurer": {
+          "state": "fail",
+          "note": "issuer is an intermediary — ORIAS 07 002 497"
+        },
+        "policyNumber": {
+          "state": "pass",
+          "note": "144 725 803"
+        },
+        "dates": {
+          "state": "pass",
+          "note": "01 Jan 2025 → 31 Dec 2025"
+        },
+        "entity": {
+          "state": "pass",
+          "note": "M.T.S. SAS named as policyholder"
+        },
+        "coinsurance": {
+          "state": "na"
+        },
+        "documentType": {
+          "state": "pass",
+          "note": "attestation d'assurance"
+        }
+      },
+      "coverage": [
+        {
+          "id": "pl",
+          "guarantee": "Product liability",
+          "required": 20000000,
+          "foundOriginal": "€10,000,000",
+          "foundEur": 10000000,
+          "status": "BELOW_MINIMUM",
+          "basis": "tous dommages confondus, per claim",
+          "territory": "Worldwide excl. USA/Canada",
+          "territoryExcluded": true,
+          "confidence": 0.88,
+          "page": 2,
+          "quote": "Tous dommages confondus 10.000.000 €"
+        },
+        {
+          "id": "recall",
+          "guarantee": "Product recall / withdrawal costs",
+          "required": 15000000,
+          "foundOriginal": "€305,000",
+          "foundEur": 305000,
+          "status": "BELOW_MINIMUM",
+          "basis": "frais de retrait engagés par l'assuré",
+          "deductible": "€3,000",
+          "territory": "Excluded for USA/Canada",
+          "territoryExcluded": true,
+          "confidence": 0.82,
+          "page": 2,
+          "quote": "Frais de retrait engagés par l'assuré 305.000 €"
+        },
+        {
+          "id": "pfl",
+          "guarantee": "Pure financial loss",
+          "required": 15000000,
+          "foundOriginal": "€305,000",
+          "foundEur": 305000,
+          "status": "BELOW_MINIMUM",
+          "basis": "dommages immatériels non consécutifs",
+          "deductible": "€1,500",
+          "confidence": 0.79,
+          "page": 2,
+          "quote": "Dommages immatériels non consécutifs 305.000 €"
+        },
+        {
+          "id": "dismantling",
+          "guarantee": "Dismantling and refitting costs",
+          "required": null,
+          "foundOriginal": "€305,000",
+          "foundEur": 305000,
+          "status": "EXCLUDED",
+          "basis": "frais de dépose repose",
+          "territory": "Excluded for USA/Canada",
+          "territoryExcluded": true,
+          "group": "secondary",
+          "confidence": 0.77,
+          "page": 2,
+          "quote": "Frais de dépose repose engagés par l'assuré ou par un tiers — Exclu"
+        },
+        {
+          "id": "environmental",
+          "guarantee": "Environmental impairment",
+          "foundOriginal": "€750,000",
+          "foundEur": 750000,
+          "status": "PRESENT",
+          "group": "secondary",
+          "confidence": 0.84,
+          "page": 2
+        },
+        {
+          "id": "ecological",
+          "guarantee": "Ecological damage",
+          "foundOriginal": "€500,000",
+          "foundEur": 500000,
+          "status": "PRESENT",
+          "group": "other",
+          "confidence": 0.81,
+          "page": 2
+        },
+        {
+          "id": "usca",
+          "guarantee": "USA / Canada sub-limit",
+          "foundOriginal": "€2,000,000",
+          "foundEur": 2000000,
+          "status": "PRESENT",
+          "basis": "tous dommages confondus",
+          "deductible": "€15,000",
+          "group": "other",
+          "confidence": 0.8,
+          "page": 2
+        }
+      ],
+      "findings": [
+        {
+          "ruleId": "ISSUER_IS_BROKER",
+          "severity": "BLOCK",
+          "title": "Certificate issued by a broker, not by the insurer",
+          "quote": "SARL MARRON & ASSOCIES — N° ORIAS 07 002 497 — Agent Général Exclusif MMA et Courtier en assurance",
+          "page": 2,
+          "lang": "fr",
+          "fix": "Request a certificate issued, signed and stamped by MMA itself."
+        },
+        {
+          "ruleId": "STAMP_MISSING",
+          "severity": "BLOCK",
+          "title": "No insurer stamp — only the broker's stamp is present",
+          "page": 1,
+          "lang": "fr",
+          "fix": "Request the insurer's stamp on the certificate."
+        },
+        {
+          "ruleId": "RECALL_BELOW_MIN",
+          "severity": "CRITICAL",
+          "title": "Product recall costs at €305,000 against €15,000,000 required",
+          "quote": "Frais de retrait engagés par l'assuré 305.000 €",
+          "page": 2,
+          "lang": "fr",
+          "fix": "Request product recall / withdrawal costs of at least EUR 15,000,000, worldwide."
+        },
+        {
+          "ruleId": "TERRITORY_EXCL_US_CA",
+          "severity": "CRITICAL",
+          "title": "Recall and refitting costs excluded for USA and Canada",
+          "quote": "Dont GARANTIE « ETATS UNIS D'AMERIQUE ET/OU CANADA » — Frais de retrait engagés par l'assuré ou par un tiers : Exclu",
+          "page": 2,
+          "lang": "fr",
+          "fix": "Request worldwide cover for recall and refitting, including USA and Canada."
+        },
+        {
+          "ruleId": "PL_BELOW_MIN",
+          "severity": "CRITICAL",
+          "title": "Product liability at €10,000,000 against €20,000,000 required",
+          "quote": "Tous dommages confondus 10.000.000 €",
+          "page": 2,
+          "lang": "fr",
+          "fix": "Request product liability of at least EUR 20,000,000."
+        },
+        {
+          "ruleId": "PFL_BELOW_MIN",
+          "severity": "CRITICAL",
+          "title": "Pure financial loss at €305,000 against €15,000,000 required",
+          "quote": "Dommages immatériels non consécutifs 305.000 €",
+          "page": 2,
+          "lang": "fr",
+          "fix": "Request pure financial loss cover of at least EUR 15,000,000."
+        },
+        {
+          "ruleId": "OCR_PATH_USED",
+          "severity": "INFO",
+          "title": "Scanned document — read through OCR, field accuracy 82 %",
+          "page": 1,
+          "lang": "fr"
+        }
+      ],
+      "highlights": [
+        {
+          "id": "pl",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.277,
+          "w": 0.744,
+          "h": 0.024
+        },
+        {
+          "id": "pfl",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.35,
+          "w": 0.744,
+          "h": 0.021
+        },
+        {
+          "id": "recall",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.636,
+          "w": 0.744,
+          "h": 0.022
+        },
+        {
+          "id": "dismantling",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.612,
+          "w": 0.744,
+          "h": 0.022
+        },
+        {
+          "id": "environmental",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.383,
+          "w": 0.744,
+          "h": 0.04
+        },
+        {
+          "id": "ecological",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.45,
+          "w": 0.744,
+          "h": 0.02
+        },
+        {
+          "id": "usca",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.712,
+          "w": 0.744,
+          "h": 0.026
+        },
+        {
+          "id": "TERRITORY_EXCL_US_CA",
+          "page": 2,
+          "x": 0.131,
+          "y": 0.795,
+          "w": 0.744,
+          "h": 0.024
+        },
+        {
+          "id": "ISSUER_IS_BROKER",
+          "page": 2,
+          "x": 0.155,
+          "y": 0.905,
+          "w": 0.7,
+          "h": 0.016
+        },
+        {
+          "id": "STAMP_MISSING",
+          "page": 1,
+          "x": 0.6,
+          "y": 0.8,
+          "w": 0.3,
+          "h": 0.1
+        }
+      ],
+      "email": {
+        "contact": "Sir or Madam",
+        "validUntil": "31 December 2025",
+        "dueDate": "30 April 2025",
+        "formalPoints": [
+          "The certificate must be issued, signed and stamped by the insurer (MMA), not by a broker or agent.",
+          "Please ensure the certificate is issued in the name of Faurecia Intérieur Industrie."
+        ],
+        "coveragePoints": [
+          "Product liability: at least EUR 20,000,000 (found: EUR 10,000,000).",
+          "Product recall / withdrawal costs: at least EUR 15,000,000, worldwide including USA/Canada (found: EUR 305,000, excluded for USA/Canada).",
+          "Pure financial loss: at least EUR 15,000,000 (found: EUR 305,000).",
+          "Dismantling and refitting costs to be explicitly covered, including USA/Canada."
+        ]
+      },
+      "worst": "Certificate issued by a broker, not by the insurer",
+      "spend": "Tier 1"
+    },
+    {
+      "id": "06",
+      "supplier": "Componentes de Vehículos de Galicia",
+      "country": "Spain",
+      "code": "ES",
+      "insurer": "Zurich ES",
+      "rating": "AA- · S&P",
+      "policyNumber": "ES-0089-441207",
+      "decision": "REQUEST_CHANGES",
+      "subtype": null,
+      "score": 56,
+      "provisional": false,
+      "accuracy": 0.86,
+      "currency": "EUR",
+      "expiry": "31 Dec 2025",
+      "expiryDays": 260,
+      "received": "20 Feb 2025",
+      "assignee": "R. Mekouar",
+      "lastAction": "In review",
+      "aribaId": "SUP-0077310",
+      "entity": "Faurecia Automotive Exteriors España",
+      "seconds": 21,
+      "model": "v0.4",
+      "runId": "b41f9",
+      "lang": "en",
+      "ocrUsed": true,
+      "needsReview": true,
+      "mini": {
+        "pl": "COMPLIANT",
+        "recall": "BELOW_MINIMUM",
+        "pfl": "BELOW_MINIMUM"
+      },
+      "pages": [
+        {
+          "n": 1,
+          "imageUrl": "../../assets/pages/zurich_copo_p1.jpeg",
+          "lang": "en",
+          "ocrUsed": true
+        }
+      ],
+      "summary": "Product liability reaches €20,000,000 and meets FORVIA's requirement — the only certificate in the batch that does. Product recall is capped at €4,000,000 and pure financial loss at €3,000,000, both well below the €15,000,000 required. The supplier appears as an additional insured of its parent Grupo COPO and the signature is unclear, so a human check is required before the request is sent.",
+      "gates": {
+        "stamp": {
+          "state": "pass",
+          "note": "insurer stamp found p.1"
+        },
+        "signature": {
+          "state": "review",
+          "note": "scribble, no printed name"
+        },
+        "insurer": {
+          "state": "pass",
+          "note": "Zurich Insurance plc, Spanish branch"
+        },
+        "policyNumber": {
+          "state": "pass",
+          "note": "ES-0089-441207"
+        },
+        "dates": {
+          "state": "pass",
+          "note": "01 Jan 2025 → 31 Dec 2025"
+        },
+        "entity": {
+          "state": "review",
+          "note": "additional insured of Grupo COPO — parent policy"
+        },
+        "coinsurance": {
+          "state": "na"
+        },
+        "documentType": {
+          "state": "pass",
+          "note": "certificate of insurance"
+        }
+      },
+      "coverage": [
+        {
+          "id": "pl",
+          "guarantee": "Product liability",
+          "required": 20000000,
+          "foundOriginal": "€20,000,000",
+          "foundEur": 20000000,
+          "status": "COMPLIANT",
+          "basis": "per occurrence and aggregate",
+          "territory": "Worldwide",
+          "confidence": 0.9,
+          "page": 1
+        },
+        {
+          "id": "recall",
+          "guarantee": "Product recall / withdrawal costs",
+          "required": 15000000,
+          "foundOriginal": "€4,000,000",
+          "foundEur": 4000000,
+          "status": "BELOW_MINIMUM",
+          "confidence": 0.84,
+          "page": 1
+        },
+        {
+          "id": "pfl",
+          "guarantee": "Pure financial loss",
+          "required": 15000000,
+          "foundOriginal": "€3,000,000",
+          "foundEur": 3000000,
+          "status": "BELOW_MINIMUM",
+          "confidence": 0.82,
+          "page": 1
+        },
+        {
+          "id": "dismantling",
+          "guarantee": "Dismantling and refitting costs",
+          "required": null,
+          "foundOriginal": "€4,000,000",
+          "foundEur": 4000000,
+          "status": "PRESENT",
+          "group": "secondary",
+          "confidence": 0.8,
+          "page": 1
+        }
+      ],
+      "findings": [
+        {
+          "ruleId": "RECALL_BELOW_MIN",
+          "severity": "CRITICAL",
+          "title": "Product recall costs at €4,000,000 against €15,000,000 required",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request product recall / withdrawal costs of at least EUR 15,000,000."
+        },
+        {
+          "ruleId": "PFL_BELOW_MIN",
+          "severity": "CRITICAL",
+          "title": "Pure financial loss at €3,000,000 against €15,000,000 required",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request pure financial loss cover of at least EUR 15,000,000."
+        },
+        {
+          "ruleId": "SIGNATURE_UNCLEAR",
+          "severity": "WARNING",
+          "title": "Signature is a scribble with no printed name",
+          "page": 1,
+          "lang": "en",
+          "fix": "Request a certificate signed by a named representative of Zurich."
+        },
+        {
+          "ruleId": "ADDITIONAL_INSURED",
+          "severity": "WARNING",
+          "title": "Cover comes from the parent policy of Grupo COPO",
+          "page": 1,
+          "lang": "en",
+          "fix": "Confirm that Componentes de Vehículos de Galicia is an insured party for the full limits."
+        },
+        {
+          "ruleId": "OCR_PATH_USED",
+          "severity": "INFO",
+          "title": "Garbled text layer — read through OCR and vision model",
+          "page": 1,
+          "lang": "en"
+        }
+      ],
+      "highlights": [
+        {
+          "id": "pl",
+          "page": 1,
+          "x": 0.1,
+          "y": 0.45,
+          "w": 0.8,
+          "h": 0.03
+        }
+      ],
+      "worst": "Product recall costs at €4,000,000 against €15,000,000 required",
+      "spend": "Tier 2"
+    },
+    {
+      "id": "02",
+      "supplier": "Scherdel GmbH",
+      "country": "Germany",
+      "code": "DE",
+      "insurer": "Generali DE",
+      "rating": "A · S&P",
+      "policyNumber": "DE-77-114508",
+      "decision": "FORMAL_DEFECT",
+      "subtype": "No stamp",
+      "score": 20,
+      "provisional": true,
+      "accuracy": 0.93,
+      "currency": "EUR",
+      "expiry": "30 Apr 2025",
+      "expiryDays": 15,
+      "received": "18 Mar 2025",
+      "assignee": "—",
+      "lastAction": "Analysed",
+      "needsReview": false,
+      "mini": {
+        "pl": "MISSING",
+        "recall": "BELOW_MINIMUM",
+        "pfl": "MISSING"
+      },
+      "secondary": "Recall-only document — not a liability certificate",
+      "worst": "Recall-only document — not a liability certificate",
+      "spend": "Tier 2"
+    },
+    {
+      "id": "03",
+      "supplier": "EKKO-MEISTER AG",
+      "country": "Switzerland",
+      "code": "CH",
+      "insurer": "Swiss Mobiliar",
+      "rating": "A · registry",
+      "policyNumber": "CH-4471-09",
+      "decision": "FORMAL_DEFECT",
+      "subtype": "No stamp",
+      "score": 50,
+      "provisional": true,
+      "accuracy": 0.94,
+      "currency": "CHF",
+      "expiry": "31 Jan 2026",
+      "expiryDays": 291,
+      "received": "05 Feb 2025",
+      "assignee": "—",
+      "lastAction": "Analysed",
+      "needsReview": false,
+      "mini": {
+        "pl": "COMPLIANT",
+        "recall": "BELOW_MINIMUM",
+        "pfl": "COVERED_NO_AMOUNT"
+      },
+      "secondary": "CHF 20,000,000 converts to €20.8M — borderline compliant",
+      "worst": "CHF 20,000,000 converts to €20.8M — borderline compliant",
+      "spend": "Tier 2"
+    },
+    {
+      "id": "05",
+      "supplier": "Naxnova Technologies",
+      "country": "India",
+      "code": "IN",
+      "insurer": "ICICI Lombard",
+      "rating": "— · not rated",
+      "policyNumber": "quote, no number",
+      "decision": "STRUCTURAL",
+      "subtype": "Quote, not a certificate",
+      "score": 22,
+      "provisional": true,
+      "accuracy": 0.91,
+      "currency": "INR",
+      "expiry": "—",
+      "expiryDays": null,
+      "received": "28 Jan 2025",
+      "assignee": "R. Mekouar",
+      "lastAction": "Analysed",
+      "needsReview": false,
+      "mini": {
+        "pl": "BELOW_MINIMUM",
+        "recall": "MISSING",
+        "pfl": "MISSING"
+      },
+      "secondary": "Quote at 20 % capacity, claims-made, automotive exclusion",
+      "worst": "Quote at 20 % capacity, claims-made, automotive exclusion",
+      "spend": "Tier 2"
+    },
+    {
+      "id": "07",
+      "supplier": "Norgren GmbH (IMI)",
+      "country": "Germany",
+      "code": "DE",
+      "insurer": "Zurich DE",
+      "rating": "AA- · S&P",
+      "policyNumber": "DE-0089-778812",
+      "decision": "FORMAL_DEFECT",
+      "subtype": "No stamp",
+      "score": 22,
+      "provisional": true,
+      "accuracy": 0.95,
+      "currency": "EUR",
+      "expiry": "29 Jun 2025",
+      "expiryDays": 75,
+      "received": "11 Mar 2025",
+      "assignee": "—",
+      "lastAction": "Analysed",
+      "needsReview": false,
+      "mini": {
+        "pl": "BELOW_MINIMUM",
+        "recall": "MISSING",
+        "pfl": "BELOW_MINIMUM"
+      },
+      "secondary": "16 co-insured entities — contracting entity found on the list",
+      "worst": "16 co-insured entities — contracting entity found on the list",
+      "spend": "Tier 2"
+    },
+    {
+      "id": "08",
+      "supplier": "CeramTec GmbH",
+      "country": "Germany",
+      "code": "DE",
+      "insurer": "Allianz AGCS",
+      "rating": "AA · S&P",
+      "policyNumber": "DE-AGCS-55014",
+      "decision": "FORMAL_DEFECT",
+      "subtype": "No stamp",
+      "score": 20,
+      "provisional": true,
+      "accuracy": 0.96,
+      "currency": "EUR",
+      "expiry": "31 Dec 2025",
+      "expiryDays": 260,
+      "received": "02 Apr 2025",
+      "assignee": "R. Mekouar",
+      "lastAction": "Analysed",
+      "needsReview": false,
+      "mini": {
+        "pl": "MISSING",
+        "recall": "BELOW_MINIMUM",
+        "pfl": "MISSING"
+      },
+      "secondary": "Recall €5M — compliant under the Expert profile",
+      "flipsOnExpert": true,
+      "worst": "Recall €5M — compliant under the Expert profile",
+      "spend": "Tier 2"
+    },
+    {
+      "id": "09",
+      "supplier": "Polyvlies Franz Beyer",
+      "country": "Germany",
+      "code": "DE",
+      "insurer": "Allianz DE",
+      "rating": "AA · S&P",
+      "policyNumber": "DE-AZ-330871",
+      "decision": "FORMAL_DEFECT",
+      "subtype": "No stamp",
+      "score": 50,
+      "provisional": true,
+      "accuracy": 0.92,
+      "currency": "EUR",
+      "expiry": "01 Apr 2025",
+      "expiryDays": -14,
+      "received": "14 Jan 2025",
+      "assignee": "L. Fontaine",
+      "lastAction": "Expired",
+      "needsReview": false,
+      "mini": {
+        "pl": "BELOW_MINIMUM",
+        "recall": "COVERED_NO_AMOUNT",
+        "pfl": "BELOW_MINIMUM"
+      },
+      "secondary": "Cover letter carries personal data — masked",
+      "contact": "nicole.hoffmann@polyvlies.de",
+      "worst": "Cover letter carries personal data — masked",
+      "spend": "Tier 2"
+    },
+    {
+      "id": "10",
+      "supplier": "Metraton S.r.l.",
+      "country": "Italy",
+      "code": "IT",
+      "insurer": "Generali Italia",
+      "rating": "A · S&P",
+      "policyNumber": "IT-GEN-902244",
+      "decision": "FORMAL_DEFECT",
+      "subtype": "No stamp",
+      "score": 60,
+      "provisional": true,
+      "accuracy": 0.88,
+      "currency": "EUR",
+      "expiry": "12 Jul 2025",
+      "expiryDays": 88,
+      "received": "22 Feb 2025",
+      "assignee": "—",
+      "lastAction": "Analysed",
+      "needsReview": false,
+      "mini": {
+        "pl": "COMPLIANT",
+        "recall": "BELOW_MINIMUM",
+        "pfl": "COMPLIANT"
+      },
+      "secondary": "Best coverage in the batch — PL €50M, recall €10M",
+      "worst": "Best coverage in the batch — PL €50M, recall €10M",
+      "spend": "Tier 2"
+    }
+  ],
+  "audit": [
+    {
+      "at": "15 Apr 2025 09:12",
+      "what": "Ingested from SAP Ariba questionnaire",
+      "who": "system",
+      "ref": "run 3c7ab"
+    },
+    {
+      "at": "15 Apr 2025 09:12",
+      "what": "Analysed — 8 steps, 18.0 s",
+      "who": "pipeline v0.4",
+      "ref": "prompt v3"
+    },
+    {
+      "at": "15 Apr 2025 09:31",
+      "what": "Opened by buyer",
+      "who": "L. Fontaine",
+      "ref": "—"
+    },
+    {
+      "at": "15 Apr 2025 09:33",
+      "what": "Evidence revealed on page 2",
+      "who": "L. Fontaine",
+      "ref": "recall"
+    },
+    {
+      "at": "15 Apr 2025 09:35",
+      "what": "Request changes email generated",
+      "who": "L. Fontaine",
+      "ref": "email v1"
+    }
+  ]
+}
