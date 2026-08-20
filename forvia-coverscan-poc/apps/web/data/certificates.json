@@ -1,0 +1,3079 @@
+[
+  {
+    "id": "01",
+    "supplier": "Air Products SAS",
+    "country": "France",
+    "code": "FR",
+    "insurer": "Chubb",
+    "rating": "A++ · AM Best",
+    "policyNumber": "FRBOPX 7654321",
+    "decision": "REQUEST_CHANGES",
+    "subtype": null,
+    "score": 12,
+    "provisional": false,
+    "accuracy": 0.9,
+    "currency": "USD",
+    "expiry": "31 May 2025",
+    "expiryDays": 46,
+    "received": "03 May 2024",
+    "assignee": "L. Fontaine",
+    "lastAction": "Analysed",
+    "aribaId": "SUP-0084219",
+    "entity": "Faurecia Systèmes d'Échappement",
+    "seconds": 18,
+    "model": "v0.4",
+    "runId": "8f21c",
+    "lang": "fr-en",
+    "needsReview": true,
+    "mini": {
+      "pl": "BELOW_MINIMUM",
+      "recall": "MISSING",
+      "pfl": "BELOW_MINIMUM"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/01_p1.jpeg",
+        "lang": "en"
+      },
+      {
+        "n": 2,
+        "imageUrl": "/pages/01_p2.jpeg",
+        "lang": "fr"
+      }
+    ],
+    "summary": "Combined general and product liability of USD 5,000,000 converts to €4,672,897, about a quarter of the €20,000,000 required by FORVIA's purchasing terms. Product recall is not mentioned at all and pure financial loss is capped at USD 200,000. The signature could not be read with confidence, so the certificate is flagged for human review.",
+    "gates": {
+      "stamp": {
+        "state": "review",
+        "note": "faint stamp detected p.1, low contrast"
+      },
+      "signature": {
+        "state": "review",
+        "note": "signature present but not attributable"
+      },
+      "insurer": {
+        "state": "pass",
+        "note": "Chubb European Group SE — registry hit"
+      },
+      "policyNumber": {
+        "state": "pass",
+        "note": "FRBOPX 7654321"
+      },
+      "dates": {
+        "state": "pass",
+        "note": "01 Jun 2024 → 31 May 2025"
+      },
+      "entity": {
+        "state": "pass",
+        "note": "Faurecia Systèmes d'Échappement listed"
+      },
+      "coinsurance": {
+        "state": "na"
+      },
+      "documentType": {
+        "state": "pass",
+        "note": "certificate of insurance"
+      }
+    },
+    "coverage": [
+      {
+        "id": "pl",
+        "guarantee": "Product liability",
+        "required": 20000000,
+        "foundOriginal": "USD 5,000,000",
+        "foundEur": 4672897,
+        "status": "BELOW_MINIMUM",
+        "basis": "combined GL + PL, per occurrence",
+        "territory": "Worldwide",
+        "confidence": 0.9,
+        "page": 1,
+        "fxNote": "USD→EUR 1.07 · ECB 26 Apr 2024",
+        "quote": "Combined single limit USD 5,000,000"
+      },
+      {
+        "id": "recall",
+        "guarantee": "Product recall / withdrawal costs",
+        "required": 15000000,
+        "status": "MISSING",
+        "confidence": 0.88,
+        "page": 1
+      },
+      {
+        "id": "pfl",
+        "guarantee": "Pure financial loss",
+        "required": 15000000,
+        "foundOriginal": "USD 200,000",
+        "foundEur": 186916,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.85,
+        "page": 1,
+        "fxNote": "USD→EUR 1.07 · ECB 26 Apr 2024"
+      },
+      {
+        "id": "consequential",
+        "guarantee": "Consequential loss",
+        "required": null,
+        "status": "MISSING",
+        "group": "secondary",
+        "confidence": 0.8,
+        "page": 1
+      },
+      {
+        "id": "dic",
+        "guarantee": "Difference in conditions / limits",
+        "status": "MISSING",
+        "group": "secondary",
+        "confidence": 0.75
+      },
+      {
+        "id": "employers",
+        "guarantee": "Employer's liability",
+        "status": "COVERED_NO_AMOUNT",
+        "group": "other",
+        "confidence": 0.68,
+        "page": 1
+      }
+    ],
+    "findings": [
+      {
+        "ruleId": "PL_BELOW_MIN",
+        "severity": "CRITICAL",
+        "title": "Product liability at €4,672,897 against €20,000,000 required",
+        "quote": "Combined single limit USD 5,000,000",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request product liability of at least EUR 20,000,000, or a difference-in-limits cover on top of the current policy."
+      },
+      {
+        "ruleId": "RECALL_MISSING",
+        "severity": "CRITICAL",
+        "title": "Product recall and withdrawal costs are not covered",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request product recall / withdrawal costs of at least EUR 15,000,000, worldwide including USA and Canada."
+      },
+      {
+        "ruleId": "PFL_BELOW_MIN",
+        "severity": "CRITICAL",
+        "title": "Pure financial loss capped at €186,916 against €15,000,000 required",
+        "quote": "Pure financial loss USD 200,000",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request pure financial loss cover of at least EUR 15,000,000."
+      },
+      {
+        "ruleId": "SIGNATURE_AMBIGUOUS",
+        "severity": "WARNING",
+        "title": "Signature present but not attributable to the insurer",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request a certificate signed by a named representative of Chubb."
+      },
+      {
+        "ruleId": "EXPIRY_WINDOW",
+        "severity": "WARNING",
+        "title": "Certificate expires in 46 days",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request the renewal certificate before 31 May 2025."
+      },
+      {
+        "ruleId": "FX_APPLIED",
+        "severity": "INFO",
+        "title": "USD converted at ECB 1.07 on 26 April 2024",
+        "page": 1,
+        "lang": "en"
+      }
+    ],
+    "highlights": [
+      {
+        "id": "pl",
+        "page": 1,
+        "x": 0.1,
+        "y": 0.42,
+        "w": 0.8,
+        "h": 0.028
+      },
+      {
+        "id": "pfl",
+        "page": 1,
+        "x": 0.1,
+        "y": 0.5,
+        "w": 0.8,
+        "h": 0.026
+      }
+    ],
+    "guarantees": [
+      {
+        "code": "COMBINED_GL_PL",
+        "labelOriginal": "Responsabilité Civile Exploitation et Produit combinés / Public and Product Liability combined limit",
+        "page": 1,
+        "amountOriginal": 5000000,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": 4672897,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": "Claims paid excess of SIR"
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "Responsabilité Civile Produit — 'Covered' (no own amount; combined limit applies)",
+        "page": 1,
+        "amountOriginal": 5000000,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": 4672897,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": "Line says 'Covered' without amount → COVERED_NO_AMOUNT; amount inherited from combined limit"
+      },
+      {
+        "code": "GENERAL_LIABILITY",
+        "labelOriginal": "Responsabilité Civile Exploitation — Covered",
+        "page": 1,
+        "amountOriginal": null,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": null,
+        "basis": "PER_CLAIM",
+        "deductible": null,
+        "status": "COVERED_NO_AMOUNT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "EMPLOYERS_LIABILITY",
+        "labelOriginal": "Faute Inexcusable / Employer's Liability – Gross Negligence",
+        "page": 1,
+        "amountOriginal": 1000000,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": 934579,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "POLLUTION_ACCIDENTAL",
+        "labelOriginal": "Pollution Accidentelle / Sudden and Accidental Pollution",
+        "page": 1,
+        "amountOriginal": 500000,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": 467290,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": "Dommages Immatériels Non Consécutifs / Pure Financial Losses",
+        "page": 1,
+        "amountOriginal": 200000,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": 186916,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": "Listed twice (under GL and under PL), same amount"
+      },
+      {
+        "code": "CONSEQUENTIAL_FINANCIAL_LOSS",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": "DIC not mentioned — Richard: 'il manque les DIC' → alert"
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "USD",
+        "fxRate": 1.07,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": null
+      }
+    ],
+    "exclusions": [],
+    "deductibles": "SIR (self-insured retention) mentioned, amount not stated",
+    "fx": {
+      "USD": 1.07
+    },
+    "territory": {
+      "statement": null,
+      "usaCanada": "UNCLEAR"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": 12,
+      "riskScoreProvisional": 12,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 4672897,
+          "status": "BELOW_MINIMUM",
+          "points": 7,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": 186916,
+          "status": "BELOW_MINIMUM",
+          "points": 0.2,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "UNCLEAR",
+          "points": 0,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "REQUEST_CHANGES",
+      "noGoSubtype": null,
+      "failedGates": [],
+      "reviewGates": [
+        "SIGNATURE_PRESENT"
+      ],
+      "needsHumanReview": true,
+      "matchesExpert": true
+    },
+    "accuracyScore": 0.9,
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "PASS",
+      "SIGNATURE_PRESENT": "REVIEW",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    }
+  },
+  {
+    "id": "02",
+    "supplier": "Scherdel GmbH",
+    "country": "Germany",
+    "code": "DE",
+    "insurer": "Generali DE",
+    "rating": "A · S&P",
+    "policyNumber": "DE-77-114508",
+    "decision": "FORMAL_DEFECT",
+    "subtype": "No stamp",
+    "score": 20,
+    "provisional": true,
+    "accuracy": 0.93,
+    "currency": "EUR",
+    "expiry": "30 Apr 2025",
+    "expiryDays": 15,
+    "received": "18 Mar 2025",
+    "assignee": "—",
+    "lastAction": "Analysed",
+    "needsReview": false,
+    "mini": {
+      "pl": "MISSING",
+      "recall": "BELOW_MINIMUM",
+      "pfl": "MISSING"
+    },
+    "secondary": "Recall-only document — not a liability certificate",
+    "guarantees": [
+      {
+        "code": "AUTOMOTIVE_RECALL",
+        "labelOriginal": "KFZ Rückrufkostenversicherung (inkl. Aus- und Einbaukosten ohne Rückruf)",
+        "page": 2,
+        "amountOriginal": 2000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 2000000,
+        "basis": "PER_EVENT_2X_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": "double annual aggregate = 4M"
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": "Produktrückrufkosten / Product recall cost insurance",
+        "page": 2,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_EVENT_1X_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "DISMANTLING_REFITTING",
+        "labelOriginal": "Aus- und Einbaukosten ohne Rückruf (within automotive recall)",
+        "page": 2,
+        "amountOriginal": 2000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 2000000,
+        "basis": "PER_EVENT_2X_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": "Recall-only certificate: no general/product liability at all"
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": "Recall costs are 'pure financial loss' but restricted to enumerated recall expenses — does not satisfy PFL requirement"
+      }
+    ],
+    "exclusions": [
+      {
+        "text": "No coverage for bodily injury or property damage as such",
+        "critical": false
+      }
+    ],
+    "deductibles": null,
+    "fx": {},
+    "territory": {
+      "statement": null,
+      "usaCanada": "UNCLEAR"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 20,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": 5000000,
+          "status": "BELOW_MINIMUM",
+          "points": 10,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "PRESENT",
+          "points": 5,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "UNCLEAR",
+          "points": 0,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "FORMAL_DEFECT",
+      "failedGates": [
+        "STAMP_PRESENT"
+      ],
+      "reviewGates": [],
+      "needsHumanReview": false,
+      "matchesExpert": true
+    },
+    "accuracyScore": 0.93,
+    "gates": {
+      "stamp": {
+        "state": "fail"
+      },
+      "signature": {
+        "state": "pass"
+      },
+      "insurer": {
+        "state": "pass"
+      },
+      "policyNumber": {
+        "state": "pass"
+      },
+      "dates": {
+        "state": "pass"
+      },
+      "entity": {
+        "state": "pass"
+      },
+      "coinsurance": {
+        "state": "pass"
+      },
+      "documentType": {
+        "state": "pass"
+      }
+    },
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "PASS",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/02_p1.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 2,
+        "imageUrl": "/pages/02_p2.jpeg",
+        "lang": "de"
+      }
+    ]
+  },
+  {
+    "id": "03",
+    "supplier": "EKKO-MEISTER AG",
+    "country": "Switzerland",
+    "code": "CH",
+    "insurer": "Swiss Mobiliar",
+    "rating": "A · registry",
+    "policyNumber": "CH-4471-09",
+    "decision": "FORMAL_DEFECT",
+    "subtype": "No stamp",
+    "score": 50,
+    "provisional": true,
+    "accuracy": 0.94,
+    "currency": "CHF",
+    "expiry": "31 Jan 2026",
+    "expiryDays": 291,
+    "received": "05 Feb 2025",
+    "assignee": "—",
+    "lastAction": "Analysed",
+    "needsReview": false,
+    "mini": {
+      "pl": "COMPLIANT",
+      "recall": "BELOW_MINIMUM",
+      "pfl": "COVERED_NO_AMOUNT"
+    },
+    "secondary": "CHF 20,000,000 converts to €20.8M — borderline compliant",
+    "guarantees": [
+      {
+        "code": "COMBINED_GL_PL",
+        "labelOriginal": "CHF 20'000'000 combined single limit for bodily injury and property damage, annual aggregate (one-time guarantee)",
+        "page": 1,
+        "amountOriginal": 20000000,
+        "currency": "CHF",
+        "fxRate": 0.96,
+        "amountEur": 20833333,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "COMPLIANT",
+        "confidence": 0.95,
+        "note": "CSL BI+PD only; counted as PL per default CSL rule (Q13 open)"
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "General- and Products Liability insurance (inherits CSL)",
+        "page": 1,
+        "amountOriginal": 20000000,
+        "currency": "CHF",
+        "fxRate": 0.96,
+        "amountEur": 20833333,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "COMPLIANT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": "Sublimit: CHF 5'000'000 Recall Costs",
+        "page": 1,
+        "amountOriginal": 5000000,
+        "currency": "CHF",
+        "fxRate": 0.96,
+        "amountEur": 5208333,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "CHF",
+        "fxRate": 0.96,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": "CSL covers BI & PD only — pure financial loss not mentioned"
+      }
+    ],
+    "exclusions": [],
+    "deductibles": null,
+    "fx": {
+      "CHF": 0.96
+    },
+    "territory": {
+      "statement": "Worldwide, including USA and Canada (loss occurrence)",
+      "usaCanada": "INCLUDED"
+    },
+    "trigger": "OCCURRENCE",
+    "basisSummary": "AGGREGATE",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 50,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 20833333,
+          "status": "COMPLIANT",
+          "points": 30,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": 5208333,
+          "status": "BELOW_MINIMUM",
+          "points": 10.4,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "INCLUDED",
+          "points": 5,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "AGGREGATE",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "FORMAL_DEFECT",
+      "failedGates": [
+        "STAMP_PRESENT"
+      ],
+      "reviewGates": [
+        "INSURER_RATING_FLOOR"
+      ],
+      "needsHumanReview": true,
+      "matchesExpert": true
+    },
+    "accuracyScore": 0.94,
+    "gates": {
+      "stamp": {
+        "state": "fail"
+      },
+      "signature": {
+        "state": "pass"
+      },
+      "insurer": {
+        "state": "review"
+      },
+      "policyNumber": {
+        "state": "pass"
+      },
+      "dates": {
+        "state": "pass"
+      },
+      "entity": {
+        "state": "pass"
+      },
+      "coinsurance": {
+        "state": "pass"
+      },
+      "documentType": {
+        "state": "pass"
+      }
+    },
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "REVIEW",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "PASS",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/03_p1.jpeg",
+        "lang": "en"
+      }
+    ]
+  },
+  {
+    "id": "04",
+    "supplier": "M.T.S. SAS",
+    "country": "France",
+    "code": "FR",
+    "insurer": "MMA — issued by Marron & Associés",
+    "rating": "A · registry",
+    "policyNumber": "144 725 803",
+    "decision": "STRUCTURAL",
+    "subtype": "Broker-issued",
+    "score": 3,
+    "provisional": true,
+    "accuracy": 0.82,
+    "currency": "EUR",
+    "expiry": "31 Dec 2025",
+    "expiryDays": 260,
+    "received": "12 Jan 2025",
+    "assignee": "L. Fontaine",
+    "lastAction": "Analysed",
+    "aribaId": "SUP-0091774",
+    "entity": "Faurecia Intérieur Industrie",
+    "seconds": 18,
+    "model": "v0.4",
+    "runId": "3c7ab",
+    "lang": "fr",
+    "ocrUsed": true,
+    "needsReview": false,
+    "mini": {
+      "pl": "BELOW_MINIMUM",
+      "recall": "BELOW_MINIMUM",
+      "pfl": "MISSING"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/04_p1.jpeg",
+        "lang": "fr",
+        "ocrUsed": true
+      },
+      {
+        "n": 2,
+        "imageUrl": "/pages/04_p2.jpeg",
+        "lang": "fr",
+        "ocrUsed": true
+      }
+    ],
+    "summary": "This certificate was issued by a broker (Marron & Associés), not by the insurer, so it has no legal value for FORVIA. Even if reissued by MMA, recall/withdrawal costs are limited to €305,000 against €15M required and are excluded for USA/Canada. Recommended action: request a certificate issued and stamped by MMA with recall ≥ €15M worldwide.",
+    "gates": {
+      "stamp": {
+        "state": "fail",
+        "note": "broker's stamp found p.1, no insurer stamp"
+      },
+      "signature": {
+        "state": "fail",
+        "note": "no insurer signature"
+      },
+      "insurer": {
+        "state": "fail",
+        "note": "issuer is an intermediary — ORIAS 07 002 497"
+      },
+      "policyNumber": {
+        "state": "pass",
+        "note": "144 725 803"
+      },
+      "dates": {
+        "state": "pass",
+        "note": "01 Jan 2025 → 31 Dec 2025"
+      },
+      "entity": {
+        "state": "pass",
+        "note": "M.T.S. SAS named as policyholder"
+      },
+      "coinsurance": {
+        "state": "na"
+      },
+      "documentType": {
+        "state": "pass",
+        "note": "attestation d'assurance"
+      }
+    },
+    "coverage": [
+      {
+        "id": "pl",
+        "guarantee": "Product liability",
+        "required": 20000000,
+        "foundOriginal": "€10,000,000",
+        "foundEur": 10000000,
+        "status": "BELOW_MINIMUM",
+        "basis": "tous dommages confondus, per claim",
+        "territory": "Worldwide excl. USA/Canada",
+        "territoryExcluded": true,
+        "confidence": 0.88,
+        "page": 2,
+        "quote": "Tous dommages confondus 10.000.000 €"
+      },
+      {
+        "id": "recall",
+        "guarantee": "Product recall / withdrawal costs",
+        "required": 15000000,
+        "foundOriginal": "€305,000",
+        "foundEur": 305000,
+        "status": "BELOW_MINIMUM",
+        "basis": "frais de retrait engagés par l'assuré",
+        "deductible": "€3,000",
+        "territory": "Excluded for USA/Canada",
+        "territoryExcluded": true,
+        "confidence": 0.82,
+        "page": 2,
+        "quote": "Frais de retrait engagés par l'assuré 305.000 €"
+      },
+      {
+        "id": "pfl",
+        "guarantee": "Pure financial loss",
+        "required": 15000000,
+        "foundOriginal": "€305,000",
+        "foundEur": 305000,
+        "status": "BELOW_MINIMUM",
+        "basis": "dommages immatériels non consécutifs",
+        "deductible": "€1,500",
+        "confidence": 0.79,
+        "page": 2,
+        "quote": "Dommages immatériels non consécutifs 305.000 €"
+      },
+      {
+        "id": "dismantling",
+        "guarantee": "Dismantling and refitting costs",
+        "required": null,
+        "foundOriginal": "€305,000",
+        "foundEur": 305000,
+        "status": "EXCLUDED",
+        "basis": "frais de dépose repose",
+        "territory": "Excluded for USA/Canada",
+        "territoryExcluded": true,
+        "group": "secondary",
+        "confidence": 0.77,
+        "page": 2,
+        "quote": "Frais de dépose repose engagés par l'assuré ou par un tiers — Exclu"
+      },
+      {
+        "id": "environmental",
+        "guarantee": "Environmental impairment",
+        "foundOriginal": "€750,000",
+        "foundEur": 750000,
+        "status": "PRESENT",
+        "group": "secondary",
+        "confidence": 0.84,
+        "page": 2
+      },
+      {
+        "id": "ecological",
+        "guarantee": "Ecological damage",
+        "foundOriginal": "€500,000",
+        "foundEur": 500000,
+        "status": "PRESENT",
+        "group": "other",
+        "confidence": 0.81,
+        "page": 2
+      },
+      {
+        "id": "usca",
+        "guarantee": "USA / Canada sub-limit",
+        "foundOriginal": "€2,000,000",
+        "foundEur": 2000000,
+        "status": "PRESENT",
+        "basis": "tous dommages confondus",
+        "deductible": "€15,000",
+        "group": "other",
+        "confidence": 0.8,
+        "page": 2
+      }
+    ],
+    "findings": [
+      {
+        "ruleId": "ISSUER_IS_BROKER",
+        "severity": "BLOCK",
+        "title": "Certificate issued by a broker, not by the insurer",
+        "quote": "SARL MARRON & ASSOCIES — N° ORIAS 07 002 497 — Agent Général Exclusif MMA et Courtier en assurance",
+        "page": 2,
+        "lang": "fr",
+        "fix": "Request a certificate issued, signed and stamped by MMA itself."
+      },
+      {
+        "ruleId": "STAMP_MISSING",
+        "severity": "BLOCK",
+        "title": "No insurer stamp — only the broker's stamp is present",
+        "page": 1,
+        "lang": "fr",
+        "fix": "Request the insurer's stamp on the certificate."
+      },
+      {
+        "ruleId": "RECALL_BELOW_MIN",
+        "severity": "CRITICAL",
+        "title": "Product recall costs at €305,000 against €15,000,000 required",
+        "quote": "Frais de retrait engagés par l'assuré 305.000 €",
+        "page": 2,
+        "lang": "fr",
+        "fix": "Request product recall / withdrawal costs of at least EUR 15,000,000, worldwide."
+      },
+      {
+        "ruleId": "TERRITORY_EXCL_US_CA",
+        "severity": "CRITICAL",
+        "title": "Recall and refitting costs excluded for USA and Canada",
+        "quote": "Dont GARANTIE « ETATS UNIS D'AMERIQUE ET/OU CANADA » — Frais de retrait engagés par l'assuré ou par un tiers : Exclu",
+        "page": 2,
+        "lang": "fr",
+        "fix": "Request worldwide cover for recall and refitting, including USA and Canada."
+      },
+      {
+        "ruleId": "PL_BELOW_MIN",
+        "severity": "CRITICAL",
+        "title": "Product liability at €10,000,000 against €20,000,000 required",
+        "quote": "Tous dommages confondus 10.000.000 €",
+        "page": 2,
+        "lang": "fr",
+        "fix": "Request product liability of at least EUR 20,000,000."
+      },
+      {
+        "ruleId": "PFL_BELOW_MIN",
+        "severity": "CRITICAL",
+        "title": "Pure financial loss at €305,000 against €15,000,000 required",
+        "quote": "Dommages immatériels non consécutifs 305.000 €",
+        "page": 2,
+        "lang": "fr",
+        "fix": "Request pure financial loss cover of at least EUR 15,000,000."
+      },
+      {
+        "ruleId": "OCR_PATH_USED",
+        "severity": "INFO",
+        "title": "Scanned document — read through OCR, field accuracy 82 %",
+        "page": 1,
+        "lang": "fr"
+      }
+    ],
+    "highlights": [
+      {
+        "id": "pl",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.277,
+        "w": 0.744,
+        "h": 0.024
+      },
+      {
+        "id": "pfl",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.35,
+        "w": 0.744,
+        "h": 0.021
+      },
+      {
+        "id": "recall",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.636,
+        "w": 0.744,
+        "h": 0.022
+      },
+      {
+        "id": "dismantling",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.612,
+        "w": 0.744,
+        "h": 0.022
+      },
+      {
+        "id": "environmental",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.383,
+        "w": 0.744,
+        "h": 0.04
+      },
+      {
+        "id": "ecological",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.45,
+        "w": 0.744,
+        "h": 0.02
+      },
+      {
+        "id": "usca",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.712,
+        "w": 0.744,
+        "h": 0.026
+      },
+      {
+        "id": "TERRITORY_EXCL_US_CA",
+        "page": 2,
+        "x": 0.131,
+        "y": 0.795,
+        "w": 0.744,
+        "h": 0.024
+      },
+      {
+        "id": "ISSUER_IS_BROKER",
+        "page": 2,
+        "x": 0.155,
+        "y": 0.905,
+        "w": 0.7,
+        "h": 0.016
+      },
+      {
+        "id": "STAMP_MISSING",
+        "page": 1,
+        "x": 0.6,
+        "y": 0.8,
+        "w": 0.3,
+        "h": 0.1
+      }
+    ],
+    "email": {
+      "contact": "Sir or Madam",
+      "validUntil": "31 December 2025",
+      "dueDate": "30 April 2025",
+      "formalPoints": [
+        "The certificate must be issued, signed and stamped by the insurer (MMA), not by a broker or agent.",
+        "Please ensure the certificate is issued in the name of Faurecia Intérieur Industrie."
+      ],
+      "coveragePoints": [
+        "Product liability: at least EUR 20,000,000 (found: EUR 10,000,000).",
+        "Product recall / withdrawal costs: at least EUR 15,000,000, worldwide including USA/Canada (found: EUR 305,000, excluded for USA/Canada).",
+        "Pure financial loss: at least EUR 15,000,000 (found: EUR 305,000).",
+        "Dismantling and refitting costs to be explicitly covered, including USA/Canada."
+      ]
+    },
+    "guarantees": [
+      {
+        "code": "GENERAL_LIABILITY",
+        "labelOriginal": "RC Exploitation — Tous dommages confondus",
+        "page": 2,
+        "amountOriginal": 10000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 10000000,
+        "basis": "PER_CLAIM",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "CONSEQUENTIAL_FINANCIAL_LOSS",
+        "labelOriginal": "Dommages matériels et immatériels consécutifs y compris biens confiés",
+        "page": 2,
+        "amountOriginal": 2000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 2000000,
+        "basis": "PER_CLAIM",
+        "deductible": 750,
+        "status": "COMPLIANT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": "Dommages immatériels non consécutifs",
+        "page": 2,
+        "amountOriginal": 305000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 305000,
+        "basis": "PER_CLAIM",
+        "deductible": 1500,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "POLLUTION_ACCIDENTAL",
+        "labelOriginal": "Atteintes à l'environnement accidentelles",
+        "page": 2,
+        "amountOriginal": 750000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 750000,
+        "basis": "PER_CLAIM",
+        "deductible": 2000,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "RC Après Livraison — Tous dommages confondus (hors USA/Canada)",
+        "page": 2,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null,
+        "excludedTerritories": [
+          "USA",
+          "Canada"
+        ]
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": "Frais de retrait engagés par l'assuré",
+        "page": 2,
+        "amountOriginal": 305000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 305000,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": 3000,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null,
+        "excludedTerritories": [
+          "USA",
+          "Canada"
+        ]
+      },
+      {
+        "code": "DISMANTLING_REFITTING",
+        "labelOriginal": "Frais de dépose repose engagés par l'assuré",
+        "page": 2,
+        "amountOriginal": 305000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 305000,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": 3000,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null,
+        "excludedTerritories": [
+          "USA",
+          "Canada"
+        ]
+      },
+      {
+        "code": "OTHER",
+        "labelOriginal": "DINC y compris frais de dépose repose et de retrait engagés par un tiers",
+        "page": 2,
+        "amountOriginal": 500000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 500000,
+        "basis": "PER_CLAIM_AND_ANNUAL",
+        "deductible": 3000,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      }
+    ],
+    "exclusions": [
+      {
+        "text": "USA/Canada: Dommages immatériels non consécutifs suite à un vice caché (loss of use) — Exclu",
+        "critical": true
+      },
+      {
+        "text": "USA/Canada: Frais de dépose repose — Exclu",
+        "critical": true
+      },
+      {
+        "text": "USA/Canada: Frais de retrait — Exclu",
+        "critical": true
+      },
+      {
+        "text": "Tout dispositif/matériel implantable dans le corps humain",
+        "critical": false
+      }
+    ],
+    "deductibles": "€750–€15,000 per claim depending on line",
+    "fx": {},
+    "territory": {
+      "statement": "USA/Canada section with reduced limits and exclusions",
+      "usaCanada": "PARTIAL_EXCLUDED"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 3,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 5000000,
+          "status": "BELOW_MINIMUM",
+          "points": 7.5,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": 305000,
+          "status": "BELOW_MINIMUM",
+          "points": 0.6,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": 305000,
+          "status": "BELOW_MINIMUM",
+          "points": 0.3,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": 2000000,
+          "status": "COMPLIANT",
+          "points": 5,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "PRESENT",
+          "points": 5,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "PARTIAL_EXCLUDED",
+          "points": 0,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": -20
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "STRUCTURAL",
+      "failedGates": [
+        "ISSUER_IS_INSURER",
+        "STAMP_PRESENT",
+        "SIGNATURE_PRESENT"
+      ],
+      "reviewGates": [],
+      "needsHumanReview": false,
+      "matchesExpert": true
+    },
+    "accuracyScore": 0.82,
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "FAIL",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "FAIL",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    }
+  },
+  {
+    "id": "05",
+    "supplier": "Naxnova Technologies",
+    "country": "India",
+    "code": "IN",
+    "insurer": "ICICI Lombard",
+    "rating": "— · not rated",
+    "policyNumber": "quote, no number",
+    "decision": "STRUCTURAL",
+    "subtype": "Quote, not a certificate",
+    "score": 22,
+    "provisional": true,
+    "accuracy": 0.91,
+    "currency": "INR",
+    "expiry": "—",
+    "expiryDays": null,
+    "received": "28 Jan 2025",
+    "assignee": "R. Mekouar",
+    "lastAction": "Analysed",
+    "needsReview": false,
+    "mini": {
+      "pl": "BELOW_MINIMUM",
+      "recall": "MISSING",
+      "pfl": "MISSING"
+    },
+    "secondary": "Quote at 20 % capacity, claims-made, automotive exclusion",
+    "guarantees": [
+      {
+        "code": "COMBINED_GL_PL",
+        "labelOriginal": "Limit of Indemnity INR 1,000,000,000 per occurrence and in the aggregate",
+        "page": 1,
+        "amountOriginal": 1000000000,
+        "currency": "INR",
+        "fxRate": 95.5,
+        "amountEur": 10471204,
+        "basis": "PER_OCCURRENCE_AND_AGGREGATE",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": "Only 20% capacity from this insurer"
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "Product & Completed Operations — Policy Limits",
+        "page": 1,
+        "amountOriginal": 1000000000,
+        "currency": "INR",
+        "fxRate": 95.5,
+        "amountEur": 10471204,
+        "basis": "PER_OCCURRENCE_AND_AGGREGATE",
+        "deductible": "INR 250,000 India / 350,000 USA-Canada / 500,000 ROW",
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": "Product Recall — INR 1,000,000,000 Per Accident and in Aggregate",
+        "page": 1,
+        "amountOriginal": 1000000000,
+        "currency": "INR",
+        "fxRate": 95.5,
+        "amountEur": 10471204,
+        "basis": "PER_ACCIDENT_AND_AGGREGATE",
+        "deductible": "INR 3,500,000",
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "INR",
+        "fxRate": 95.5,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "POLLUTION_ACCIDENTAL",
+        "labelOriginal": "72 hours Sudden & Accidental Pollution — Sub Limit: Policy Limit",
+        "page": 1,
+        "amountOriginal": null,
+        "currency": "INR",
+        "fxRate": 95.5,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "COVERED_NO_AMOUNT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "GOODS_IN_CUSTODY",
+        "labelOriginal": "Care, Custody and control",
+        "page": 3,
+        "amountOriginal": 50000000,
+        "currency": "INR",
+        "fxRate": 95.5,
+        "amountEur": 523560,
+        "basis": "PER_OCCURRENCE_AND_AGGREGATE",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      }
+    ],
+    "exclusions": [
+      {
+        "text": "No cover for Automobile Critical Components: steering, brakes, wheel, tyres, seatbelts & airbags (except sub-components)",
+        "critical": true
+      },
+      {
+        "text": "Failure to supply exclusion",
+        "critical": true
+      },
+      {
+        "text": "Cyber risk exclusion; Electronic data exclusion; Professional liability exclusion; Punitive damages; Unapproved product; Aircraft products; Offshore/Aviation/Defence/Railways",
+        "critical": false
+      }
+    ],
+    "deductibles": "INR 85,000 general; recall INR 3,500,000",
+    "fx": {
+      "INR": 95.5
+    },
+    "territory": {
+      "statement": "General: India; Products/Completed operations: Worldwide incl. USA & Canada",
+      "usaCanada": "INCLUDED"
+    },
+    "trigger": "CLAIMS_MADE",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 22,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 10471204,
+          "status": "BELOW_MINIMUM",
+          "points": 15.7,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": 10471204,
+          "status": "BELOW_MINIMUM",
+          "points": 20.9,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "INCLUDED",
+          "points": 5,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": -25
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "STRUCTURAL",
+      "failedGates": [
+        "DOCUMENT_IS_CERTIFICATE",
+        "STAMP_PRESENT",
+        "SIGNATURE_PRESENT",
+        "POLICY_NUMBER_PRESENT",
+        "DATES_PRESENT",
+        "COINSURANCE_COMPLETE"
+      ],
+      "reviewGates": [
+        "INSURER_RATING_FLOOR",
+        "NOT_EXPIRED"
+      ],
+      "needsHumanReview": true,
+      "matchesExpert": true
+    },
+    "accuracyScore": 0.91,
+    "gates": {
+      "stamp": {
+        "state": "fail"
+      },
+      "signature": {
+        "state": "fail"
+      },
+      "insurer": {
+        "state": "review"
+      },
+      "policyNumber": {
+        "state": "fail"
+      },
+      "dates": {
+        "state": "fail"
+      },
+      "entity": {
+        "state": "pass"
+      },
+      "coinsurance": {
+        "state": "fail"
+      },
+      "documentType": {
+        "state": "fail"
+      }
+    },
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "FAIL",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "REVIEW",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "FAIL",
+      "POLICY_NUMBER_PRESENT": "FAIL",
+      "DATES_PRESENT": "FAIL",
+      "NOT_EXPIRED": "REVIEW",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "FAIL",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/05_p1.jpeg",
+        "lang": "en"
+      },
+      {
+        "n": 2,
+        "imageUrl": "/pages/05_p2.jpeg",
+        "lang": "en"
+      },
+      {
+        "n": 3,
+        "imageUrl": "/pages/05_p3.jpeg",
+        "lang": "en"
+      },
+      {
+        "n": 4,
+        "imageUrl": "/pages/05_p4.jpeg",
+        "lang": "en"
+      },
+      {
+        "n": 5,
+        "imageUrl": "/pages/05_p5.jpeg",
+        "lang": "en"
+      }
+    ]
+  },
+  {
+    "id": "06",
+    "supplier": "Componentes de Vehículos de Galicia",
+    "country": "Spain",
+    "code": "ES",
+    "insurer": "Zurich ES",
+    "rating": "AA- · S&P",
+    "policyNumber": "ES-0089-441207",
+    "decision": "REQUEST_CHANGES",
+    "subtype": null,
+    "score": 56,
+    "provisional": false,
+    "accuracy": 0.86,
+    "currency": "EUR",
+    "expiry": "31 Dec 2025",
+    "expiryDays": 260,
+    "received": "20 Feb 2025",
+    "assignee": "R. Mekouar",
+    "lastAction": "In review",
+    "aribaId": "SUP-0077310",
+    "entity": "Faurecia Automotive Exteriors España",
+    "seconds": 21,
+    "model": "v0.4",
+    "runId": "b41f9",
+    "lang": "en",
+    "ocrUsed": true,
+    "needsReview": true,
+    "mini": {
+      "pl": "COMPLIANT",
+      "recall": "BELOW_MINIMUM",
+      "pfl": "BELOW_MINIMUM"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/06_p1.jpeg",
+        "lang": "en",
+        "ocrUsed": true
+      }
+    ],
+    "summary": "Product liability reaches €20,000,000 and meets FORVIA's requirement — the only certificate in the batch that does. Product recall is capped at €4,000,000 and pure financial loss at €3,000,000, both well below the €15,000,000 required. The supplier appears as an additional insured of its parent Grupo COPO and the signature is unclear, so a human check is required before the request is sent.",
+    "gates": {
+      "stamp": {
+        "state": "pass",
+        "note": "insurer stamp found p.1"
+      },
+      "signature": {
+        "state": "review",
+        "note": "scribble, no printed name"
+      },
+      "insurer": {
+        "state": "pass",
+        "note": "Zurich Insurance plc, Spanish branch"
+      },
+      "policyNumber": {
+        "state": "pass",
+        "note": "ES-0089-441207"
+      },
+      "dates": {
+        "state": "pass",
+        "note": "01 Jan 2025 → 31 Dec 2025"
+      },
+      "entity": {
+        "state": "review",
+        "note": "additional insured of Grupo COPO — parent policy"
+      },
+      "coinsurance": {
+        "state": "na"
+      },
+      "documentType": {
+        "state": "pass",
+        "note": "certificate of insurance"
+      }
+    },
+    "coverage": [
+      {
+        "id": "pl",
+        "guarantee": "Product liability",
+        "required": 20000000,
+        "foundOriginal": "€20,000,000",
+        "foundEur": 20000000,
+        "status": "COMPLIANT",
+        "basis": "per occurrence and aggregate",
+        "territory": "Worldwide",
+        "confidence": 0.9,
+        "page": 1
+      },
+      {
+        "id": "recall",
+        "guarantee": "Product recall / withdrawal costs",
+        "required": 15000000,
+        "foundOriginal": "€4,000,000",
+        "foundEur": 4000000,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.84,
+        "page": 1
+      },
+      {
+        "id": "pfl",
+        "guarantee": "Pure financial loss",
+        "required": 15000000,
+        "foundOriginal": "€3,000,000",
+        "foundEur": 3000000,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.82,
+        "page": 1
+      },
+      {
+        "id": "dismantling",
+        "guarantee": "Dismantling and refitting costs",
+        "required": null,
+        "foundOriginal": "€4,000,000",
+        "foundEur": 4000000,
+        "status": "PRESENT",
+        "group": "secondary",
+        "confidence": 0.8,
+        "page": 1
+      }
+    ],
+    "findings": [
+      {
+        "ruleId": "RECALL_BELOW_MIN",
+        "severity": "CRITICAL",
+        "title": "Product recall costs at €4,000,000 against €15,000,000 required",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request product recall / withdrawal costs of at least EUR 15,000,000."
+      },
+      {
+        "ruleId": "PFL_BELOW_MIN",
+        "severity": "CRITICAL",
+        "title": "Pure financial loss at €3,000,000 against €15,000,000 required",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request pure financial loss cover of at least EUR 15,000,000."
+      },
+      {
+        "ruleId": "SIGNATURE_UNCLEAR",
+        "severity": "WARNING",
+        "title": "Signature is a scribble with no printed name",
+        "page": 1,
+        "lang": "en",
+        "fix": "Request a certificate signed by a named representative of Zurich."
+      },
+      {
+        "ruleId": "ADDITIONAL_INSURED",
+        "severity": "WARNING",
+        "title": "Cover comes from the parent policy of Grupo COPO",
+        "page": 1,
+        "lang": "en",
+        "fix": "Confirm that Componentes de Vehículos de Galicia is an insured party for the full limits."
+      },
+      {
+        "ruleId": "OCR_PATH_USED",
+        "severity": "INFO",
+        "title": "Garbled text layer — read through OCR and vision model",
+        "page": 1,
+        "lang": "en"
+      }
+    ],
+    "highlights": [
+      {
+        "id": "pl",
+        "page": 1,
+        "x": 0.1,
+        "y": 0.45,
+        "w": 0.8,
+        "h": 0.03
+      }
+    ],
+    "guarantees": [
+      {
+        "code": "GENERAL_LIABILITY",
+        "labelOriginal": "General Liability (Premises)",
+        "page": 1,
+        "amountOriginal": 20000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 20000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "GOODS_IN_CUSTODY",
+        "labelOriginal": "Goods under custody",
+        "page": 1,
+        "amountOriginal": 2000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 2000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "EMPLOYERS_LIABILITY",
+        "labelOriginal": "Employers' Liability",
+        "page": 1,
+        "amountOriginal": 20000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 20000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "POLLUTION_ACCIDENTAL",
+        "labelOriginal": "Civil liability for Accidental Pollution",
+        "page": 1,
+        "amountOriginal": 20000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 20000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "Products Liability",
+        "page": 1,
+        "amountOriginal": 20000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 20000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "COMPLIANT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": "Prodcut recall (sic)",
+        "page": 1,
+        "amountOriginal": 4000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 4000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "EXTENDED_PRODUCT_LIABILITY",
+        "labelOriginal": "Mixing and Blending",
+        "page": 1,
+        "amountOriginal": 2000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 2000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "DISMANTLING_REFITTING",
+        "labelOriginal": "Dismantling and assembly Cost",
+        "page": 1,
+        "amountOriginal": 4000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 4000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": "Pure Financial Loss",
+        "page": 1,
+        "amountOriginal": 3000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 3000000,
+        "basis": "SUM_INSURED_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      }
+    ],
+    "exclusions": [
+      {
+        "text": "Sanctions clause (standard)",
+        "critical": false
+      },
+      {
+        "text": "Spanish version prevails over English",
+        "critical": false
+      }
+    ],
+    "deductibles": null,
+    "fx": {},
+    "territory": {
+      "statement": null,
+      "usaCanada": "UNCLEAR"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": 56,
+      "riskScoreProvisional": 56,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 20000000,
+          "status": "COMPLIANT",
+          "points": 30,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": 4000000,
+          "status": "BELOW_MINIMUM",
+          "points": 8,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": 3000000,
+          "status": "BELOW_MINIMUM",
+          "points": 3,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "PRESENT",
+          "points": 5,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "PRESENT",
+          "points": 5,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "UNCLEAR",
+          "points": 0,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "REQUEST_CHANGES",
+      "noGoSubtype": null,
+      "failedGates": [],
+      "reviewGates": [
+        "SIGNATURE_PRESENT"
+      ],
+      "needsHumanReview": true,
+      "matchesExpert": true
+    },
+    "accuracyScore": 0.86,
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "PASS",
+      "SIGNATURE_PRESENT": "REVIEW",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    }
+  },
+  {
+    "id": "07",
+    "supplier": "Norgren GmbH (IMI)",
+    "country": "Germany",
+    "code": "DE",
+    "insurer": "Zurich DE",
+    "rating": "AA- · S&P",
+    "policyNumber": "DE-0089-778812",
+    "decision": "FORMAL_DEFECT",
+    "subtype": "No stamp",
+    "score": 22,
+    "provisional": true,
+    "accuracy": 0.95,
+    "currency": "EUR",
+    "expiry": "29 Jun 2025",
+    "expiryDays": 75,
+    "received": "11 Mar 2025",
+    "assignee": "—",
+    "lastAction": "Analysed",
+    "needsReview": false,
+    "mini": {
+      "pl": "BELOW_MINIMUM",
+      "recall": "MISSING",
+      "pfl": "BELOW_MINIMUM"
+    },
+    "secondary": "16 co-insured entities — contracting entity found on the list",
+    "guarantees": [
+      {
+        "code": "COMBINED_GL_PL",
+        "labelOriginal": "Betriebs- und Produkt-Haftpflichtversicherung / Combined limit for General and Product Liability — BI & PD",
+        "page": 1,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_EVENT_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "(inherits combined limit)",
+        "page": 1,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_EVENT_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "EXTENDED_PRODUCT_LIABILITY",
+        "labelOriginal": "erweiterte Produkt-Haftpflicht (named in type of insurance, no sublimit shown)",
+        "page": 1,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "POLLUTION_ACCIDENTAL",
+        "labelOriginal": "Umwelt-Haftpflichtversicherung",
+        "page": 2,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_EVENT_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PROFESSIONAL_INDEMNITY",
+        "labelOriginal": "Berufshaftpflicht für Architekten und Ingenieure",
+        "page": 2,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_EVENT_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": "'named pure financial loss' only within environmental liability"
+      }
+    ],
+    "exclusions": [
+      {
+        "text": "Only the German contract is binding; coverage amounts may be reduced by claim payments",
+        "critical": false
+      }
+    ],
+    "deductibles": null,
+    "fx": {},
+    "territory": {
+      "statement": "Weltweite Exporte / Exports worldwide",
+      "usaCanada": "INCLUDED"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 22,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 5000000,
+          "status": "BELOW_MINIMUM",
+          "points": 7.5,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "PRESENT",
+          "points": 5,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "INCLUDED",
+          "points": 5,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "FORMAL_DEFECT",
+      "failedGates": [
+        "STAMP_PRESENT"
+      ],
+      "reviewGates": [],
+      "needsHumanReview": false,
+      "matchesExpert": true
+    },
+    "accuracyScore": 0.95,
+    "gates": {
+      "stamp": {
+        "state": "fail"
+      },
+      "signature": {
+        "state": "pass"
+      },
+      "insurer": {
+        "state": "pass"
+      },
+      "policyNumber": {
+        "state": "pass"
+      },
+      "dates": {
+        "state": "pass"
+      },
+      "entity": {
+        "state": "pass"
+      },
+      "coinsurance": {
+        "state": "pass"
+      },
+      "documentType": {
+        "state": "pass"
+      }
+    },
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "PASS",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/07_p1.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 2,
+        "imageUrl": "/pages/07_p2.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 3,
+        "imageUrl": "/pages/07_p3.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 4,
+        "imageUrl": "/pages/07_p4.jpeg",
+        "lang": "de"
+      }
+    ]
+  },
+  {
+    "id": "08",
+    "supplier": "CeramTec GmbH",
+    "country": "Germany",
+    "code": "DE",
+    "insurer": "Allianz AGCS",
+    "rating": "AA · S&P",
+    "policyNumber": "DE-AGCS-55014",
+    "decision": "FORMAL_DEFECT",
+    "subtype": "No stamp",
+    "score": 20,
+    "provisional": true,
+    "accuracy": 0.96,
+    "currency": "EUR",
+    "expiry": "31 Dec 2025",
+    "expiryDays": 260,
+    "received": "02 Apr 2025",
+    "assignee": "R. Mekouar",
+    "lastAction": "Analysed",
+    "needsReview": false,
+    "mini": {
+      "pl": "MISSING",
+      "recall": "BELOW_MINIMUM",
+      "pfl": "MISSING"
+    },
+    "secondary": "Recall €5M — compliant under the Expert profile",
+    "flipsOnExpert": true,
+    "guarantees": [
+      {
+        "code": "AUTOMOTIVE_RECALL",
+        "labelOriginal": "Rückrufkosten-Haftpflichtversicherung für Kfz-Teile-Zulieferer / Recall Liability Insurance for Automotive Component Suppliers — pure financial loss",
+        "page": 2,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_OCCURRENCE_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": "(automotive recall counts toward product recall)",
+        "page": 2,
+        "amountOriginal": 5000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 5000000,
+        "basis": "PER_OCCURRENCE_AND_ANNUAL",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": "Recall-only certificate"
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": "Restricted to enumerated recall expenses"
+      }
+    ],
+    "exclusions": [
+      {
+        "text": "No coverage for bodily injury or property damage as such",
+        "critical": false
+      }
+    ],
+    "deductibles": null,
+    "fx": {},
+    "territory": {
+      "statement": "weltweit/worldwide",
+      "usaCanada": "INCLUDED"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 20,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": 5000000,
+          "status": "BELOW_MINIMUM",
+          "points": 10,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "INCLUDED",
+          "points": 5,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "FORMAL_DEFECT",
+      "failedGates": [
+        "STAMP_PRESENT"
+      ],
+      "reviewGates": [],
+      "needsHumanReview": false,
+      "matchesExpert": false
+    },
+    "accuracyScore": 0.96,
+    "gates": {
+      "stamp": {
+        "state": "fail"
+      },
+      "signature": {
+        "state": "pass"
+      },
+      "insurer": {
+        "state": "pass"
+      },
+      "policyNumber": {
+        "state": "pass"
+      },
+      "dates": {
+        "state": "pass"
+      },
+      "entity": {
+        "state": "pass"
+      },
+      "coinsurance": {
+        "state": "pass"
+      },
+      "documentType": {
+        "state": "pass"
+      }
+    },
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "PASS",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/08_p1.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 2,
+        "imageUrl": "/pages/08_p2.jpeg",
+        "lang": "de"
+      }
+    ]
+  },
+  {
+    "id": "09",
+    "supplier": "Polyvlies Franz Beyer",
+    "country": "Germany",
+    "code": "DE",
+    "insurer": "Allianz DE",
+    "rating": "AA · S&P",
+    "policyNumber": "DE-AZ-330871",
+    "decision": "FORMAL_DEFECT",
+    "subtype": "No stamp",
+    "score": 50,
+    "provisional": true,
+    "accuracy": 0.92,
+    "currency": "EUR",
+    "expiry": "01 Apr 2025",
+    "expiryDays": -14,
+    "received": "14 Jan 2025",
+    "assignee": "L. Fontaine",
+    "lastAction": "Expired",
+    "needsReview": false,
+    "mini": {
+      "pl": "BELOW_MINIMUM",
+      "recall": "COVERED_NO_AMOUNT",
+      "pfl": "BELOW_MINIMUM"
+    },
+    "secondary": "Cover letter carries personal data — masked",
+    "contact": "nicole.hoffmann@polyvlies.de",
+    "guarantees": [
+      {
+        "code": "COMBINED_GL_PL",
+        "labelOriginal": "Personen-, Sach- und Vermögensschäden pauschal — 5,000,000 EUR any one occurrence / 10,000,000 EUR aggregate (CSL incl. pure financial loss)",
+        "page": 3,
+        "amountOriginal": 10000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 10000000,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": "aggregate retained per Q12; per-occurrence 5M"
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "Produkthaftpflicht (inherits CSL aggregate)",
+        "page": 2,
+        "amountOriginal": 10000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 10000000,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "EXTENDED_PRODUCT_LIABILITY",
+        "labelOriginal": "Sublimit erweiterte Produkthaftpflicht — 10,000,000 EUR per occurrence / 20,000,000 EUR aggregate",
+        "page": 3,
+        "amountOriginal": 20000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 20000000,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "DISMANTLING_REFITTING",
+        "labelOriginal": "Aus- und Einbaukosten (within extended product liability)",
+        "page": 2,
+        "amountOriginal": 20000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 20000000,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": "Vermögensschäden within CSL",
+        "page": 3,
+        "amountOriginal": 10000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 10000000,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "CONSEQUENTIAL_FINANCIAL_LOSS",
+        "labelOriginal": "(consequential losses within CSL)",
+        "page": 3,
+        "amountOriginal": 10000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 10000000,
+        "basis": "ANNUAL_AGGREGATE",
+        "deductible": null,
+        "status": "COMPLIANT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "MISSING",
+        "confidence": 0.95,
+        "note": null
+      }
+    ],
+    "exclusions": [],
+    "deductibles": null,
+    "fx": {},
+    "territory": {
+      "statement": "weltweit / worldwide incl. USA, US-territories and Canada",
+      "usaCanada": "INCLUDED"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 50,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 10000000,
+          "status": "BELOW_MINIMUM",
+          "points": 15,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": 10000000,
+          "status": "BELOW_MINIMUM",
+          "points": 10,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": 10000000,
+          "status": "COMPLIANT",
+          "points": 5,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "PRESENT",
+          "points": 5,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "PRESENT",
+          "points": 5,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "INCLUDED",
+          "points": 5,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "FORMAL_DEFECT",
+      "failedGates": [
+        "STAMP_PRESENT"
+      ],
+      "reviewGates": [],
+      "needsHumanReview": false,
+      "matchesExpert": false
+    },
+    "accuracyScore": 0.92,
+    "gates": {
+      "stamp": {
+        "state": "fail"
+      },
+      "signature": {
+        "state": "pass"
+      },
+      "insurer": {
+        "state": "pass"
+      },
+      "policyNumber": {
+        "state": "pass"
+      },
+      "dates": {
+        "state": "pass"
+      },
+      "entity": {
+        "state": "pass"
+      },
+      "coinsurance": {
+        "state": "pass"
+      },
+      "documentType": {
+        "state": "pass"
+      }
+    },
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "PASS",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/09_p1.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 2,
+        "imageUrl": "/pages/09_p2.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 3,
+        "imageUrl": "/pages/09_p3.jpeg",
+        "lang": "de"
+      },
+      {
+        "n": 4,
+        "imageUrl": "/pages/09_p4.jpeg",
+        "lang": "de"
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "supplier": "Metraton S.r.l.",
+    "country": "Italy",
+    "code": "IT",
+    "insurer": "Generali Italia",
+    "rating": "A · S&P",
+    "policyNumber": "IT-GEN-902244",
+    "decision": "FORMAL_DEFECT",
+    "subtype": "No stamp",
+    "score": 60,
+    "provisional": true,
+    "accuracy": 0.88,
+    "currency": "EUR",
+    "expiry": "12 Jul 2025",
+    "expiryDays": 88,
+    "received": "22 Feb 2025",
+    "assignee": "—",
+    "lastAction": "Analysed",
+    "needsReview": false,
+    "mini": {
+      "pl": "COMPLIANT",
+      "recall": "BELOW_MINIMUM",
+      "pfl": "COMPLIANT"
+    },
+    "secondary": "Best coverage in the batch — PL €50M, recall €10M",
+    "guarantees": [
+      {
+        "code": "GENERAL_LIABILITY",
+        "labelOriginal": "Third Party Liability €50,000,000 e.e.l.",
+        "page": 1,
+        "amountOriginal": 50000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 50000000,
+        "basis": "EACH_LOSS_AND_ANNUAL",
+        "deductible": null,
+        "status": "PRESENT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_LIABILITY",
+        "labelOriginal": "Products Liability €50,000,000 e.e.l.",
+        "page": 1,
+        "amountOriginal": 50000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 50000000,
+        "basis": "EACH_LOSS_AND_ANNUAL",
+        "deductible": null,
+        "status": "COMPLIANT",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PRODUCT_RECALL",
+        "labelOriginal": "Recall €10,000,000 e.e.l.",
+        "page": 1,
+        "amountOriginal": 10000000,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": 10000000,
+        "basis": "EACH_LOSS",
+        "deductible": null,
+        "status": "BELOW_MINIMUM",
+        "confidence": 0.95,
+        "note": null
+      },
+      {
+        "code": "PURE_FINANCIAL_LOSS",
+        "labelOriginal": null,
+        "page": null,
+        "amountOriginal": null,
+        "currency": "EUR",
+        "fxRate": 1,
+        "amountEur": null,
+        "basis": null,
+        "deductible": null,
+        "status": "UNCLEAR",
+        "confidence": 0.95,
+        "note": "Not isolated; may be within €50M 'all guarantees' — clarification needed"
+      }
+    ],
+    "exclusions": [
+      {
+        "text": "No coverage for punitive and/or exemplary damages",
+        "critical": false
+      }
+    ],
+    "deductibles": null,
+    "fx": {},
+    "territory": {
+      "statement": "Worldwide",
+      "usaCanada": "INCLUDED"
+    },
+    "trigger": "UNSTATED",
+    "basisSummary": "BOTH",
+    "computed": {
+      "profile": "FORVIA_GPTC_DEFAULT",
+      "riskScore": null,
+      "riskScoreProvisional": 60,
+      "breakdown": {
+        "PRODUCT_LIABILITY": {
+          "required": 20000000,
+          "found": 50000000,
+          "status": "COMPLIANT",
+          "points": 30,
+          "max": 30
+        },
+        "PRODUCT_RECALL": {
+          "required": 15000000,
+          "found": 10000000,
+          "status": "BELOW_MINIMUM",
+          "points": 20,
+          "max": 30
+        },
+        "PURE_FINANCIAL_LOSS": {
+          "required": 15000000,
+          "found": null,
+          "status": "UNCLEAR",
+          "points": 0,
+          "max": 15
+        },
+        "CONSEQUENTIAL_FINANCIAL_LOSS": {
+          "required": 1000000,
+          "found": null,
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "DISMANTLING_REFITTING": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "EXTENDED_PRODUCT_LIABILITY": {
+          "required": "PRESENT",
+          "status": "MISSING",
+          "points": 0,
+          "max": 5
+        },
+        "TERRITORY_USA_CANADA": {
+          "status": "INCLUDED",
+          "points": 5,
+          "max": 5
+        },
+        "AGGREGATE_BASIS": {
+          "status": "BOTH",
+          "points": 5,
+          "max": 5
+        },
+        "_penalties": 0
+      },
+      "decision": "NO_GO",
+      "noGoSubtype": "FORMAL_DEFECT",
+      "failedGates": [
+        "STAMP_PRESENT"
+      ],
+      "reviewGates": [],
+      "needsHumanReview": false,
+      "matchesExpert": false
+    },
+    "accuracyScore": 0.88,
+    "gates": {
+      "stamp": {
+        "state": "fail"
+      },
+      "signature": {
+        "state": "pass"
+      },
+      "insurer": {
+        "state": "pass"
+      },
+      "policyNumber": {
+        "state": "pass"
+      },
+      "dates": {
+        "state": "pass"
+      },
+      "entity": {
+        "state": "pass"
+      },
+      "coinsurance": {
+        "state": "pass"
+      },
+      "documentType": {
+        "state": "pass"
+      }
+    },
+    "ruleGates": {
+      "DOCUMENT_IS_CERTIFICATE": "PASS",
+      "ISSUER_IS_INSURER": "PASS",
+      "INSURER_IDENTIFIED": "PASS",
+      "INSURER_RATING_FLOOR": "PASS",
+      "STAMP_PRESENT": "FAIL",
+      "SIGNATURE_PRESENT": "PASS",
+      "POLICY_NUMBER_PRESENT": "PASS",
+      "DATES_PRESENT": "PASS",
+      "NOT_EXPIRED": "PASS",
+      "ENTITY_MATCH": "PASS",
+      "COINSURANCE_COMPLETE": "PASS",
+      "CAPTIVE_FRONTED": "PASS",
+      "FILE_FORMAT_OK": "PASS"
+    },
+    "pages": [
+      {
+        "n": 1,
+        "imageUrl": "/pages/10_p1.jpeg",
+        "lang": "en"
+      }
+    ]
+  }
+]
