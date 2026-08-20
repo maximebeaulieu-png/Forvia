@@ -14,7 +14,7 @@ Source status from the "Questions Forvia" workbook (21/08/2026 offer deadline): 
 | C4 | **Score granularity** | Spec: one risk score | Q06/Q10/Q11: global + per-guarantee + colour + explicit reasons | All of the above (breakdown object) |
 | C5 | **Accuracy score meaning** | Spec ambiguous (extraction vs document reliability) | Q23: extraction confidence | Extraction confidence; document reliability is handled by gates |
 | C6 | **Ariba development** | Early hypothesis: none on Ariba side | Q35: custom questionnaire fields must be created by FORVIA IT | Documented in 08 §6; mock in POC |
-| C7 | **LLM hosting** | Spec: open-source LLM hosted in France | Vincent: is it "open source" or "data stays in France"? | **Closed 20/08/2026: French-hosted endpoint provided by AlphaEdge** (`LLM_PROVIDER=alphaedge`). Open-weights or not = to state in the offer. See U1–U4 below. |
+| C7 | **LLM hosting** | Spec: open-source LLM hosted in France | Vincent: is it "open source" or "data stays in France"? | **Closed 20/08/2026 — and corrected the same day: AlphaEdge is an OCR API, not an LLM** (catalogue = OCR + audio only). OCR leg is FR-hosted (`alpha-digit-max`, probe in `docs/eval/llm_probe.md`); the **reasoning LLM is a re-opened decision** for the pipeline sprint (candidate: Claude/Anthropic, with the §4.4 caveat that this leg would not be FR-hosted — documents themselves only transit through the FR OCR). U1–U4 closed via the probe (docs/07 §13). |
 | C8 | **Sample quality** | Damien sent "validated" certificates | Richard: none passes as is | Demo narrative: "your best one scores 12" — handle with care (see README §5) |
 
 ## B. Open questions that change the build (P1 first)

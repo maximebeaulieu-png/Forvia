@@ -1,6 +1,6 @@
 # Sprint 0 + Certificate Analysis Screen — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Scaffold the CoverScan monorepo and deliver the Certificate analysis screen fed by cached data, with the AlphaEdge OCR client probed, viewable at `http://localhost:3100` with zero external dependencies.
 
@@ -54,10 +54,10 @@ Root `package.json`:
 `turbo.json`: tasks `build` (dependsOn `^build`, outputs `.next/**`, `dist/**`), `dev` (cache false, persistent true), `test` (dependsOn `^build`).
 Package stubs: `{ "name": "@coverscan/<name>", "version": "0.0.1", "type": "module", "main": "src/index.ts", "types": "src/index.ts" }`; schemas + llm add `"scripts": {"test": "vitest run"}` and devDeps `vitest`, `typescript`; llm adds `tsx` + script `"probe": "tsx src/ocr/probe.ts"`.
 
-- [ ] Step 1: write all files above
-- [ ] Step 2: `pnpm install` → lockfile created, no errors
-- [ ] Step 3: `git status` → verify `.env.local` and `node_modules` absent from untracked list
-- [ ] Step 4: commit `chore: scaffold pnpm+turbo monorepo`
+- [x] Step 1: write all files above
+- [x] Step 2: `pnpm install` → lockfile created, no errors
+- [x] Step 3: `git status` → verify `.env.local` and `node_modules` absent from untracked list
+- [x] Step 4: commit `chore: scaffold pnpm+turbo monorepo`
 
 ### Task 2: Next.js app on port 3100
 
@@ -71,10 +71,10 @@ Package stubs: `{ "name": "@coverscan/<name>", "version": "0.0.1", "type": "modu
 `app/page.tsx`: `redirect('/certificates/04')` (server component, `next/navigation`).
 `app/layout.tsx`: minimal html/body shell for now (fonts arrive Task 3).
 
-- [ ] Step 1: write files, `pnpm install`
-- [ ] Step 2: `pnpm --filter web build` → passes
-- [ ] Step 3: start dev, `curl -s -o /dev/null -w "%{http_code}" http://localhost:3100` → 307/404 acceptable (redirect target not built yet), server responds; stop server
-- [ ] Step 4: commit `feat(web): next.js app skeleton on port 3100`
+- [x] Step 1: write files, `pnpm install`
+- [x] Step 2: `pnpm --filter web build` → passes
+- [x] Step 3: start dev, `curl -s -o /dev/null -w "%{http_code}" http://localhost:3100` → 307/404 acceptable (redirect target not built yet), server responds; stop server
+- [x] Step 4: commit `feat(web): next.js app skeleton on port 3100`
 
 ### Task 3: Design tokens + fonts + Tailwind v4
 
@@ -123,20 +123,20 @@ Package stubs: `{ "name": "@coverscan/<name>", "version": "0.0.1", "type": "modu
 ```
 `layout.tsx`: `Inter({ subsets:['latin'], variable:'--font-inter' })`, `JetBrains_Mono({ subsets:['latin'], variable:'--font-jetbrains-mono' })` from `next/font/google` (self-hosted at build by Next); classes on `<html>`; `<body className="bg-background text-foreground font-sans">`.
 
-- [ ] Step 1: copy the 7 token files (`styles.css` itself is replaced by globals.css imports), edit fonts.css as above
-- [ ] Step 2: temporary marker in `page.tsx`… skip — instead `pnpm --filter web build` passes
-- [ ] Step 3: grep check: `grep -rn "fonts.googleapis\|url(http" apps/web/styles/` → no hits
-- [ ] Step 4: commit `feat(web): DS tokens as single style source + self-hosted fonts`
+- [x] Step 1: copy the 7 token files (`styles.css` itself is replaced by globals.css imports), edit fonts.css as above
+- [x] Step 2: temporary marker in `page.tsx`… skip — instead `pnpm --filter web build` passes
+- [x] Step 3: grep check: `grep -rn "fonts.googleapis\|url(http" apps/web/styles/` → no hits
+- [x] Step 4: commit `feat(web): DS tokens as single style source + self-hosted fonts`
 
 ### Task 4: shadcn primitives
 
 **Files:**
 - Create: `apps/web/components.json`, `apps/web/lib/utils.ts` (cn), `apps/web/components/ui/*` via CLI
 
-- [ ] Step 1: `pnpm dlx shadcn@latest init` (style: new-york, base color: neutral, CSS variables: yes → point to `app/globals.css`); accept it wiring to existing vars — do NOT let it overwrite token values: re-diff `globals.css`/`colors.css` after init and revert any palette it injected (our DS values win)
-- [ ] Step 2: `pnpm dlx shadcn@latest add button badge card table tabs sheet tooltip input select progress accordion separator`
-- [ ] Step 3: `pnpm --filter web build` passes; `git diff apps/web/styles/` empty (tokens untouched)
-- [ ] Step 4: commit `feat(web): shadcn primitives wired to DS tokens`
+- [x] Step 1: `pnpm dlx shadcn@latest init` (style: new-york, base color: neutral, CSS variables: yes → point to `app/globals.css`); accept it wiring to existing vars — do NOT let it overwrite token values: re-diff `globals.css`/`colors.css` after init and revert any palette it injected (our DS values win)
+- [x] Step 2: `pnpm dlx shadcn@latest add button badge card table tabs sheet tooltip input select progress accordion separator`
+- [x] Step 3: `pnpm --filter web build` passes; `git diff apps/web/styles/` empty (tokens untouched)
+- [x] Step 4: commit `feat(web): shadcn primitives wired to DS tokens`
 
 ### Task 5: `@coverscan/schemas` — enums + cached-certificate contract
 
@@ -174,7 +174,7 @@ it("review wins over REQUEST_CHANGES", () => {
 ```
 (vitest config: `resolve.alias` not needed; enable `json` imports via `assert` type or `import raw from ... with { type: "json" }` per Node 22.)
 
-- [ ] Step 1: failing tests → Step 2: implement → Step 3: `pnpm --filter @coverscan/schemas test` green → Step 4: commit `feat(schemas): enums + cached certificate contract`
+- [x] Step 1: failing tests → Step 2: implement → Step 3: `pnpm --filter @coverscan/schemas test` green → Step 4: commit `feat(schemas): enums + cached certificate contract`
 
 ### Task 6: cached data build + repository
 
@@ -210,7 +210,7 @@ it("cert 04 is the broker NO_GO case", () => {
 it("unknown id returns undefined", () => expect(getCertificate("99")).toBeUndefined());
 ```
 
-- [ ] Steps: failing test → script → run script (validates via zod) → test green → `git add` generated JSON + images → commit `feat(web): cached data build + certificate repository`
+- [x] Steps: failing test → script → run script (validates via zod) → test green → `git add` generated JSON + images → commit `feat(web): cached data build + certificate repository`
 
 ### Task 7: formatters
 
@@ -227,7 +227,7 @@ it("unknown id returns undefined", () => expect(getCertificate("99")).toBeUndefi
 
 Tests: one assertion per example above, plus `daysLeft("2025-05-31","2025-04-15") === 46` (the "Chubb 46 days" fact) and `confidenceGlyph(0.85) === "●"`.
 
-- [ ] Steps: red → implement → green → commit `feat(web): amount/date/confidence formatters`
+- [x] Steps: red → implement → green → commit `feat(web): amount/date/confidence formatters`
 
 ### Task 8: verdict components
 
@@ -258,7 +258,7 @@ it("locked label for formal defect", () => {
 });
 ```
 
-- [ ] Steps: red → implement 5 components → green → add all 5 to `/specimens` with the states shown in `verdict.card.html` → visual check vs card → commit `feat(web): verdict components`
+- [x] Steps: red → implement 5 components → green → add all 5 to `/specimens` with the states shown in `verdict.card.html` → visual check vs card → commit `feat(web): verdict components`
 
 ### Task 9: coverage components
 
@@ -280,7 +280,7 @@ it("missing renders empty track and no fill", () => { /* found null, status MISS
 it("findings sorted by severity", () => { /* pass shuffled severities, assert DOM order BLOCK first */ });
 ```
 
-- [ ] Steps: red → implement → green → extend `/specimens` (coverage.card.html states) → commit `feat(web): coverage components`
+- [x] Steps: red → implement → green → extend `/specimens` (coverage.card.html states) → commit `feat(web): coverage components`
 
 ### Task 10: document components
 
@@ -292,7 +292,7 @@ it("findings sorted by severity", () => { /* pass shuffled severities, assert DO
 
 Tests: MaskedText hides content until clicked then shows + fires onReveal; ProcessingStepper renders 8 steps with current state; ProfileSwitcher Expert disabled.
 
-- [ ] Steps: red → implement → green → extend `/specimens` → commit `feat(web): document components`
+- [x] Steps: red → implement → green → extend `/specimens` → commit `feat(web): document components`
 
 ### Task 11: API routes + Certificate analysis screen
 
@@ -306,7 +306,7 @@ Tests: MaskedText hides content until clicked then shows + fires onReveal; Proce
 
 Tests: renders cert 04 with `Not admissible` chip family; tab switching shows Extracted data; screen for id 99 → `notFound()`.
 
-- [ ] Steps: red → implement → green → `pnpm --filter web build` → manual dev check of `/certificates/04` and 2–3 others → commit `feat(web): certificate analysis screen + api`
+- [x] Steps: red → implement → green → `pnpm --filter web build` → manual dev check of `/certificates/04` and 2–3 others → commit `feat(web): certificate analysis screen + api`
 
 ### Task 12: AlphaEdge OCR client (`@coverscan/llm`)
 
@@ -327,7 +327,7 @@ Behaviour: POST `${baseUrl}/models/${model}/ocr`, multipart field **`image`** (n
 
 Tests use `vi.stubGlobal("fetch", …)`: (1) sends field `image` + header; (2) retries once on 500 then succeeds; (3) second identical call hits cache (fetch called once); (4) 422 throws without retry.
 
-- [ ] Steps: red → implement → green → commit `feat(llm): alphaedge ocr client with retry/throttle/cache`
+- [x] Steps: red → implement → green → commit `feat(llm): alphaedge ocr client with retry/throttle/cache`
 
 ### Task 13: OCR probe (real API run)
 
@@ -337,7 +337,7 @@ Tests use `vi.stubGlobal("fetch", …)`: (1) sends field `image` + header; (2) r
 
 Probe: loads `../../.env.local` (dotenv or manual parse), iterates all `data/samples/*/pages/*.jpeg` (~26), runs `alpha-digit-max` on each + `alpha-digit-medium` on each, computes per-page word-similarity vs sibling `.txt` (SequenceMatcher-style ratio — implement `similarity(a,b)` over word arrays with a small LCS or use `difflib`-equivalent simple ratio), tests `enable_bbox` on ONE page and records the response shape, then writes `docs/eval/llm_probe.md`: table per page (cert, page, model, confidence, seconds, similarity), aggregates per model, bbox findings, recommendation line, and closes U1–U4 (vision: N/A — OCR-only provider; JSON: multipart REST; context: per-page; throughput: measured). Respect throttle; total cost note (<€0.05).
 
-- [ ] Steps: implement → `pnpm ocr:probe` (real run, ~3–5 min) → review report numbers are plausible → commit `docs(eval): alphaedge ocr probe report` (report + cache excluded: add `.cache/` to `.gitignore`)
+- [x] Steps: implement → `pnpm ocr:probe` (real run, ~3–5 min) → review report numbers are plausible → commit `docs(eval): alphaedge ocr probe report` (report + cache excluded: add `.cache/` to `.gitignore`)
 
 ### Task 14: conformance test, docs updates, final gate
 
@@ -349,4 +349,4 @@ Ground-truth test: for each of the 10 cached certs, assert `toDisplayStatus(comp
 
 Docs edits (surgical, per spec §9): 07 → AlphaEdge = OCR REST + probe numbers + text-first primary; 08 → front decision + JSON repository note + §9 env vars replaced by real ones (`ALPHAEDGE_BASE_URL/API_KEY/OCR_MODEL`); 09 → C7 closed as OCR-only, reason-LLM open w/ Anthropic candidate + §4.4 caveat; CLAUDE.md → clock 2025-04-15 + OCR reality + port 3100; `.env.example` → rewrite (OCR vars; `DATABASE_URL`/`DEMO_MODE` commented "Sprint 1+"); README → quickstart `pnpm install && pnpm dev` → http://localhost:3100.
 
-- [ ] Steps: conformance test green → docs edits → `pnpm build && pnpm test` all green → commit `docs: align pipeline/env docs with OCR reality + quickstart` → final: leave `pnpm dev` running for the user
+- [x] Steps: conformance test green → docs edits → `pnpm build && pnpm test` all green → commit `docs: align pipeline/env docs with OCR reality + quickstart` → final: leave `pnpm dev` running for the user

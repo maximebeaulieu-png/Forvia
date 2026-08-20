@@ -19,7 +19,7 @@ coverscan/
 │   ├── schemas/                  zod schemas + generated JSON Schema (ExtractionResult, NormalizedCertificate, Scoring, Profile, AribaPayload)
 │   ├── rules/                    taxonomy, amount/basis parsing, fx, gates, scoring, decision, findings, explain-template  (pure TS, vitest ≥ 90 %)
 │   ├── pipeline/                 tools: ingest, ocr, classify, extract, normalize, verify, visual, explain, persist; orchestrator (Mastra workflow or plain async)
-│   ├── llm/                      provider adapter (alphaedge = OpenAI-compatible FR-hosted endpoint [default] | anthropic [local dev]), probe, retries, JSON repair, cost/latency logging
+│   ├── llm/                      ocr/ = AlphaEdge OCR client (multipart REST, retry/throttle/disk cache) + probe · reason/ = ReasonProvider interface (provider decided at pipeline sprint)
 │   └── db/                       Drizzle schema + migrations (Postgres; SQLite for local)
 ├── data/
 │   ├── samples/                  10 certificates (pages, text, expected.json) + ground_truth.json + synthetic/ (140 generated rows for charts)
@@ -103,7 +103,15 @@ Design for V1: connector service with queue, pagination, 429 backoff, idempotent
 
 ## 9. Local dev
 
-`pnpm i` · `pnpm db:push` · `pnpm seed` (loads registry, 10 samples with cached outputs, synthetic set) · `pnpm dev` · `pnpm eval` · `pnpm test`. Env: `LLM_PROVIDER=alphaedge`, `ALPHAEDGE_BASE_URL`, `ALPHAEDGE_API_KEY`, `ALPHAEDGE_MODEL`, `ALPHAEDGE_VISION_MODEL` (optional), `LLM_MODE=vision|text-first` (set by probe), `ANTHROPIC_API_KEY` (local fallback only), `DEMO_MODE`, `DEMO_CLOCK=2025-04-15`, `DATABASE_URL`, `FX_SOURCE=ecb|cache`. Scripts: `pnpm llm:probe`, `pnpm catalogue:build` (runs `tools/build_check_catalogue.py`).
+`pnpm i` · `pnpm db:push` · `pnpm seed` (loads registry, 10 samples with cached outputs, synthetic set) · `pnpm dev` · `pnpm eval` · `pnpm test`. Env (`.env.local`): `ALPHAEDGE_BASE_URL`, `ALPHAEDGE_API_KEY`, `ALPHAEDGE_OCR_MODEL=alpha-digit-max`; later sprints add `ANTHROPIC_API_KEY` (reasoning candidate), `DEMO_MODE`, `DEMO_CLOCK=2025-04-15`, `DATABASE_URL`, `FX_SOURCE=ecb|cache`. Scripts: `pnpm ocr:probe`, `pnpm catalogue:build` (runs `tools/build_check_catalogue.py`).
 
 ## 10. Non-goals (POC)
 Real Ariba calls; email sending; SSO; multi-tenant; fine-tuning; PDF forensic authenticity; mobile layout (desktop-first, readable on tablet).
+
+
+## 11. Decision log — 20/08/2026 (Sprint 0 build)
+
+- **Front-end**: the exported design system (`design-pack/Design System Cover Scan/`) is the visual source of truth (tokens, `.d.ts` contracts, locked labels, ui_kit as composition blueprint); components are **re-implemented in shadcn/Tailwind v4**, the DS token CSS files are copied verbatim as the single style source and the Tailwind theme references only `var(--…)`. No raw hex/px in components.
+- **Data**: no DB in Sprint 0 — `CertificateRepository` serves `apps/web/data/certificates.json` (10 real certs, zod-validated at build by `apps/web/scripts/build-cached-data.mjs`); Drizzle/Postgres lands behind the same interface in the next sprint.
+- **Dev server**: port **3100**.
+- **AlphaEdge = OCR-only** (see docs/07 §13); spec for this build: `docs/superpowers/specs/2026-08-20-sprint0-core-screen-design.md`.

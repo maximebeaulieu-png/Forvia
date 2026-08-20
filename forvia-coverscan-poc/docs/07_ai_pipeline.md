@@ -104,3 +104,13 @@ Day-1 probe (`pnpm llm:probe`) must record in `docs/eval/llm_probe.md`:
 5. Determinism at temperature 0 (run sample 04 three times; diff outputs).
 6. Languages: quick check on DE/IT/ES pages of the samples.
 Known unknowns are logged in `docs/09` (U1–U4). Cost: ~6 pages × vision + ~6k text tokens in, ~3k out per certificate; 8,000/year is negligible on any hosted model.
+
+
+## 13. Reality update — 20/08/2026 (probe run)
+
+AlphaEdge is an **OCR REST API** (multipart `image` + `X-API-Key`), not an OpenAI-compatible chat endpoint; its catalogue has no reasoning model. Consequences, superseding §5/§12 where they conflict:
+
+- **`text-first` is the primary mode** (AlphaEdge OCR → text → extraction), not a fallback. Vision-LLM mode is N/A with this provider.
+- OCR probe executed on all 24 sample pages × 2 models (`docs/eval/llm_probe.md`): `alpha-digit-max` mean confidence 0.969, ~4.8 s/page, word similarity 0.60 vs reference text; `alpha-digit-medium` silently truncates ~10 pages — never use as primary without an output-length sanity check. **Default: `alpha-digit-max`.** At ~4.8 s/page, per-certificate OCR must run pages in parallel to hold the <30 s budget.
+- `enable_bbox` returns **pixel-based, region-level** boxes (words carry no geometry) — normalize by page dimensions before feeding DocumentViewer overlays.
+- The reasoning LLM (classify / extract hints / explain) is an **open decision** for the pipeline sprint; `ReasonProvider` interface stub exists in `packages/llm`. U1–U4 are closed accordingly: U1 vision = N/A (OCR-only provider); U2 = REST multipart, no JSON mode involved; U3 context = per-page; U4 throughput measured ~20 calls/min sustained in the probe.

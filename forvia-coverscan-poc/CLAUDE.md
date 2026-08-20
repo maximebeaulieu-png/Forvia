@@ -37,7 +37,8 @@ Internal team is French; code comments and commit messages in English.
 - `packages/pipeline`: Mastra (agents + tools) or plain TS orchestrator if Mastra adds friction — tools are pure functions either way.
 - `packages/rules`: rules engine (zod schemas, pure functions, 100% unit-tested against ground truth).
 - `packages/schemas`: zod + JSON Schema shared types.
-- LLM: **French-hosted endpoint provided by AlphaEdge** (decided 20/08/2026; API credentials will be given in Claude Code — never commit them). Implement it as `LLM_PROVIDER=alphaedge` on the OpenAI-compatible adapter (`ALPHAEDGE_BASE_URL`, `ALPHAEDGE_API_KEY`, `ALPHAEDGE_MODEL`, optional `ALPHAEDGE_VISION_MODEL`). Keep `anthropic` only as a local dev fallback behind the same interface. Day-1 task: run `pnpm llm:probe` (see docs/07 §12) to confirm vision support, JSON mode, context length and throughput — the pipeline must degrade to **text-first mode** (OCR + text extraction, deterministic stamp/signature heuristics) if the hosted model has no vision.
+- OCR: **AlphaEdge — French-hosted OCR REST API** (reality confirmed 20/08/2026: AlphaEdge's catalogue is OCR + audio transcription, NOT a chat LLM). Client in `packages/llm/src/ocr`: POST multipart field `image`, header `X-API-Key`; env `ALPHAEDGE_BASE_URL`, `ALPHAEDGE_API_KEY`, `ALPHAEDGE_OCR_MODEL=alpha-digit-max` in `.env.local` (never commit). Probe report: `docs/eval/llm_probe.md` (alpha-digit-max: 0.969 confidence, ~4.8 s/page; alpha-digit-medium silently truncates — never primary). **`text-first` is the primary pipeline mode** (OCR → text → extraction), not a degraded mode.
+- Reasoning LLM (classify / extract / explain): **provider decision deferred to the pipeline sprint**. Interface stub `ReasonProvider` in `packages/llm/src/reason`. Default candidate: Claude/Anthropic — flag in the offer that this leg is not FR-hosted (§4.4 caveat); the documents themselves transit through the FR-hosted OCR.
 - DB: Postgres via Drizzle (SQLite acceptable for local dev). Object storage: local `/storage` in POC.
 - OCR fallback: Tesseract (`tesseract.js`) when text layer is absent or garbled (see sample 06).
 - Python allowed only in `tools/eval` for the benchmark harness if convenient.
@@ -47,7 +48,7 @@ Internal team is French; code comments and commit messages in English.
 - Status enum (global): `PENDING | PROCESSING | NEEDS_REVIEW | NO_GO | REQUEST_CHANGES | GO`.
 - Guarantee compliance enum: `COMPLIANT | BELOW_MINIMUM | MISSING | COVERED_NO_AMOUNT | EXCLUDED | UNCLEAR`.
 - Money: store integer minor units + ISO currency; convert once at analysis time with ECB rate of the **reference date**; persist rate and date.
-- Dates: ISO 8601, UTC. Analysis has a `referenceDate` (default = reception date; demo default `2025-03-15`).
+- Dates: ISO 8601, UTC. Analysis has a `referenceDate` (default = reception date; demo default `2025-04-15`).
 - All user-facing strings in `apps/web/messages/en.json` (i18n-ready even if English-only now).
 - Components: shadcn primitives only; custom components in `apps/web/components/coverscan/`. Design tokens in `design-system/tokens.md`.
 - Tests: `vitest`. Rules engine coverage ≥ 90%. Pipeline eval: `pnpm eval` runs all 10 samples and prints field accuracy + decision match vs ground truth.
@@ -61,6 +62,8 @@ Internal team is French; code comments and commit messages in English.
 
 - `/check-ground-truth` — runs the eval harness and reports deltas against `ground_truth.json`.
 - `/analyze-sample <id>` — runs the full pipeline on one sample and prints the structured result.
+- `pnpm dev` — serves the app on **http://localhost:3100** (port 3000 is taken by another local project).
+- `pnpm ocr:probe` — re-runs the AlphaEdge OCR probe (disk-cached; report in `docs/eval/llm_probe.md`).
 - `pnpm catalogue:build` — regenerates `data/checks/check_catalogue.json` + `docs/11` from `tools/build_check_catalogue.py` (edit the script, never the outputs).
 
 ## Out of scope for the POC (do not build)
