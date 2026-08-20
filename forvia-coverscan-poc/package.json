@@ -1,0 +1,13 @@
+{
+  "name": "coverscan",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "packageManager": "pnpm@10.33.3",
+  "scripts": {
+    "dev": "turbo run dev --filter=web",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "ocr:probe": "pnpm --filter @coverscan/llm probe"
+  },
+  "devDependencies": { "turbo": "^2" }
+}

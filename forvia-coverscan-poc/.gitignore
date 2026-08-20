@@ -5,3 +5,8 @@ node_modules/
 storage/
 dist/
 .next/
+
+# Turbo / Next
+.turbo
+.next
+.cache/
