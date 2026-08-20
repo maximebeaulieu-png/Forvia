@@ -140,7 +140,7 @@ export function DocumentViewer({
           ))}
         </div>
 
-        <div className="flex min-w-0 flex-1 items-start justify-center overflow-auto bg-background p-4">
+        <div className="flex min-w-0 flex-1 items-start justify-center overflow-auto bg-background p-4" tabIndex={0} role="region" aria-label="Document page">
           <div
             className="relative flex-none"
             style={{ width: `${zoom * 100}%`, maxWidth: zoom <= 1 ? "100%" : "none" }}

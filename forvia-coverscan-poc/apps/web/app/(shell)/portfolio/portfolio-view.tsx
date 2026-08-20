@@ -349,7 +349,8 @@ function GapByGuarantee({ rows }: { rows: GuaranteeGapRow[] }) {
           <GapBar
             found={r.median * 100}
             required={r.required * 100}
-            width={340}
+            width="100%"
+            stacked
             label={`median ${compactMajor(r.median)} · ${Math.round((r.median / r.required) * 100)} %`}
           />
         </div>
@@ -445,7 +446,7 @@ function RiskTable({
   onRowClick?: (r: TopRiskRow) => void;
 }) {
   return (
-    <div style={{ overflow: "auto" }}>
+    <div style={{ overflow: "auto" }} tabIndex={0} role="region" aria-label="Top 10 risks table">
       <table style={{ width: "100%", fontSize: "var(--text-dense)", tableLayout: "auto" }}>
         <thead>
           <tr>

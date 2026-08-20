@@ -162,18 +162,31 @@ function FilterSelect({
 
 /* ------------------------------------------------------------ upload zone */
 
-function UploadZone() {
+function UploadZone({ onUpload }: { onUpload: () => void }) {
   const [over, setOver] = React.useState(false);
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label="Upload a certificate — demo replay of certificate 06"
+      title="Demo replay — the live pipeline lands in Sprint 1"
+      onClick={onUpload}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onUpload();
+        }
+      }}
       onDragOver={(e) => {
         e.preventDefault();
         setOver(true);
       }}
       onDragLeave={() => setOver(false)}
       onDrop={(e) => {
+        /* The dropped file is accepted then ignored — this is a demo replay. */
         e.preventDefault();
         setOver(false);
+        onUpload();
       }}
       style={{
         border: `1px dashed ${over ? "var(--primary)" : "var(--border)"}`,
@@ -207,6 +220,9 @@ function UploadZone() {
         PDF or PNG · analysed in under 30 s
       </span>
       <span style={{ flex: 1 }} />
+      <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
+        Demo replay of certificate 06 — live pipeline arrives with Sprint 1
+      </span>
       <span style={{ fontSize: 12, fontWeight: 500, color: "var(--primary)" }}>
         Browse files
       </span>
@@ -495,7 +511,7 @@ export function CertificatesView({
         </ToolbarButton>
       </div>
 
-      <UploadZone />
+      <UploadZone onUpload={() => router.push("/certificates/06?processing=1")} />
 
       <div
         style={{
@@ -530,7 +546,7 @@ export function CertificatesView({
         }}
       >
         <div style={{ padding: 0, flex: 1, minWidth: 0 }}>
-          <div style={{ overflow: "auto" }}>
+          <div style={{ overflow: "auto" }} tabIndex={0} role="region" aria-label="Certificates table">
             <table style={{ width: "100%", fontSize: "var(--text-dense)", tableLayout: "auto" }}>
               <thead>
                 <tr>

@@ -216,6 +216,7 @@ export function DsBadge({
 /* --------------------------------------------------------------- Input --- */
 
 export interface DsInputProps {
+  ariaLabel?: string;
   value?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   placeholder?: string;
@@ -227,12 +228,13 @@ export interface DsInputProps {
   title?: string;
 }
 
-export function DsInput({ value, onChange, placeholder, mono, disabled, readOnly, size = "md", style, title }: DsInputProps) {
+export function DsInput({ value, onChange, placeholder, mono, disabled, readOnly, size = "md", style, title, ariaLabel }: DsInputProps) {
   const [focus, setFocus] = React.useState(false);
   return (
     <input
       value={value}
       onChange={onChange}
+      aria-label={ariaLabel}
       placeholder={placeholder}
       disabled={disabled}
       readOnly={readOnly}
@@ -434,6 +436,7 @@ export function DataTable<Row extends { id: string }>({
 /* ------------------------------------------------------------ Progress --- */
 
 export interface DsProgressProps {
+  ariaLabel?: string;
   value?: number;
   max?: number;
   tone?: "ink" | "go" | "amber" | "red" | "primary";
@@ -442,7 +445,7 @@ export interface DsProgressProps {
   style?: React.CSSProperties;
 }
 
-export function DsProgress({ value = 0, max = 100, tone = "ink", height = 6, label, style }: DsProgressProps) {
+export function DsProgress({ value = 0, max = 100, tone = "ink", height = 6, label, ariaLabel, style }: DsProgressProps) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
   const fill =
     tone === "ink"
@@ -458,6 +461,7 @@ export function DsProgress({ value = 0, max = 100, tone = "ink", height = 6, lab
     <div style={{ display: "flex", alignItems: "center", gap: 8, ...style }}>
       <div
         role="progressbar"
+        aria-label={ariaLabel ?? (typeof label === "string" ? label : "progress")}
         aria-valuenow={value}
         aria-valuemax={max}
         style={{ flex: 1, height, background: "var(--gap-track)", borderRadius: height / 2, overflow: "hidden" }}

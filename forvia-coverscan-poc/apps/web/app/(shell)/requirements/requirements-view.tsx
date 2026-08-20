@@ -123,7 +123,7 @@ export function RequirementsView({ profiles }: { profiles: ProfileItem[] }) {
               <div key={l} style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <span style={{ fontSize: 13, width: 220, flex: "0 0 220px" }}>{l}</span>
                 <span style={{ fontSize: 13, color: "var(--muted-foreground)" }}>EUR</span>
-                <DsInput mono size="sm" value={v} readOnly style={{ width: 150 }} />
+                <DsInput mono size="sm" value={v} readOnly style={{ width: 150 }} ariaLabel={`${l} threshold`} />
               </div>
             ))}
           </div>
@@ -153,7 +153,7 @@ export function RequirementsView({ profiles }: { profiles: ProfileItem[] }) {
                   style={{ display: "grid", gridTemplateColumns: "150px 1fr 34px", gap: 10, alignItems: "center" }}
                 >
                   <span style={{ fontSize: 13 }}>{l}</span>
-                  <DsProgress value={w} max={40} />
+                  <DsProgress value={w} max={40} ariaLabel={`Weight ${l}: ${w} of 40`} />
                   <span className="cs-num" style={{ fontSize: 13, textAlign: "right" }}>
                     {w}
                   </span>

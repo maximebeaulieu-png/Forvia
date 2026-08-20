@@ -30,3 +30,13 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
+
+/* ---- Accessibility overrides (WCAG AA, required by docs/05 §accessibility) ----
+   The DS ships --status-go #1E7F4F (4.40:1 on --status-go-bg) and --status-amber
+   #B26B00 (3.83:1 on --status-amber-bg) — both below the 4.5:1 AA floor for the
+   small text they carry in chips and labels. Darkened just enough to pass while
+   keeping the hue; red / review / neutral already pass (5.58 / 6.53 / 5.56). */
+:root {
+  --status-go: #176B41;    /* 5.76:1 on #E6F4EC */
+  --status-amber: #935900; /* 5.22:1 on #FFF3DF */
+}

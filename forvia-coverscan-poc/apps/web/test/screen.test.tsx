@@ -1,6 +1,6 @@
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { CertificateView } from "../app/(shell)/certificates/[id]/certificate-view";
 import { getCertificate } from "../lib/repository";
 
@@ -50,5 +50,31 @@ describe("Certificate analysis screen", () => {
     render(<CertificateView cert={getCertificate("04")!} prevId="03" nextId="05" />);
     expect(screen.getByRole("link", { name: "Previous certificate" })).toHaveAttribute("href", "/certificates/03");
     expect(screen.getByRole("link", { name: "Next certificate" })).toHaveAttribute("href", "/certificates/05");
+  });
+
+  it("replay mode on cert 06 shows the processing stepper and hides the tabs", () => {
+    render(<CertificateView cert={getCertificate("06")!} processing />);
+    expect(screen.getByText("Analysing certificate")).toBeInTheDocument();
+    expect(screen.getByText("Text layer / OCR")).toBeInTheDocument();
+    expect(screen.getAllByText("Processing").length).toBeGreaterThan(0);
+    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+  });
+
+  it("reveals the analysis tabs once the simulated pipeline completes", () => {
+    vi.useFakeTimers();
+    try {
+      render(<CertificateView cert={getCertificate("06")!} processing />);
+      expect(screen.queryAllByRole("tab")).toHaveLength(0);
+      /* The steps chain setTimeouts — each act() flush lets the next one be scheduled. */
+      for (let i = 0; i < 12; i += 1) {
+        act(() => {
+          vi.advanceTimersByTime(1_500);
+        });
+      }
+      expect(screen.queryByText("Analysing certificate")).not.toBeInTheDocument();
+      expect(screen.getAllByRole("tab")).toHaveLength(5);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

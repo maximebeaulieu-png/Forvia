@@ -11,8 +11,8 @@ export interface GapBarProps {
   required: number;
   /** COVERED_NO_AMOUNT renders hatched; MISSING renders an empty track */
   status?: GuaranteeStatusT;
-  /** px, default 180 */
-  width?: number;
+  /** px number, or any CSS width (e.g. "100%"); default 180 */
+  width?: number | string;
   /** px, default 6 */
   height?: number;
   showLabel?: boolean;
@@ -89,9 +89,9 @@ export function GapBar({
         data-slot="gap-bar-track"
         style={{
           position: "relative",
-          width,
+          width: typeof width === "number" ? width : undefined,
           height,
-          flex: `0 0 ${width}px`,
+          flex: typeof width === "number" ? `0 0 ${width}px` : `1 1 auto`,
           background: "var(--gap-track)",
           borderRadius: height / 2,
         }}

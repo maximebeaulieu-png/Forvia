@@ -45,6 +45,7 @@ import {
   DocumentViewer, type DocumentPage, type EvidenceHighlight,
   FindingsList, type Finding,
   MaskedText,
+  PIPELINE_STEPS, ProcessingStepper,
   RequestEmailSheet, buildRequestEmail,
   ScoreRing,
   SEAL_GATES,
@@ -237,7 +238,21 @@ const TERRITORY_CELLS: Array<{ key: string; label: string }> = [
 
 const focusRing = "rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
-export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertificateT; prevId?: string; nextId?: string }) {
+/** Per-step replay timings (ms) from the ui_kit mock — the demo advances at max(220, t/6) ms. */
+const PROCESSING_TIMINGS = [420, 3100, 900, 6400, 700, 1500, 300, 2600];
+
+export function CertificateView({
+  cert,
+  prevId,
+  nextId,
+  processing = false,
+}: {
+  cert: CachedCertificateT;
+  prevId?: string;
+  nextId?: string;
+  /** Replays the simulated 8-step pipeline before revealing the analysis (demo only). */
+  processing?: boolean;
+}) {
   const c = cert as unknown as DeepCert;
   const router = useRouter();
   const [tab, setTab] = React.useState("summary");
@@ -249,6 +264,10 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
   const [reviewed, setReviewed] = React.useState(false);
   const [rejected, setRejected] = React.useState(false);
   const [showMinors, setShowMinors] = React.useState(false);
+  /* Simulated pipeline replay — running step index, or null once the analysis is shown. */
+  const [processingStep, setProcessingStep] = React.useState<number | null>(processing ? 0 : null);
+  const isProcessing = processingStep != null;
+  const [revealed, setRevealed] = React.useState(!processing);
 
   const rows = React.useMemo(() => coverageRows(c), [c]);
   const findings = React.useMemo(() => derivedFindings(c), [c]);
@@ -271,6 +290,32 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [prevId, nextId, router]);
+
+  /* Chained timers mirror the ui_kit mock: each step lasts max(220, timing/6) ms; 600 ms
+     after the last step the analysis is revealed and the ?processing=1 URL is cleaned. */
+  React.useEffect(() => {
+    if (processingStep == null) return;
+    if (processingStep >= PIPELINE_STEPS.length) {
+      const t = setTimeout(() => {
+        setProcessingStep(null);
+        router.replace(`/certificates/${c.id}`);
+      }, 600);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(
+      () => setProcessingStep((s) => (s == null ? s : s + 1)),
+      Math.max(220, (PROCESSING_TIMINGS[processingStep] ?? 0) / 6),
+    );
+    return () => clearTimeout(t);
+  }, [processingStep, router, c.id]);
+
+  /* Mount the tabs at opacity 0, then fade them in on the next frame. */
+  React.useEffect(() => {
+    if (!isProcessing && !revealed) {
+      const raf = requestAnimationFrame(() => setRevealed(true));
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [isProcessing, revealed]);
 
   const jumpToEvidence = (id?: string, page?: number) => {
     const h = id ? highlights.find((x) => x.id === id) : undefined;
@@ -365,14 +410,17 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
         <span style={{ flex: 1 }} />
         <div
           title={`Profile GPTC default v3 · reference date ${REFERENCE_DATE}${c.model ? ` · model ${c.model}` : ""}${c.runId ? ` · run ${c.runId}` : ""}`}
-          style={{ textAlign: "right", fontSize: 11, color: "var(--muted-foreground)", lineHeight: 1.4, maxWidth: 180 }}
+          style={{ textAlign: "right", fontSize: 11, color: "var(--muted-foreground)", lineHeight: 1.4, whiteSpace: "nowrap" }}
         >
           {c.seconds != null && <>Analysed in <span className="cs-num">{c.seconds} s</span><br /></>}
           GPTC default v3
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {isProcessing && (
+            <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>Simulated replay</span>
+          )}
           {c.accuracy != null && <ConfidenceDot value={c.accuracy} showValue />}
-          <DecisionChip decision={c.decision} size="lg" />
+          <DecisionChip decision={isProcessing ? "PROCESSING" : c.decision} size="lg" />
           {needsReview && (
             <Badge className="border-transparent bg-(--status-review-bg) text-(--status-review)">Needs review</Badge>
           )}
@@ -397,8 +445,30 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
           aria-label="Analysis"
           style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", border: "1px solid var(--border)", borderRadius: "var(--radius)", background: "var(--card)", overflow: "hidden" }}
         >
-          <TabsPrimitive.Root value={tab} onValueChange={setTab} style={{ display: "flex", flexDirection: "column", minHeight: 0, flex: 1 }}>
-            <TabsPrimitive.List style={{ display: "flex", alignItems: "center", gap: 2, borderBottom: "1px solid var(--border)", paddingLeft: 4, flex: "0 0 auto" }}>
+          {isProcessing ? (
+            <div style={{ padding: 20, display: "grid", gap: 16, alignContent: "start" }}>
+              <h2 style={{ fontSize: "var(--text-h3)" }}>Analysing certificate</h2>
+              <ProcessingStepper current={processingStep ?? 0} timings={PROCESSING_TIMINGS} />
+              <div style={{ display: "grid", gap: 8 }}>
+                {[64, 120, 96].map((h, i) => (
+                  <div key={i} style={{ height: h, borderRadius: "var(--radius)", background: "var(--muted)" }} />
+                ))}
+              </div>
+            </div>
+          ) : (
+          <TabsPrimitive.Root
+            value={tab}
+            onValueChange={setTab}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              minHeight: 0,
+              flex: 1,
+              opacity: revealed ? 1 : 0,
+              transition: "opacity var(--dur-pulse) var(--ease-standard)",
+            }}
+          >
+            <TabsPrimitive.List style={{ display: "flex", alignItems: "center", gap: 2, borderBottom: "1px solid var(--border)", paddingLeft: 4, flex: "0 0 auto", overflowX: "auto", whiteSpace: "nowrap", scrollbarWidth: "thin" }}>
               {TAB_DEFS.map((t) => {
                 const active = t.id === tab;
                 const TabIcon = t.icon;
@@ -427,7 +497,13 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
               })}
             </TabsPrimitive.List>
 
-            <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Analysis panel"
+              className="focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              style={{ flex: 1, minHeight: 0, overflow: "auto" }}
+            >
               {/* ------------------------------------------------ Summary */}
               <TabsPrimitive.Content value="summary" className="outline-none">
                 <div style={{ padding: 20, display: "grid", gap: 20 }}>
@@ -505,7 +581,12 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
                       </h2>
                       <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>Click a figure to see it on the document</span>
                     </div>
-                    <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
+                    <div
+                      style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", overflowX: "auto" }}
+                      tabIndex={0}
+                      role="region"
+                      aria-label="Coverage grid"
+                    >
                       <CoverageGrid rows={rows} activeId={activeHighlightId} onEvidenceClick={(r) => jumpToEvidence(r.id, r.page)} />
                     </div>
                   </div>
@@ -664,10 +745,12 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
               </TabsPrimitive.Content>
             </div>
           </TabsPrimitive.Root>
+          )}
         </section>
       </div>
 
-      {/* full-width action bar */}
+      {/* full-width action bar — hidden while the simulated pipeline replays */}
+      {!isProcessing && (
       <div style={{ padding: "10px 16px", borderTop: "1px solid var(--border)", background: "var(--card)", boxShadow: "var(--shadow-sticky)", display: "flex", alignItems: "center", gap: 8 }}>
         <Button size="lg" onClick={() => { setEmail((e) => e ?? emailText(c, findings)); setEmailOpen(true); }}>
           <PenLine size={15} aria-hidden="true" />Request changes
@@ -689,6 +772,7 @@ export function CertificateView({ cert, prevId, nextId }: { cert: CachedCertific
           <Check size={14} aria-hidden="true" />{reviewed ? "Reviewed ✓" : "Mark reviewed"}
         </Button>
       </div>
+      )}
 
       <RequestEmailSheet
         open={emailOpen} onClose={() => setEmailOpen(false)}

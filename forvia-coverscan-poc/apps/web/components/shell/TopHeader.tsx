@@ -20,6 +20,7 @@ export function TopHeader({ profiles }: TopHeaderProps) {
   const [profile, setProfile] = React.useState("gptc");
   const [role, setRole] = React.useState("Buyer");
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -120,10 +121,25 @@ export function TopHeader({ profiles }: TopHeaderProps) {
           <ChevronDown size={14} />
         </span>
       </span>
+      {/* Hidden picker — the selected file is accepted then ignored: demo replay of cert 06 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,.png,.jpg,.jpeg"
+        tabIndex={-1}
+        aria-hidden="true"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          if (e.target.files?.length) {
+            e.target.value = "";
+            router.push("/certificates/06?processing=1");
+          }
+        }}
+      />
       <button
         type="button"
-        disabled
-        title="Live upload arrives with the pipeline sprint"
+        title="Demo replay — the live pipeline lands in Sprint 1"
+        onClick={() => fileInputRef.current?.click()}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -138,8 +154,7 @@ export function TopHeader({ profiles }: TopHeaderProps) {
           color: "var(--primary-foreground)",
           border: "1px solid var(--primary)",
           borderRadius: "var(--radius-full)",
-          cursor: "not-allowed",
-          opacity: 0.45,
+          cursor: "pointer",
           whiteSpace: "nowrap",
         }}
       >

@@ -6,11 +6,25 @@ export function generateStaticParams() {
   return getCertificates().map((c) => ({ id: c.id }));
 }
 
-export default async function CertificatePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CertificatePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const { id } = await params;
   const cert = getCertificate(id);
   if (!cert) notFound();
+  const { processing } = await searchParams;
   const ids = getCertificates().map((c) => c.id).sort();
   const i = ids.indexOf(id);
-  return <CertificateView cert={cert} prevId={ids[i - 1]} nextId={ids[i + 1]} />;
+  return (
+    <CertificateView
+      cert={cert}
+      prevId={ids[i - 1]}
+      nextId={ids[i + 1]}
+      processing={processing === "1"}
+    />
+  );
 }
