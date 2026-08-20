@@ -1,0 +1,68 @@
+<!-- @dsCard group="CoverScan" viewport="1440x900" name="CoverScan app" subtitle="Click-through: portfolio → certificates → certificate analysis, with linked evidence, profile switch and the generated email" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>CoverScan — FORVIA</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>html,body{height:100%}body{margin:0;overflow:hidden}#root{height:100vh;min-width:1280px}</style>
+<script>window.__CS_ICON_BASE__="../../assets/icons";</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="data.js"></script>
+</head>
+<body><div id="root"></div>
+<script type="text/babel" src="AppShell.jsx"></script>
+<script type="text/babel" src="PortfolioScreen.jsx"></script>
+<script type="text/babel" src="CertificatesScreen.jsx"></script>
+<script type="text/babel" src="CertificateScreen.jsx"></script>
+<script type="text/babel" src="MidFiScreens.jsx"></script>
+<script type="text/babel">
+const TIMINGS=[420,3100,900,6400,700,1500,300,2600];
+function App(){
+  const [route,setRoute]=React.useState("portfolio");
+  const [collapsed,setCollapsed]=React.useState(false);
+  const [role,setRole]=React.useState("Buyer");
+  const [profile,setProfile]=React.useState("gptc");
+  const [theme,setTheme]=React.useState("light");
+  const [view,setView]=React.useState("All");
+  const [filter,setFilter]=React.useState(null);
+  const [openCert,setOpenCert]=React.useState(null);
+  const [processing,setProcessing]=React.useState(null);
+
+  React.useEffect(()=>{document.documentElement.setAttribute("data-theme",theme);document.body.setAttribute("data-theme",theme);},[theme]);
+
+  React.useEffect(()=>{
+    if(!processing) return;
+    if(processing.current>=8){const t=setTimeout(()=>setProcessing(null),600);return()=>clearTimeout(t);}
+    const t=setTimeout(()=>setProcessing(p=>({current:p.current+1,timings:TIMINGS})),Math.max(220,TIMINGS[processing.current]/6));
+    return()=>clearTimeout(t);
+  },[processing]);
+
+  const open=c=>{const full=window.CS.certificates.find(x=>x.id===c.id);setOpenCert(full&&full.pages?full:window.CS.certificates.find(x=>x.id==="04"));setRoute("certificate");};
+  const upload=()=>{setOpenCert(window.CS.certificates.find(x=>x.id==="06"));setProcessing({current:0,timings:TIMINGS});setRoute("certificate");};
+  const goFilter=f=>{setFilter(typeof f==="string"&&["All","Needs review","Not admissible","Expiring","My suppliers"].includes(f)?null:f);
+    if(f==="Not admissible"||f==="Expiring")setView(f); setRoute("certificates");};
+
+  return <div style={{display:"flex",height:"100vh",minHeight:0,background:"var(--background)"}}>
+    <Sidebar route={route==="certificate"?"certificates":route} collapsed={collapsed} onToggle={()=>setCollapsed(v=>!v)}
+      onNavigate={r=>{setRoute(r);if(r==="review"){setView("Needs review");setRoute("certificates");}}}/>
+    <div style={{flex:1,minWidth:0,display:"flex",flexDirection:"column"}}>
+      <Header role={role} onRole={setRole} profile={profile} onProfile={setProfile} profiles={window.CS.profiles}
+        onUpload={upload} theme={theme} onTheme={()=>setTheme(t=>t==="light"?"dark":"light")}/>
+      <main style={{flex:1,minHeight:0,overflow:route==="certificate"?"hidden":"auto",display:"flex",flexDirection:"column"}}>
+        {route==="portfolio"&&<><PageHeading title="Portfolio" sub="150 certificates analysed · demo dataset: 10 real + 140 synthetic · reference date 15 Apr 2025"/>
+          <PortfolioScreen data={window.CS} onOpen={open} onFilter={goFilter}/></>}
+        {route==="certificates"&&<><PageHeading title="Certificates" sub={filter?`Filtered on ${filter}`:"Find and triage. Saved views keep your filters."}/>
+          <CertificatesScreen data={window.CS} view={view} onView={v=>{setView(v);setFilter(null);}} onOpen={open} onUpload={upload} profile={profile} filter={filter}/></>}
+        {route==="certificate"&&openCert&&<CertificateScreen c={openCert} data={window.CS} processing={processing} profile={profile} onBack={()=>setRoute("certificates")}/>}
+        {route==="suppliers"&&<><PageHeading title="Metraton S.r.l." sub="Supplier 360 · all certificates, change detection, policy numbers"/>
+          <Supplier360Screen data={window.CS} onOpen={open}/></>}
+        {route==="requirements"&&<><PageHeading title="Requirements profiles" sub="Thresholds, gates and weights. Each analysis records the profile version used."/>
+          <RequirementsScreen data={window.CS} profile={profile} onProfile={setProfile}/></>}
+        {route==="integrations"&&<><PageHeading title="Integrations & exports" sub="SAP Ariba, Excel, registry and rates"/>
+          <IntegrationsScreen data={window.CS}/></>}
+      </main>
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script></body></html>

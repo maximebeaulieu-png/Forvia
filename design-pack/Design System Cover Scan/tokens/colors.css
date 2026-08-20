@@ -1,0 +1,81 @@
+/* CoverScan colour tokens — FORVIA brand palette (#0A23CA / #8390E4 / #01003D, from forvia.com),
+   light theme default, modern and épuré: white surfaces, hairlines, colour reserved for status.
+   Status colour is ALWAYS paired with an icon + a word. Max two accent colours per screen besides status. */
+:root{
+  /* brand */
+  --brand:#0A23CA;            /* FORVIA blue */
+  --brand-light:#8390E4;      /* FORVIA light blue */
+  --brand-dark:#01003D;       /* FORVIA dark navy */
+  /* surfaces & ink */
+  --background:#F7F8FC;       /* cool near-white app canvas */
+  --foreground:#01003D;       /* navy ink */
+  --card:#FFFFFF;
+  --card-foreground:#01003D;
+  --popover:#FFFFFF;
+  --popover-foreground:#01003D;
+  --muted:#EFF1F9;
+  --muted-foreground:#575E86;
+  --border:#E4E7F4;           /* hairlines */
+  --input:#E4E7F4;
+  /* primary / accent */
+  --primary:#0A23CA;
+  --primary-foreground:#FFFFFF;
+  --secondary:#EAEDFB;
+  --secondary-foreground:#0A23CA;
+  --accent:#EAEDFB;           /* hover, selected row */
+  --accent-foreground:#01003D;
+  --destructive:#B3261E;
+  --destructive-foreground:#FFFFFF;
+  --ring:#0A23CA;             /* focus ring, 2px, always visible */
+  /* status — the only chromatic vocabulary */
+  --status-go:#1E7F4F;             --status-go-bg:#E6F4EC;
+  --status-amber:#B26B00;          --status-amber-bg:#FFF3DF;
+  --status-red:#B3261E;            --status-red-bg:#FBE9E7;
+  --status-review:#5B3FA6;         --status-review-bg:#EEE9FA;
+  --status-neutral:#575E86;        --status-neutral-bg:#EFF1F9;
+  /* document & gap-bar semantics */
+  --evidence:rgba(245,196,81,.35); /* highlight rectangles on the page */
+  --evidence-solid:#F5C451;
+  --required-marker:#01003D;       /* threshold tick on gap bars */
+  --gap-fill:#01003D;              /* the bar is ink, never status colour */
+  --gap-track:#E4E7F4;
+  /* chart structure — ink and hairlines, no gradients */
+  --chart-grid:#E4E7F4;
+  --chart-axis:#575E86;
+}
+[data-theme="dark"]{
+  --brand:#8390E4;
+  --brand-light:#8390E4;
+  --brand-dark:#01003D;
+  --background:#05061C;
+  --foreground:#E8EAF8;
+  --card:#0D0F2B;
+  --card-foreground:#E8EAF8;
+  --popover:#0D0F2B;
+  --popover-foreground:#E8EAF8;
+  --muted:#171A3E;
+  --muted-foreground:#9CA3D4;
+  --border:#212550;
+  --input:#212550;
+  --primary:#8390E4;
+  --primary-foreground:#01003D;
+  --secondary:#171A3E;
+  --secondary-foreground:#E8EAF8;
+  --accent:#171A3E;
+  --accent-foreground:#E8EAF8;
+  --destructive:#E5726B;
+  --destructive-foreground:#05061C;
+  --ring:#8390E4;
+  --status-go:#3FBF7F;             --status-go-bg:#0F2E26;
+  --status-amber:#E0A23C;          --status-amber-bg:#2E2410;
+  --status-red:#E5726B;            --status-red-bg:#371A1F;
+  --status-review:#A68CF0;         --status-review-bg:#241F44;
+  --status-neutral:#9CA3D4;        --status-neutral-bg:#171A3E;
+  --evidence:rgba(245,196,81,.30);
+  --evidence-solid:#F5C451;
+  --required-marker:#E8EAF8;
+  --gap-fill:#E8EAF8;
+  --gap-track:#212550;
+  --chart-grid:#212550;
+  --chart-axis:#9CA3D4;
+}

@@ -1,0 +1,12 @@
+/* Minimal base layer so specimen cards and kits share one baseline. */
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--background);color:var(--foreground);font-family:var(--font-sans);font-size:var(--text-body);line-height:var(--lh-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-weight:var(--weight-semibold);letter-spacing:-0.01em}
+h1{font-size:var(--text-h1);line-height:var(--lh-h1)}
+h2{font-size:var(--text-h2);line-height:var(--lh-h2)}
+h3{font-size:var(--text-h3);line-height:var(--lh-h3)}
+p{margin:0}
+a{color:var(--primary);text-decoration:none;border-bottom:1px solid color-mix(in oklch,var(--primary) 30%,transparent)}
+a:hover{color:var(--primary);border-bottom-color:var(--primary)}
+:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+table{border-collapse:collapse}

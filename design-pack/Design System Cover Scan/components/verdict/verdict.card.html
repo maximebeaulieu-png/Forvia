@@ -1,0 +1,44 @@
+<!-- @dsCard group="Components" viewport="700x320" name="Verdict" subtitle="DecisionChip, VerificationSeal, ScoreRing, StatusMiniGrid, ConfidenceDot" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css"><style>body{padding:16px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.lab{font-size:11px;font-family:var(--font-mono);color:var(--muted-foreground);width:64px;flex:0 0 64px}</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script></head>
+<body><div id="root"></div>
+<script type="text/babel">
+const { DecisionChip, VerificationSeal, VerificationSealList, ScoreRing, StatusMiniGrid, ConfidenceDot } = window.CoverScanDesignSystem_6debdf;
+const gates = {
+  stamp:{state:"fail",note:"broker's stamp p.1, no insurer stamp"},
+  signature:{state:"fail",note:"no insurer signature"},
+  insurer:{state:"fail",note:"issuer is a broker — ORIAS 07 002 497"},
+  policyNumber:{state:"pass",note:"144 725 803"},
+  dates:{state:"pass",note:"1 Jan → 31 Dec 2025"},
+  entity:{state:"pass"},coinsurance:{state:"na"},documentType:{state:"pass",note:"certificate"}
+};
+function Demo(){return <div>
+  <div className="row"><span className="lab">Decision</span>
+    <DecisionChip decision="GO" size="lg"/><DecisionChip decision="REQUEST_CHANGES" size="lg"/>
+    <DecisionChip decision="FORMAL_DEFECT" size="lg"/><DecisionChip decision="STRUCTURAL" size="lg"/>
+  </div>
+  <div className="row"><span className="lab">sm / md</span>
+    <DecisionChip decision="STRUCTURAL" size="sm"/><DecisionChip decision="NEEDS_REVIEW" size="sm"/>
+    <DecisionChip decision="PROCESSING" size="sm"/><DecisionChip decision="PENDING" size="sm"/>
+    <DecisionChip decision="REQUEST_CHANGES" size="md"/>
+  </div>
+  <div style={{display:"flex",gap:24,alignItems:"flex-start",marginTop:4}}>
+    <VerificationSeal gates={gates} size={96}/>
+    <VerificationSeal gates={gates} size={40}/>
+    <VerificationSealList gates={gates} style={{flex:1,minWidth:0}}/>
+    <div style={{display:"flex",gap:16}}><ScoreRing value={56}/><ScoreRing value={3} provisional/></div>
+  </div>
+  <div className="row" style={{marginTop:16}}><span className="lab">Mini-grid</span>
+    <StatusMiniGrid pl="COMPLIANT" recall="BELOW_MINIMUM" pfl="COMPLIANT"/>
+    <StatusMiniGrid pl="BELOW_MINIMUM" recall="BELOW_MINIMUM" pfl="MISSING" tooltips={{recall:"Found €305,000 · required €15,000,000"}}/>
+    <StatusMiniGrid pl="COVERED_NO_AMOUNT" recall="EXCLUDED" pfl="UNCLEAR"/>
+    <span className="lab" style={{width:"auto",flex:"0 0 auto",marginLeft:12}}>Confidence</span>
+    <ConfidenceDot value={0.96}/><ConfidenceDot value={0.72}/><ConfidenceDot value={0.41}/>
+    <ConfidenceDot value={0.82} showValue page={2} quote="Frais de retrait engagés par l'assuré 305.000 €"/>
+  </div>
+</div>;}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);
+</script></body></html>

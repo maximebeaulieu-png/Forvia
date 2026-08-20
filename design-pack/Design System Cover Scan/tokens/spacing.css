@@ -1,0 +1,22 @@
+/* 4-px grid. Desktop tool: no max content width, min viewport 1280. */
+:root{
+  --space-0:0px;  --space-1:4px;  --space-2:8px;  --space-3:12px;
+  --space-4:16px; --space-5:20px; --space-6:24px; --space-8:32px;
+  --space-10:40px;--space-12:48px;--space-16:64px;
+
+  --radius:0.5rem;          /* rounded, épuré — echoes forvia.com */
+  --radius-sm:0.375rem;
+  --radius-lg:0.75rem;
+  --radius-full:9999px;
+
+  --row-h:36px;             /* table rows */
+  --row-h-dense:32px;
+  --card-pad:20px;
+  --split-gutter:8px;       /* document ↔ grid, draggable handle */
+  --sidebar-w:232px;
+  --sidebar-w-collapsed:56px;
+  --header-h:56px;
+  --min-viewport:1280px;
+  --hairline:1px;
+  --weight-num:500; /* @kind other */
+}

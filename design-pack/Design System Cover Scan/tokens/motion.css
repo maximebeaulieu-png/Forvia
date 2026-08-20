@@ -1,0 +1,24 @@
+/* Motion carries information or does not happen.
+   Allowed: processing stepper progression, row recolour on profile switch, evidence highlight pulse. */
+:root{
+  --dur-instant:0ms;      /* @kind other */
+  --dur-recolour:150ms; /* @kind other */
+  --dur-pulse:300ms; /* @kind other */
+  --dur-step:200ms; /* @kind other */
+  --ease-standard:cubic-bezier(.2,0,.38,1); /* @kind other */
+  --ease-out:cubic-bezier(0,0,.38,1);       /* @kind other */
+}
+@keyframes cs-evidence-pulse{
+  0%{box-shadow:0 0 0 0 var(--evidence-solid);background:var(--evidence-solid)}
+  100%{box-shadow:0 0 0 6px rgba(245,196,81,0);background:var(--evidence)}
+}
+.cs-pulse{animation:cs-evidence-pulse var(--dur-pulse) var(--ease-out) 1}
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --dur-recolour:0ms; /* @kind other */
+    --dur-pulse:0ms; /* @kind other */
+    --dur-step:0ms; /* @kind other */
+  }
+  .cs-pulse{animation:none}
+  *,*::before,*::after{transition-duration:0ms!important;animation-duration:0ms!important}
+}
