@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="1024" viewBox="0 0 600 1024" preserveAspectRatio="xMidYMid slice" role="img" aria-label="">
+  <!-- CoverScan login visual — modern office towers, low-angle view, FORVIA palette only. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0A23CA"/>
+      <stop offset="0.55" stop-color="#8390E4"/>
+      <stop offset="1" stop-color="#F7F8FC"/>
+    </linearGradient>
+    <linearGradient id="facadeDark" x1="0.1" y1="1" x2="0.55" y2="0">
+      <stop offset="0" stop-color="#01003D"/>
+      <stop offset="1" stop-color="#0A23CA"/>
+    </linearGradient>
+    <linearGradient id="facadeLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E4E7F4"/>
+      <stop offset="1" stop-color="#8390E4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#F7F8FC" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#F7F8FC" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F7F8FC" stop-opacity="0"/>
+      <stop offset="1" stop-color="#F7F8FC" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- sky -->
+  <rect width="600" height="1024" fill="url(#sky)"/>
+  <ellipse cx="300" cy="380" rx="360" ry="280" fill="url(#glow)"/>
+
+  <!-- back tower (center, hazy) -->
+  <g>
+    <polygon points="262,436 368,450 392,1024 246,1024" fill="#8390E4" opacity="0.55"/>
+    <polygon points="262,436 368,450 368,456 262,442" fill="#F7F8FC" opacity="0.3"/>
+    <line x1="288.5" y1="440" x2="282.5" y2="1024" stroke="#F7F8FC" stroke-opacity="0.3"/>
+    <line x1="315" y1="443" x2="319" y2="1024" stroke="#F7F8FC" stroke-opacity="0.3"/>
+    <line x1="341.5" y1="447" x2="355.5" y2="1024" stroke="#F7F8FC" stroke-opacity="0.3"/>
+  </g>
+
+  <!-- left tower (dark glass) -->
+  <g>
+    <polygon points="-60,1024 -8,150 212,228 300,1024" fill="url(#facadeDark)"/>
+    <!-- glass stripes -->
+    <polygon points="47,170 74.5,179 75,1024 30,1024" fill="#F7F8FC" opacity="0.07"/>
+    <polygon points="129.5,199 157,209 210,1024 165,1024" fill="#F7F8FC" opacity="0.05"/>
+    <!-- vertical mullions -->
+    <line x1="19.5" y1="160" x2="-15" y2="1024" stroke="#8390E4" stroke-opacity="0.28"/>
+    <line x1="47" y1="170" x2="30" y2="1024" stroke="#8390E4" stroke-opacity="0.28"/>
+    <line x1="74.5" y1="179" x2="75" y2="1024" stroke="#8390E4" stroke-opacity="0.28"/>
+    <line x1="102" y1="189" x2="120" y2="1024" stroke="#8390E4" stroke-opacity="0.28"/>
+    <line x1="129.5" y1="199" x2="165" y2="1024" stroke="#8390E4" stroke-opacity="0.28"/>
+    <line x1="157" y1="209" x2="210" y2="1024" stroke="#8390E4" stroke-opacity="0.28"/>
+    <line x1="184.5" y1="218" x2="255" y2="1024" stroke="#8390E4" stroke-opacity="0.28"/>
+    <!-- lit right edge -->
+    <polygon points="212,228 300,1024 272,1024 196,232" fill="#8390E4" opacity="0.5"/>
+    <!-- diagonal reflection -->
+    <polygon points="40,640 196,330 240,420 78,776" fill="#F7F8FC" opacity="0.1"/>
+  </g>
+
+  <!-- right tower (light glass) -->
+  <g>
+    <polygon points="362,1024 428,88 622,142 664,1024" fill="url(#facadeLight)"/>
+    <!-- glass stripes -->
+    <polygon points="492.7,106 525,115 513,1024 462.7,1024" fill="#F7F8FC" opacity="0.28"/>
+    <polygon points="557.3,124 589.7,133 613.7,1024 563.3,1024" fill="#F7F8FC" opacity="0.2"/>
+    <!-- vertical mullions -->
+    <line x1="460.3" y1="97" x2="412.3" y2="1024" stroke="#0A23CA" stroke-opacity="0.22"/>
+    <line x1="492.7" y1="106" x2="462.7" y2="1024" stroke="#0A23CA" stroke-opacity="0.22"/>
+    <line x1="525" y1="115" x2="513" y2="1024" stroke="#0A23CA" stroke-opacity="0.22"/>
+    <line x1="557.3" y1="124" x2="563.3" y2="1024" stroke="#0A23CA" stroke-opacity="0.22"/>
+    <line x1="589.7" y1="133" x2="613.7" y2="1024" stroke="#0A23CA" stroke-opacity="0.22"/>
+    <!-- shaded left edge -->
+    <polygon points="362,1024 428,88 452,94 392,1024" fill="#0A23CA" opacity="0.28"/>
+    <!-- diagonal reflection -->
+    <polygon points="430,520 600,250 640,330 470,640" fill="#F7F8FC" opacity="0.35"/>
+  </g>
+
+  <!-- ground haze -->
+  <rect x="0" y="920" width="600" height="104" fill="url(#haze)" opacity="0.7"/>
+</svg>

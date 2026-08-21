@@ -10,7 +10,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, Download, Filter, Info, RefreshCw, Upload } from "lucide-react";
 import type { CachedCertificateT } from "@coverscan/schemas";
 import { ConfidenceDot, DecisionChip, StatusMiniGrid } from "@/components/coverscan";
@@ -20,6 +20,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { takeBatch, type BatchFile } from "@/lib/upload-batch";
+import { BatchPanel } from "./batch-panel";
 
 /** Cached certificate plus demo table extras kept by the schema's passthrough. */
 export type CertificateRow = CachedCertificateT & {
@@ -162,71 +164,98 @@ function FilterSelect({
 
 /* ------------------------------------------------------------ upload zone */
 
-function UploadZone({ onUpload }: { onUpload: () => void }) {
+function UploadZone({ onFiles }: { onFiles: (files: BatchFile[]) => void }) {
   const [over, setOver] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      aria-label="Upload a certificate — demo replay of certificate 06"
-      title="Demo replay — the live pipeline lands in Sprint 1"
-      onClick={onUpload}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+    <>
+      {/* Hidden picker — files are accepted then ignored: one file replays cert 06,
+          several files replay a batch over the cached certificates. */}
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        accept=".pdf,.png,.jpg,.jpeg"
+        tabIndex={-1}
+        aria-hidden="true"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          const files = Array.from(e.target.files ?? []).map((f) => ({
+            name: f.name,
+            size: f.size,
+          }));
+          e.target.value = "";
+          if (files.length > 0) onFiles(files);
+        }}
+      />
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="Upload certificates — demo replay"
+        title="Demo replay — the live pipeline lands in Sprint 1"
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        onDragOver={(e) => {
           e.preventDefault();
-          onUpload();
-        }
-      }}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={(e) => {
-        /* The dropped file is accepted then ignored — this is a demo replay. */
-        e.preventDefault();
-        setOver(false);
-        onUpload();
-      }}
-      style={{
-        border: `1px dashed ${over ? "var(--primary)" : "var(--border)"}`,
-        borderRadius: "var(--radius-lg)",
-        background: over ? "var(--accent)" : "transparent",
-        padding: "9px 14px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        transition: "background 120ms var(--ease-standard)",
-      }}
-    >
-      <span
+          setOver(true);
+        }}
+        onDragLeave={() => setOver(false)}
+        onDrop={(e) => {
+          /* Dropped files are accepted then ignored — this is a demo replay. */
+          e.preventDefault();
+          setOver(false);
+          onFiles(
+            Array.from(e.dataTransfer?.files ?? []).map((f) => ({
+              name: f.name,
+              size: f.size,
+            })),
+          );
+        }}
         style={{
-          width: 28,
-          height: 28,
-          borderRadius: 8,
-          background: "var(--secondary)",
-          color: "var(--primary)",
-          display: "inline-flex",
+          border: `1px dashed ${over ? "var(--primary)" : "var(--border)"}`,
+          borderRadius: "var(--radius-lg)",
+          background: over ? "var(--accent)" : "transparent",
+          padding: "9px 14px",
+          cursor: "pointer",
+          display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          flex: "0 0 28px",
+          gap: 10,
+          transition: "background 120ms var(--ease-standard)",
         }}
       >
-        <Upload size={14} strokeWidth={1.75} />
-      </span>
-      <span style={{ fontSize: 13, fontWeight: 500 }}>Drop a certificate here</span>
-      <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
-        PDF or PNG · analysed in under 30 s
-      </span>
-      <span style={{ flex: 1 }} />
-      <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
-        Demo replay of certificate 06 — live pipeline arrives with Sprint 1
-      </span>
-      <span style={{ fontSize: 12, fontWeight: 500, color: "var(--primary)" }}>
-        Browse files
-      </span>
-    </div>
+        <span
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 8,
+            background: "var(--secondary)",
+            color: "var(--primary)",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: "0 0 28px",
+          }}
+        >
+          <Upload size={14} strokeWidth={1.75} />
+        </span>
+        <span style={{ fontSize: 13, fontWeight: 500 }}>Drop certificates here</span>
+        <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+          PDF or PNG · analysed in under 30 s
+        </span>
+        <span style={{ flex: 1 }} />
+        <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
+          Demo replay — live pipeline arrives with Sprint 1
+        </span>
+        <span style={{ fontSize: 12, fontWeight: 500, color: "var(--primary)" }}>
+          Browse files
+        </span>
+      </div>
+    </>
   );
 }
 
@@ -423,8 +452,41 @@ export function CertificatesView({
   q: string;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [country, setCountry] = React.useState(COUNTRY_OPTIONS[0] as string);
   const [insurer, setInsurer] = React.useState(INSURER_OPTIONS[0] as string);
+
+  /* Active upload batch — keyed so a new batch remounts the panel's replay. */
+  const [batch, setBatch] = React.useState<{ key: number; files: BatchFile[] } | null>(null);
+  const batchKeyRef = React.useRef(0);
+  const startBatch = React.useCallback((files: BatchFile[]) => {
+    batchKeyRef.current += 1;
+    setBatch({ key: batchKeyRef.current, files });
+  }, []);
+
+  /* Arriving with ?batch=1 (from the header upload): take the pending batch from
+     the module store, then clean the URL. A reload with ?batch=1 finds no pending
+     batch and the parameter is simply ignored. */
+  const batchParam = searchParams.get("batch");
+  React.useEffect(() => {
+    if (batchParam !== "1") return;
+    const files = takeBatch();
+    if (files && files.length > 0) startBatch(files);
+    const sp = new URLSearchParams();
+    if (view !== "all") sp.set("view", view);
+    if (q) sp.set("q", q);
+    const qs = sp.toString();
+    router.replace(qs ? `/certificates?${qs}` : "/certificates", { scroll: false });
+  }, [batchParam, view, q, router, startBatch]);
+
+  /* One file keeps the single-certificate replay; two or more become a batch. */
+  const onUploadFiles = React.useCallback(
+    (files: BatchFile[]) => {
+      if (files.length >= 2) startBatch(files);
+      else router.push("/certificates/06?processing=1");
+    },
+    [router, startBatch],
+  );
 
   const rows = React.useMemo(() => {
     let r = certificates;
@@ -511,7 +573,11 @@ export function CertificatesView({
         </ToolbarButton>
       </div>
 
-      <UploadZone onUpload={() => router.push("/certificates/06?processing=1")} />
+      <UploadZone onFiles={onUploadFiles} />
+
+      {batch && (
+        <BatchPanel key={batch.key} files={batch.files} onDismiss={() => setBatch(null)} />
+      )}
 
       <div
         style={{

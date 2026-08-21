@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Clock, Eye, EyeOff, Search, Upload } from "lucide-react";
 import { ProfileSwitcher, type RequirementsProfile } from "@/components/coverscan";
+import { setBatch } from "@/lib/upload-batch";
 
 const ROLES = ["Buyer", "Insurance analyst", "Director", "Admin"];
 
@@ -121,19 +122,29 @@ export function TopHeader({ profiles }: TopHeaderProps) {
           <ChevronDown size={14} />
         </span>
       </span>
-      {/* Hidden picker — the selected file is accepted then ignored: demo replay of cert 06 */}
+      {/* Hidden picker — files are accepted then ignored: one file replays cert 06,
+          several files replay a batch over the cached certificates. */}
       <input
         ref={fileInputRef}
         type="file"
+        multiple
         accept=".pdf,.png,.jpg,.jpeg"
         tabIndex={-1}
         aria-hidden="true"
         style={{ display: "none" }}
         onChange={(e) => {
-          if (e.target.files?.length) {
-            e.target.value = "";
+          const files = Array.from(e.target.files ?? []).map((f) => ({
+            name: f.name,
+            size: f.size,
+          }));
+          e.target.value = "";
+          if (files.length === 0) return;
+          if (files.length === 1) {
             router.push("/certificates/06?processing=1");
+            return;
           }
+          setBatch(files);
+          router.push("/certificates?batch=1");
         }}
       />
       <button

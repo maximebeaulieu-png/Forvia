@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Eye,
   LayoutDashboard,
+  LogOut,
   PanelLeft,
   Plug,
   SlidersHorizontal,
@@ -49,6 +50,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
 /** CoverScan app-shell sidebar — logo, Monitor/Manage nav groups, collapse toggle. */
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = React.useState(false);
   const w = collapsed ? "var(--sidebar-w-collapsed)" : "var(--sidebar-w)";
   return (
@@ -167,7 +169,16 @@ export function Sidebar() {
           </React.Fragment>
         ))}
       </div>
-      <div style={{ padding: 8, borderTop: "1px solid var(--border)" }}>
+      <div
+        style={{
+          padding: 8,
+          borderTop: "1px solid var(--border)",
+          display: "flex",
+          flexDirection: collapsed ? "column" : "row",
+          alignItems: "stretch",
+          gap: 4,
+        }}
+      >
         <button
           type="button"
           onClick={() => setCollapsed((v) => !v)}
@@ -177,7 +188,7 @@ export function Sidebar() {
             alignItems: "center",
             gap: 10,
             height: 30,
-            width: "100%",
+            flex: 1,
             padding: "0 8px",
             background: "transparent",
             border: "none",
@@ -190,6 +201,35 @@ export function Sidebar() {
         >
           <PanelLeft size={15} />
           {!collapsed && "Collapse"}
+        </button>
+        <button
+          type="button"
+          title="Se déconnecter"
+          onClick={async () => {
+            try {
+              await fetch("/api/auth/logout", { method: "POST" });
+            } catch {
+              /* demo */
+            }
+            router.push("/login");
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: 30,
+            width: collapsed ? "100%" : 30,
+            flex: "0 0 auto",
+            padding: 0,
+            background: "transparent",
+            border: "none",
+            borderRadius: "var(--radius)",
+            cursor: "pointer",
+            color: "var(--muted-foreground)",
+            font: "inherit",
+          }}
+        >
+          <LogOut size={15} />
         </button>
       </div>
     </nav>
