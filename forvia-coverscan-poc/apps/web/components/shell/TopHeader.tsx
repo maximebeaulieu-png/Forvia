@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Clock, Eye, EyeOff, Search, Upload } from "lucide-react";
 import { ProfileSwitcher, type RequirementsProfile } from "@/components/coverscan";
-import { setBatch } from "@/lib/upload-batch";
+import { UploadDialog } from "@/components/shell/UploadDialog";
 
 const ROLES = ["Buyer", "Insurance analyst", "Director", "Admin"];
 
@@ -21,7 +21,7 @@ export function TopHeader({ profiles }: TopHeaderProps) {
   const [profile, setProfile] = React.useState("gptc");
   const [role, setRole] = React.useState("Buyer");
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [uploadOpen, setUploadOpen] = React.useState(false);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -122,35 +122,12 @@ export function TopHeader({ profiles }: TopHeaderProps) {
           <ChevronDown size={14} />
         </span>
       </span>
-      {/* Hidden picker — files are accepted then ignored: one file replays cert 06,
-          several files replay a batch over the cached certificates. */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        accept=".pdf,.png,.jpg,.jpeg"
-        tabIndex={-1}
-        aria-hidden="true"
-        style={{ display: "none" }}
-        onChange={(e) => {
-          const files = Array.from(e.target.files ?? []).map((f) => ({
-            name: f.name,
-            size: f.size,
-          }));
-          e.target.value = "";
-          if (files.length === 0) return;
-          if (files.length === 1) {
-            router.push("/certificates/06?processing=1");
-            return;
-          }
-          setBatch(files);
-          router.push("/certificates?batch=1");
-        }}
-      />
+      {/* Opens the dedicated upload space — the batch is composed in the modal. */}
+      <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
       <button
         type="button"
         title="Demo replay — the live pipeline lands in Sprint 1"
-        onClick={() => fileInputRef.current?.click()}
+        onClick={() => setUploadOpen(true)}
         style={{
           display: "inline-flex",
           alignItems: "center",
