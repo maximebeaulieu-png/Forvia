@@ -8,12 +8,12 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Requête invalide." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
   const email = typeof body.email === "string" ? body.email : "";
   const password = typeof body.password === "string" ? body.password : "";
   if (email.length === 0 || !isValidPassword(password)) {
-    return NextResponse.json({ error: "Mot de passe non conforme." }, { status: 422 });
+    return NextResponse.json({ error: "Password does not meet the policy." }, { status: 422 });
   }
   setDemoPassword(email, password);
   // A freshly created/reset password logs the user straight in (no second sign-in step).

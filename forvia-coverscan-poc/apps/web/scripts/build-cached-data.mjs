@@ -159,6 +159,37 @@ function mergeCertificate(base, expected, pageNumbers) {
   return merged;
 }
 
+/**
+ * Doctrine sanitiser (client technical dossier §1.3: binary compliance at the
+ * minimum). The design-pack demo dataset carries graded prose — "borderline
+ * compliant", "best coverage in the batch" — which contradicts the rule that
+ * anything under the minimum is simply non-compliant. Rewrite it at build time
+ * so no screen has to paper over it at render time.
+ */
+const DOCTRINE_REWRITES = [
+  [
+    "CHF 20,000,000 converts to \u20ac20.8M \u2014 borderline compliant",
+    "CHF 20,000,000 converts to \u20ac20.8M \u2014 at or above the \u20ac20M minimum",
+  ],
+  [
+    "Best coverage in the batch \u2014 PL \u20ac50M, recall \u20ac10M",
+    "Recall (frais de retrait) \u20ac10M against \u20ac15M required \u2014 under the minimum",
+  ],
+];
+
+function sanitiseWording(value) {
+  if (typeof value === "string") {
+    let out = value;
+    for (const [from, to] of DOCTRINE_REWRITES) out = out.split(from).join(to);
+    return out;
+  }
+  if (Array.isArray(value)) return value.map(sanitiseWording);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitiseWording(v)]));
+  }
+  return value;
+}
+
 async function main() {
   let CachedCertificate;
   try {
@@ -189,6 +220,10 @@ async function main() {
     })
     .sort((a, b) => a.id.localeCompare(b.id));
 
+  const sanitised = merged.map(sanitiseWording);
+  merged.length = 0;
+  merged.push(...sanitised);
+
   for (const cert of merged) {
     try {
       CachedCertificate.parse(cert);
@@ -216,7 +251,7 @@ async function main() {
     audit: CS.audit,
   };
   const aggFile = path.join(WEB_ROOT, "data/aggregates.json");
-  await fs.writeFile(aggFile, `${JSON.stringify(aggregates, null, 2)}\n`, "utf8");
+  await fs.writeFile(aggFile, `${JSON.stringify(sanitiseWording(aggregates), null, 2)}\n`, "utf8");
   console.log(`Wrote aggregates to ${path.relative(REPO_ROOT, aggFile)}`);
 }
 

@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { isValidPassword, PASSWORD_RULE_TEXT } from "@/lib/auth-demo";
+import { PASSWORD_RULE_TEXT, isValidPassword } from "@/lib/auth-demo";
 import { AuthButton } from "./AuthButton";
 import { AuthInput } from "./AuthInput";
+
+/** Helper copy mirroring `isValidPassword` (English, like the rest of the product). */
 
 interface NewPasswordFormProps {
   submitLabel: string;
@@ -12,7 +14,7 @@ interface NewPasswordFormProps {
 }
 
 /**
- * Shared "Mot de passe / Confirmer le mot de passe" form of the create & reset
+ * Shared "Password / Confirm password" form of the create & reset
  * screens — rule helper under the field, submit disabled until the password is
  * valid and confirmed, helper turns red on an invalid attempt.
  */
@@ -44,7 +46,7 @@ export function NewPasswordForm({ submitLabel, onSubmitPassword, onCancel }: New
     <form onSubmit={handleSubmit} noValidate>
       <div>
         <AuthInput
-          label="Mot de passe"
+          label="Password"
           password
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -67,7 +69,7 @@ export function NewPasswordForm({ submitLabel, onSubmitPassword, onCancel }: New
       </div>
       <div style={{ marginTop: 28 }}>
         <AuthInput
-          label="Confirmer le mot de passe"
+          label="Confirm password"
           password
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
@@ -80,7 +82,7 @@ export function NewPasswordForm({ submitLabel, onSubmitPassword, onCancel }: New
         </AuthButton>
         {onCancel != null && (
           <AuthButton type="button" variant="grey" onClick={onCancel}>
-            Annuler
+            Cancel
           </AuthButton>
         )}
       </div>

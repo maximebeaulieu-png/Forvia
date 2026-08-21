@@ -273,7 +273,40 @@ function CardTitle({ icon: IconGlyph, children }: { icon: LucideIcon; children: 
 /** Compact EUR label for MAJOR-unit amounts — matches the ui_kit `compact` helper. */
 const compactMajor = (v: number) => formatCompactEur(v * 100);
 
-/* ── Compliance by country — stacked go / request / nogo bars ── */
+/* ── Doctrine wording (client technical dossier, §1.3) ──────────────────────
+ * Compliance is binary at the minimum: nothing on this screen may read as a
+ * partial or graded verdict below the requirement. Portfolio-level ratios
+ * (median cover, share of compliant certificates) are indicators and are
+ * labelled as such. The guarantee taxonomy shows the Direction des Assurances
+ * terms — frais de retrait, DINC, DIC — next to the spec wording.
+ */
+
+/** aggregates.json guarantee names → the label carrying both vocabularies. */
+const GUARANTEE_LABEL: Record<string, string> = {
+  "Product liability": "Product liability",
+  "Product recall / withdrawal": "Product recall / withdrawal costs (frais de retrait)",
+  "Product recall / withdrawal costs": "Product recall / withdrawal costs (frais de retrait)",
+  "Pure financial loss": "Pure financial loss (DINC)",
+  "Consequential financial loss": "Consequential financial loss (DIC)",
+  "Consequential loss": "Consequential financial loss (DIC)",
+  "Dismantling and refitting": "Dismantling and refitting costs",
+};
+
+const guaranteeLabel = (name: string) => GUARANTEE_LABEL[name] ?? name;
+
+
+/** Appends the Direction des Assurances term wherever a guarantee is named in prose. */
+const TERM_RULES: Array<[RegExp, string]> = [
+  [/Product recall(?: \/ withdrawal)? costs(?! \()/g, "Product recall / withdrawal costs (frais de retrait)"],
+  [/Pure financial loss(?! \()/g, "Pure financial loss (DINC)"],
+  [/Consequential (?:financial )?loss(?! \()/g, "Consequential financial loss (DIC)"],
+];
+
+function doctrineWording(text: string): string {
+  return TERM_RULES.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), text);
+}
+
+/* ── Compliance by client entity — stacked go / request / nogo bars ── */
 
 function ComplianceByClient({
   rows,
@@ -356,7 +389,12 @@ function ComplianceByClient({
   );
 }
 
-/* ── Coverage gap by guarantee — required vs median on a GapBar ── */
+/* ── Coverage gap by guarantee — required vs median on a GapBar ──
+ * Portfolio indicator only. The percentage is the size of the gap against the
+ * requirement, never a degree of compliance: below the minimum a certificate is
+ * non-compliant, full stop. Hence "% of requirement" and "% of certificates
+ * compliant" — no bare percentage that could read as partial credit.
+ */
 
 function GapByGuarantee({ rows }: { rows: GuaranteeGapRow[] }) {
   return (
@@ -364,12 +402,12 @@ function GapByGuarantee({ rows }: { rows: GuaranteeGapRow[] }) {
       {rows.map((r) => (
         <div key={r.guarantee} style={{ display: "grid", gap: 5 }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 500, flex: 1 }}>{r.guarantee}</span>
+            <span style={{ fontSize: 13, fontWeight: 500, flex: 1 }}>{guaranteeLabel(r.guarantee)}</span>
             <span className="cs-num" style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
               required {compactMajor(r.required)}
             </span>
             <span className="cs-num" style={{ fontSize: 12, color: "var(--status-go)" }}>
-              {Math.round(r.compliantShare * 100)} % compliant
+              {Math.round(r.compliantShare * 100)} % of certificates compliant
             </span>
           </div>
           <GapBar
@@ -377,7 +415,7 @@ function GapByGuarantee({ rows }: { rows: GuaranteeGapRow[] }) {
             required={r.required * 100}
             width="100%"
             stacked
-            label={`median ${compactMajor(r.median)} · ${Math.round((r.median / r.required) * 100)} %`}
+            label={`median ${compactMajor(r.median)} · ${Math.round((r.median / r.required) * 100)} % of requirement`}
           />
         </div>
       ))}
@@ -556,13 +594,13 @@ export function PortfolioView({
     <div style={{ padding: "16px 24px 28px", display: "grid", gap: 16 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
         <KpiCard
-          label="Suppliers covered"
+          label="Certificates compliant"
           value={`${p.compliant} / ${p.total}`}
           icon="shield-check"
           tone="go"
           delta="+2"
           deltaTone="go"
-          sub="6 % of the portfolio is compliant"
+          sub="6 % of the portfolio · verdicts are per certificate"
         />
         <KpiCard
           label="Not admissible"
@@ -577,7 +615,7 @@ export function PortfolioView({
           value={118}
           tone="amber"
           icon="coins"
-          sub="Recall is the #1 gap (78 %)"
+          sub="Recall (frais de retrait) is the #1 gap — 78 % of certificates under the minimum"
         />
         <KpiCard
           label="Expiring ≤ 90 days"
@@ -600,7 +638,7 @@ export function PortfolioView({
         </Card>
         <Card
           title={<CardTitle icon={Coins}>Coverage gap by guarantee</CardTitle>}
-          subtitle="Median found against FORVIA GPTC requirement"
+          subtitle="Median found against FORVIA GPTC requirement · Gap indicator — compliance itself is binary at the minimum."
         >
           <GapByGuarantee rows={gapByGuarantee} />
         </Card>
@@ -609,6 +647,7 @@ export function PortfolioView({
       <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16 }}>
         <Card
           title={<CardTitle icon={TriangleAlert}>Top 10 risks</CardTitle>}
+          subtitle="One row = one certificate — the verdict belongs to that certificate, not to the supplier"
           padded={false}
           actions={
             <SmallButton iconLeft={<Download size={13} strokeWidth={1.75} />}>Export Excel</SmallButton>
@@ -627,7 +666,7 @@ export function PortfolioView({
               },
               { key: "supplier", header: "Supplier" },
               { key: "country", header: "Country", muted: true },
-              { key: "worst", header: "Worst finding", wrap: true },
+              { key: "worst", header: "Worst finding", wrap: true, render: (r) => doctrineWording(r.worst) },
               { key: "spend", header: "Spend", muted: true },
               {
                 key: "open",

@@ -53,6 +53,13 @@ import {
 } from "@/components/coverscan";
 import { formatEur } from "@/lib/format";
 import { REFERENCE_DATE } from "@/lib/config";
+import {
+  NO_SCORE_REASON,
+  binaryPoints,
+  binaryStatus,
+  fxLine,
+  publishesRiskScore,
+} from "@/lib/doctrine";
 
 /* The repository JSON is schema-validated at build time (scripts/build-cached-data.mjs).
    This local shape narrows the passthrough fields the screen consumes.
@@ -114,21 +121,89 @@ interface DeepCert {
 
 const eur = (major: number) => formatEur(Math.round(major * 100));
 
+/* Labels carry the Direction des Assurances taxonomy alongside the spec wording
+   (dossier §2 vocabulary: retrait / frais de retrait, DIC, DINC). */
 const BREAKDOWN_LABELS: Record<string, { label: string; group: CoverageRow["group"] }> = {
-  PRODUCT_LIABILITY: { label: "Product liability", group: "critical" },
-  PRODUCT_RECALL: { label: "Product recall / withdrawal costs", group: "critical" },
-  PURE_FINANCIAL_LOSS: { label: "Pure financial loss", group: "critical" },
+  PRODUCT_LIABILITY: { label: "Product liability (RC produits)", group: "critical" },
+  PRODUCT_RECALL: { label: "Product recall / withdrawal costs (frais de retrait)", group: "critical" },
+  PURE_FINANCIAL_LOSS: { label: "Pure financial loss (DINC)", group: "critical" },
   CONSEQUENTIAL_FINANCIAL_LOSS: { label: "Consequential financial loss (DIC)", group: "secondary" },
-  DISMANTLING_REFITTING: { label: "Dismantling and refitting", group: "secondary" },
+  DISMANTLING_REFITTING: { label: "Dismantling and refitting (dépose-repose)", group: "secondary" },
   EXTENDED_PRODUCT_LIABILITY: { label: "Extended product liability", group: "secondary" },
   TERRITORY_USA_CANADA: { label: "Territory incl. USA/Canada", group: "secondary" },
   AGGREGATE_BASIS: { label: "Aggregate basis", group: "secondary" },
+};
+
+/* --------------------------------------------------------- binary scoring */
+
+/** Dataset verdicts for the presence-type criteria (no amount to compare) that mean "satisfied". */
+const PRESENCE_OK = new Set(["PRESENT", "INCLUDED", "BOTH", "COMPLIANT", "COMPLIANT_STRONG"]);
+
+interface ScoreRow {
+  code: string;
+  label: string;
+  /** points under the binary rule — 0 or the full weight, never a proportion */
+  points: number;
+  max: number;
+  requiredEur: number | null;
+  foundEur: number | null;
+  /** explicit reason whenever the criterion scores nothing */
+  note: string;
+}
+
+/**
+ * Score breakdown under the binary-minimum doctrine (dossier §1.3): below the
+ * minimum a guarantee scores 0, never a share of its weight. The dataset's own
+ * `points` (7.5 / 30 for a quarter of the requirement) are deliberately ignored.
+ */
+function scoreRows(c: DeepCert): ScoreRow[] {
+  const out: ScoreRow[] = [];
+  for (const [code, v] of Object.entries(c.computed?.breakdown ?? {})) {
+    if (code.startsWith("_") || v == null || typeof v !== "object") continue;
+    const requiredEur = typeof v.required === "number" ? v.required : null;
+    const foundEur = typeof v.found === "number" ? v.found : null;
+    const max = v.max ?? 0;
+    const fallback = v.status && PRESENCE_OK.has(v.status) ? "PRESENT" : v.status;
+    const points = binaryPoints(foundEur, requiredEur, max, fallback);
+    const note =
+      requiredEur == null
+        ? points === 0
+          ? "not evidenced — no credit"
+          : ""
+        : binaryStatus(foundEur, requiredEur) === "NON_COMPLIANT"
+          ? foundEur == null
+            ? "not evidenced — no credit"
+            : "below minimum — no partial credit"
+          : "";
+    out.push({
+      code,
+      label: BREAKDOWN_LABELS[code]?.label ?? code,
+      points,
+      max,
+      requiredEur,
+      foundEur,
+      note,
+    });
+  }
+  return out;
+}
+
+/* Same taxonomy for the rows the dataset ships pre-built. Rows outside the
+   Direction des Assurances vocabulary (employer's liability, DIC/DIL wording,
+   sub-limits…) keep their own label. */
+const COVERAGE_ALIASES: Record<string, string> = {
+  pl: "Product liability (RC produits)",
+  recall: "Product recall / withdrawal costs (frais de retrait)",
+  pfl: "Pure financial loss (DINC)",
+  consequential: "Consequential financial loss (DIC)",
+  dismantling: "Dismantling and refitting (dépose-repose)",
 };
 
 function coverageRows(c: DeepCert): CoverageRow[] {
   if (c.coverage?.length) {
     return c.coverage.map((r) => ({
       ...r,
+      guarantee: COVERAGE_ALIASES[r.id] ?? r.guarantee,
       required: r.required != null ? Math.round(r.required * 100) : undefined,
       foundEur: r.foundEur != null ? Math.round(r.foundEur * 100) : r.foundEur,
       group: ["pl", "recall", "pfl"].includes(r.id) ? "critical" : "secondary",
@@ -167,12 +242,31 @@ function coverageRows(c: DeepCert): CoverageRow[] {
   return rows;
 }
 
+/** The cached dataset carries FX either as { rate, date } or keyed by the source currency. */
+function fxRateOf(c: DeepCert): number | undefined {
+  const fx = (c.fx ?? {}) as Record<string, unknown>;
+  if (typeof fx.rate === "number") return fx.rate;
+  if (c.currency && typeof fx[c.currency] === "number") return fx[c.currency] as number;
+  return undefined;
+}
+
 function derivedFindings(c: DeepCert): Finding[] {
-  if (c.findings?.length) return c.findings;
+  /* The FX provenance finding is re-stated from the reception date (dossier §5) so the
+     screen never quotes two different rate dates for the same certificate. */
+  const withFx = (list: Finding[]) =>
+    list.map((f) =>
+      f.ruleId === "FX_APPLIED"
+        ? { ...f, title: fxLine(c.currency, fxRateOf(c), c.received) }
+        : f,
+    );
+  if (c.findings?.length) return withFx(c.findings);
   const out: Finding[] = [];
   for (const [gate, s] of Object.entries(c.gates ?? {})) {
-    if (s.state === "fail") out.push({ ruleId: `GATE_${gate.toUpperCase()}`, severity: "BLOCK", title: s.note ?? `${gate} check failed`, fix: `Resolve the ${gate} defect and resubmit the certificate.` });
-    else if (s.state === "review") out.push({ ruleId: `GATE_${gate.toUpperCase()}`, severity: "WARNING", title: s.note ?? `${gate} needs human review` });
+    /* No verdict without a consultable reason (dossier §3). */
+    const label = SEAL_GATES.find((g) => g.id === gate)?.label ?? gate;
+    const reason = s.note ?? "Reason not recorded — human review";
+    if (s.state === "fail") out.push({ ruleId: `GATE_${gate.toUpperCase()}`, severity: "BLOCK", title: `${label}: ${reason}`, fix: `Resolve the ${label.toLowerCase()} defect and resubmit the certificate.` });
+    else if (s.state === "review") out.push({ ruleId: `GATE_${gate.toUpperCase()}`, severity: "WARNING", title: `${label}: ${reason}` });
   }
   for (const [code, v] of Object.entries(c.computed?.breakdown ?? {})) {
     if (v.status === "BELOW_MINIMUM" && typeof v.required === "number") {
@@ -264,6 +358,7 @@ export function CertificateView({
   const [reviewed, setReviewed] = React.useState(false);
   const [rejected, setRejected] = React.useState(false);
   const [showMinors, setShowMinors] = React.useState(false);
+  const [scoreOpen, setScoreOpen] = React.useState(false);
   /* Simulated pipeline replay — running step index, or null once the analysis is shown. */
   const [processingStep, setProcessingStep] = React.useState<number | null>(processing ? 0 : null);
   const isProcessing = processingStep != null;
@@ -271,6 +366,20 @@ export function CertificateView({
 
   const rows = React.useMemo(() => coverageRows(c), [c]);
   const findings = React.useMemo(() => derivedFindings(c), [c]);
+  /* Score is rebuilt from the binary rule — the dataset's proportional points are not the source. */
+  const breakdown = React.useMemo(() => scoreRows(c), [c]);
+  const binaryTotal = React.useMemo(
+    () => Math.round(breakdown.reduce((sum, r) => sum + r.points, 0)),
+    [breakdown],
+  );
+  const scorePublished = publishesRiskScore(c.accuracy);
+  const hasBreakdown = breakdown.length > 0;
+  const ringValue = hasBreakdown ? binaryTotal : c.score ?? 0;
+  const penalty = Number(
+    (c.computed?.breakdown as Record<string, unknown> | undefined)?._penalties ?? 0,
+  );
+  const fxRate = fxRateOf(c);
+  const fxConverted = !!c.currency && c.currency !== "EUR" && fxRate != null && fxRate !== 1;
   const highlights: EvidenceHighlight[] = (c.highlights ?? []) as EvidenceHighlight[];
   const pages: DocumentPage[] = (c.pages ?? []) as DocumentPage[];
   const provisional = c.provisional ?? (c.decision === "FORMAL_DEFECT" || c.decision === "STRUCTURAL");
@@ -309,6 +418,16 @@ export function CertificateView({
     return () => clearTimeout(t);
   }, [processingStep, router, c.id]);
 
+  /* Escape closes the score breakdown popover. */
+  React.useEffect(() => {
+    if (!scoreOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setScoreOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [scoreOpen]);
+
   /* Mount the tabs at opacity 0, then fade them in on the next frame. */
   React.useEffect(() => {
     if (!isProcessing && !revealed) {
@@ -331,9 +450,19 @@ export function CertificateView({
   const rest = sentences.slice(1).join(" ");
 
   const gates = c.gates ?? {};
+  /* No verdict without a consultable reason (dossier §3) — never render a bare failure. */
+  const gateReason = (g?: SealGateState) => g?.note ?? "Reason not recorded — human review";
+  const entityGate = gates.entity;
+  const entityBlocking = entityGate?.state === "fail" || entityGate?.state === "review";
   const failingGates = SEAL_GATES.filter((g) => { const s = gates[g.id]?.state; return s === "fail" || s === "review"; });
   const passingGates = SEAL_GATES.filter((g) => { const s = gates[g.id]?.state; return s !== "fail" && s !== "review"; });
-  const passedCount = 8 - SEAL_GATES.filter((g) => gates[g.id]?.state === "fail").length;
+  // A gate under review has NOT passed — only "pass" (and "na", which does not
+  // apply to this certificate) may be counted, otherwise the header claims 8/8
+  // next to two visible "?" marks.
+  const passedCount = SEAL_GATES.filter((g) => {
+    const st = gates[g.id]?.state;
+    return st === "pass" || st === "na";
+  }).length;
 
   const majors = findings.filter((f) => f.severity === "BLOCK" || f.severity === "CRITICAL");
   const minors = findings.filter((f) => f.severity !== "BLOCK" && f.severity !== "CRITICAL");
@@ -343,7 +472,7 @@ export function CertificateView({
   const usaCanada = c.territory?.usaCanada ?? "UNCLEAR";
   const cellState = (key: string) =>
     key === "usaCanada"
-      ? usaCanada === "INCLUDED" ? "included" : usaCanada === "PARTIAL_EXCLUDED" ? "partially excluded" : usaCanada === "EXCLUDED" ? "excluded" : "unclear"
+      ? usaCanada === "INCLUDED" ? "included" : usaCanada === "PARTIAL_EXCLUDED" ? "not fully covered" : usaCanada === "EXCLUDED" ? "excluded" : "unclear"
       : key === "worldwide" ? "included" : "see wording";
   const cellColor = (state: string) =>
     state === "included" ? "var(--status-go)" : state.includes("exclu") ? "var(--status-red)" : "var(--status-review)";
@@ -518,8 +647,98 @@ export function CertificateView({
                         {rest && <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--muted-foreground)", marginTop: 6, textWrap: "pretty", maxWidth: "66ch" }}>{rest}</div>}
                       </div>
                     </div>
-                    {c.score != null && <ScoreRing value={c.score} provisional={provisional} size={104} />}
+                    {/* Accuracy guard (dossier §6): below the threshold no risk score is published. */}
+                    {!scorePublished ? (
+                      <div style={{ maxWidth: 300, padding: 14, borderRadius: "var(--radius-lg)", background: "var(--muted)", display: "grid", gap: 8, justifyItems: "start" }}>
+                        <Badge className="border-transparent bg-(--status-review-bg) text-(--status-review)">Human review</Badge>
+                        <p style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted-foreground)", textWrap: "pretty" }}>{NO_SCORE_REASON}</p>
+                        <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
+                          Extraction accuracy <span className="cs-num">{c.accuracy != null ? `${Math.round(c.accuracy * 100)}%` : "—"}</span> · threshold <span className="cs-num">75%</span>
+                        </span>
+                      </div>
+                    ) : !hasBreakdown ? (
+                      c.score != null && <ScoreRing value={c.score} provisional={provisional} size={104} />
+                    ) : (
+                      <div style={{ position: "relative", display: "grid", justifyItems: "center", gap: 4 }}>
+                        <button
+                          type="button"
+                          onClick={() => setScoreOpen((v) => !v)}
+                          aria-expanded={scoreOpen}
+                          aria-haspopup="dialog"
+                          aria-label={`Risk score ${ringValue} of 100 — score breakdown`}
+                          className={focusRing}
+                          style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", font: "inherit", color: "inherit" }}
+                        >
+                          <ScoreRing value={ringValue} provisional={provisional} size={104} />
+                        </button>
+                        <span style={{ fontSize: 10, lineHeight: 1.35, color: "var(--muted-foreground)", textAlign: "center", maxWidth: 170 }}>
+                          Binary compliance at the minimum (dossier §1.3)
+                        </span>
+                        {scoreOpen && (
+                          <div
+                            role="dialog"
+                            aria-label="Score breakdown"
+                            style={{ position: "absolute", top: "100%", right: 0, zIndex: 30, width: 360, marginTop: 6, padding: 14, background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-popover)", display: "grid", gap: 10, textAlign: "left" }}
+                          >
+                            <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                              <h3 style={{ fontSize: 13, fontWeight: 600 }}>Score breakdown</h3>
+                              <span style={{ flex: 1 }} />
+                              <span className="cs-num" style={{ fontSize: 13, fontWeight: 600 }}>{binaryTotal} / 100</span>
+                            </div>
+                            <p style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted-foreground)" }}>
+                              Any cover under the required minimum scores zero — no gradation, no partial credit. Bonus bands apply only at or above the minimum.
+                            </p>
+                            <div style={{ display: "grid", gap: 6 }}>
+                              {breakdown.map((r) => (
+                                <div key={r.code} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8, alignItems: "baseline", paddingBottom: 6, borderBottom: "1px solid var(--border)" }}>
+                                  <div style={{ minWidth: 0 }}>
+                                    <div style={{ fontSize: 12, fontWeight: 500, textWrap: "pretty" }}>{r.label}</div>
+                                    {r.requiredEur != null && (
+                                      <div className="cs-num" style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
+                                        {r.foundEur != null ? eur(r.foundEur) : "not found"} of {eur(r.requiredEur)} required
+                                      </div>
+                                    )}
+                                    {r.note && (
+                                      <div style={{ fontSize: 11, color: "var(--status-red)" }}>{r.note}</div>
+                                    )}
+                                  </div>
+                                  <span className="cs-num" style={{ fontSize: 12, fontWeight: 600, color: r.points === 0 ? "var(--status-red)" : "var(--foreground)" }}>
+                                    {r.points} / {r.max}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                            {penalty !== 0 && (
+                              <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted-foreground)" }}>
+                                Formal defects recorded on this certificate (<span className="cs-num">{penalty}</span> in the legacy weighted model) are handled as blocking admissibility gates, not as a score deduction.
+                              </div>
+                            )}
+                            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                              <Button size="sm" variant="ghost" onClick={() => setScoreOpen(false)}>Close</Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
+
+                  {/* One certificate = one contracting entity (dossier §2) — blocking alert with its reason. */}
+                  {entityBlocking && (
+                    <div style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 14px", borderRadius: "var(--radius-lg)", background: "var(--status-red-bg)", border: "1px solid color-mix(in oklch, var(--status-red) 22%, transparent)" }}>
+                      <ShieldX size={18} color="var(--status-red)" aria-hidden="true" style={{ flex: "0 0 18px", marginTop: 1 }} />
+                      <div style={{ minWidth: 0, display: "grid", gap: 3 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "var(--status-red)" }}>
+                          Blocking alert — contracting entity
+                        </div>
+                        <div style={{ fontSize: 13, lineHeight: 1.45, color: "var(--foreground)", textWrap: "pretty", maxWidth: "70ch" }}>
+                          One certificate = one contracting entity — a certificate issued to the parent company is inoperative for the contracting subsidiary.
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--muted-foreground)", textWrap: "pretty" }}>
+                          Reason: {gateReason(entityGate)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* admissibility */}
                   <div style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: 20, alignItems: "center", padding: "16px 20px", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", background: "var(--card)" }}>
@@ -543,7 +762,7 @@ export function CertificateView({
                               >
                                 <span aria-hidden="true" style={{ color: review ? "var(--status-review)" : "var(--status-red)", fontFamily: "var(--font-mono)", fontWeight: 600, flex: "0 0 12px" }}>{review ? "?" : "✗"}</span>
                                 <span style={{ fontSize: 13, fontWeight: 600, flex: "0 0 auto" }}>{g.label}</span>
-                                {e.note && <span style={{ fontSize: 13, color: "var(--muted-foreground)", minWidth: 0 }}>— {e.note}</span>}
+                                <span style={{ fontSize: 13, color: "var(--muted-foreground)", minWidth: 0 }}>— {gateReason(e)}</span>
                               </button>
                             );
                           })}
@@ -604,7 +823,7 @@ export function CertificateView({
                         className={focusRing}
                         style={{ marginTop: 8, background: "transparent", border: "none", cursor: "pointer", font: "inherit", fontSize: 12, fontWeight: 500, color: "var(--primary)", display: "inline-flex", alignItems: "center", gap: 5, padding: 0 }}
                       >
-                        <ChevronDown size={13} aria-hidden="true" />Show {minors.length} minor finding{minors.length > 1 ? "s" : ""}
+                        <ChevronDown size={13} aria-hidden="true" />Show {minors.length} secondary finding{minors.length > 1 ? "s" : ""}
                       </button>
                     )}
                     {showMinors && (
@@ -616,7 +835,7 @@ export function CertificateView({
                           className={focusRing}
                           style={{ marginTop: 8, background: "transparent", border: "none", cursor: "pointer", font: "inherit", fontSize: 12, fontWeight: 500, color: "var(--primary)", display: "inline-flex", alignItems: "center", gap: 5, padding: 0 }}
                         >
-                          <ChevronUp size={13} aria-hidden="true" />Hide minor finding{minors.length > 1 ? "s" : ""}
+                          <ChevronUp size={13} aria-hidden="true" />Hide secondary finding{minors.length > 1 ? "s" : ""}
                         </button>
                       </>
                     )}
@@ -661,10 +880,12 @@ export function CertificateView({
                       ))}
                     </tbody>
                   </table>
+                  {/* FX provenance (dossier §5): ECB rate of the day the certificate was received. */}
                   <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
-                    {c.fx && "rate" in c.fx && c.fx.rate !== 1
-                      ? <><span className="cs-num">{c.fx.from ?? c.currency}→EUR {c.fx.rate}</span> · ECB {c.fx.date ?? REFERENCE_DATE} — applied to every amount on this certificate</>
-                      : <>All amounts in EUR — no conversion applied · reference date {REFERENCE_DATE}</>}
+                    <span className={fxConverted ? "cs-num" : undefined}>{fxLine(c.currency, fxRate, c.received)}</span>
+                    {fxConverted && (
+                      <> — the ECB rate of the day this certificate was received, applied to every amount on it.</>
+                    )}
                   </div>
                   <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
                     Inline field editing with instant re-score arrives with the rules engine (Sprint 1).

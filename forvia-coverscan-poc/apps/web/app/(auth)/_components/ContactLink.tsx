@@ -1,8 +1,8 @@
-/** Centered "Contacter CoverScan" footer link of every login screen. */
+/** Centered "Contact Forvia" footer link of every login screen. */
 export function ContactLink() {
   return (
     <a
-      href="mailto:contact@coverscan.example"
+      href="mailto:contact@forvia.example"
       style={{
         display: "block",
         textAlign: "center",
@@ -13,7 +13,7 @@ export function ContactLink() {
         textDecoration: "none",
       }}
     >
-      Contacter CoverScan
+      Contact Forvia
     </a>
   );
 }

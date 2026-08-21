@@ -3,7 +3,7 @@ import { PageHeading } from "@/components/shell/PageHeading";
 import { getCertificate } from "@/lib/repository";
 import { SupplierView } from "./suppliers-view";
 
-export const metadata: Metadata = { title: "Suppliers — CoverScan" };
+export const metadata: Metadata = { title: "Suppliers — Forvia" };
 
 /** Supplier 360 (mid-fi): Metraton S.r.l. — all certificates, change detection, policy numbers. */
 export default function SuppliersPage() {

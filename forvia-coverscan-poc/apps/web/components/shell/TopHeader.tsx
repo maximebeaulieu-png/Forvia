@@ -2,24 +2,24 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Clock, Eye, EyeOff, Search, Upload } from "lucide-react";
-import { ProfileSwitcher, type RequirementsProfile } from "@/components/coverscan";
+import { Clock, Eye, EyeOff, Search, Upload } from "lucide-react";
+import { AccountMenu } from "@/components/shell/AccountMenu";
 import { UploadDialog } from "@/components/shell/UploadDialog";
-
-const ROLES = ["Buyer", "Insurance analyst", "Director", "Admin"];
+import type { DemoUser } from "@/lib/auth-demo";
 
 export interface TopHeaderProps {
-  /** Requirements profiles from the demo dataset (getAggregates().profiles). */
-  profiles: RequirementsProfile[];
+  /** Signed-in account, resolved server-side in app/(shell)/layout.tsx. */
+  user: DemoUser | null;
 }
 
-/** CoverScan app-shell header — search, demo clock, profile, role, upload, theme. */
-export function TopHeader({ profiles }: TopHeaderProps) {
+/**
+ * CoverScan app-shell header — search, demo clock, upload, theme, account menu.
+ * Profile and role switchers were removed: the account carries the role.
+ */
+export function TopHeader({ user }: TopHeaderProps) {
   const router = useRouter();
   const [query, setQuery] = React.useState("");
   const [searchFocus, setSearchFocus] = React.useState(false);
-  const [profile, setProfile] = React.useState("gptc");
-  const [role, setRole] = React.useState("Buyer");
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const [uploadOpen, setUploadOpen] = React.useState(false);
 
@@ -93,35 +93,6 @@ export function TopHeader({ profiles }: TopHeaderProps) {
         <Clock size={12} />
         <span className="cs-num">15 Apr 2025</span>
       </span>
-      <ProfileSwitcher value={profile} profiles={profiles} onChange={setProfile} />
-      <span style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          aria-label="Role"
-          style={{
-            appearance: "none",
-            height: 28,
-            padding: "0 28px 0 10px",
-            fontSize: 13,
-            fontFamily: "var(--font-sans)",
-            color: "var(--foreground)",
-            background: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            cursor: "pointer",
-          }}
-        >
-          {ROLES.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
-        <span style={{ position: "absolute", right: 8, pointerEvents: "none", color: "var(--muted-foreground)", display: "flex" }}>
-          <ChevronDown size={14} />
-        </span>
-      </span>
       {/* Opens the dedicated upload space — the batch is composed in the modal. */}
       <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
       <button
@@ -179,6 +150,7 @@ export function TopHeader({ profiles }: TopHeaderProps) {
       >
         {theme === "dark" ? <Eye size={14} /> : <EyeOff size={14} />}
       </button>
+      {user && <AccountMenu user={user} />}
     </header>
   );
 }

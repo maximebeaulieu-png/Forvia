@@ -2,7 +2,7 @@ import { VerdictSection } from "./sections/verdict";
 import { CoverageSection } from "./sections/coverage";
 import { DocumentSection } from "./sections/document";
 
-export const metadata = { title: "CoverScan — Component specimens" };
+export const metadata = { title: "Forvia — Component specimens" };
 
 export default function SpecimensPage() {
   return (
@@ -10,7 +10,7 @@ export default function SpecimensPage() {
       <header className="space-y-1">
         <h1>Component specimens</h1>
         <p className="text-muted-foreground">
-          Re-implemented CoverScan components, side by side with the design-system reference cards
+          Re-implemented Forvia components, side by side with the design-system reference cards
           (design-pack / Design System Cover Scan).
         </p>
       </header>

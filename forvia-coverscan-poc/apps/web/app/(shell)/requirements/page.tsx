@@ -3,7 +3,7 @@ import { PageHeading } from "@/components/shell/PageHeading";
 import { getAggregates } from "@/lib/repository";
 import { RequirementsView, type ProfileItem } from "./requirements-view";
 
-export const metadata: Metadata = { title: "Requirements — CoverScan" };
+export const metadata: Metadata = { title: "Requirements — Forvia" };
 
 /** Requirements profiles (mid-fi): thresholds, gates and weights per profile. */
 export default function RequirementsPage() {

@@ -11,7 +11,7 @@ interface PinInputProps {
 /**
  * 6-box pin code input — auto-advance on digit entry, backspace steps back,
  * pasting a 6-digit code fills every box. Accessible: each box is labelled
- * "Chiffre N du code".
+ * "Digit N of the code".
  */
 export function PinInput({ value, onChange, length = 6 }: PinInputProps) {
   const refs = React.useRef<Array<HTMLInputElement | null>>([]);
@@ -80,7 +80,7 @@ export function PinInput({ value, onChange, length = 6 }: PinInputProps) {
           onBlur={() => setFocusedIndex(-1)}
           inputMode="numeric"
           autoComplete={i === 0 ? "one-time-code" : "off"}
-          aria-label={`Chiffre ${i + 1} du code`}
+          aria-label={`Digit ${i + 1} of the code`}
           style={{
             flex: 1,
             minWidth: 0,

@@ -6,7 +6,7 @@ import { ContactLink } from "../../_components/ContactLink";
 import { NewPasswordForm } from "../../_components/NewPasswordForm";
 import { getAuthEmail } from "../../_components/auth-client";
 
-/** /login/reset — mockup 8: "Réinitialiser le mot de passe". */
+/** /login/reset — mockup 8: "Reset password". */
 export default function ResetPage() {
   const router = useRouter();
 
@@ -35,11 +35,11 @@ export default function ResetPage() {
 
   return (
     <div>
-      <AuthTitle>Réinitialiser le mot de passe</AuthTitle>
-      <AuthSubtitle>Créez votre nouveau mot de passe</AuthSubtitle>
+      <AuthTitle>Reset password</AuthTitle>
+      <AuthSubtitle>Create your new password</AuthSubtitle>
       <div style={{ marginTop: 36 }}>
         <NewPasswordForm
-          submitLabel="Réinitialiser le mot de passe"
+          submitLabel="Reset password"
           onSubmitPassword={handleSubmit}
           onCancel={() => router.push("/login")}
         />

@@ -670,7 +670,7 @@
       "recall": "BELOW_MINIMUM",
       "pfl": "COVERED_NO_AMOUNT"
     },
-    "secondary": "CHF 20,000,000 converts to €20.8M — borderline compliant",
+    "secondary": "CHF 20,000,000 converts to €20.8M — at or above the €20M minimum",
     "guarantees": [
       {
         "code": "COMBINED_GL_PL",
@@ -2887,7 +2887,7 @@
       "recall": "BELOW_MINIMUM",
       "pfl": "COMPLIANT"
     },
-    "secondary": "Best coverage in the batch — PL €50M, recall €10M",
+    "secondary": "Recall (frais de retrait) €10M against €15M required — under the minimum",
     "guarantees": [
       {
         "code": "GENERAL_LIABILITY",

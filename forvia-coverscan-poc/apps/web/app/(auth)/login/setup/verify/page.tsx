@@ -26,17 +26,17 @@ export default function SetupVerifyPage() {
     if (code === DEMO_2FA_CODE) {
       router.push("/login/setup/password");
     } else {
-      setError("Code incorrect.");
+      setError("Incorrect code.");
     }
   };
 
   return (
     <div>
-      <AuthTitle>Créer votre mot de passe</AuthTitle>
+      <AuthTitle>Create your password</AuthTitle>
       <AuthSubtitle>
-        Pour accéder à CoverScan, confirmez votre identité avec un code pin à 6 chiffres envoyé à{" "}
-        <strong style={{ fontWeight: 700, color: "var(--foreground)" }}>{email}</strong> pour créer
-        votre mot de passe.
+        To access Forvia, confirm your identity with the 6-digit code sent to{" "}
+        <strong style={{ fontWeight: 700, color: "var(--foreground)" }}>{email}</strong>, then
+        create your password.
       </AuthSubtitle>
       <form onSubmit={handleSubmit} noValidate>
         <div style={{ marginTop: 40 }}>
@@ -57,9 +57,9 @@ export default function SetupVerifyPage() {
           <ResendButton />
         </div>
         <div style={{ marginTop: 40, display: "grid", gap: 12 }}>
-          <AuthButton type="submit">Continuer</AuthButton>
+          <AuthButton type="submit">Continue</AuthButton>
           <AuthButton type="button" variant="grey" onClick={() => router.push("/login")}>
-            Annuler
+            Cancel
           </AuthButton>
         </div>
       </form>

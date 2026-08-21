@@ -10,8 +10,8 @@ interface ResendButtonProps {
 }
 
 /**
- * "Renvoyer le code" grey pill — disabled while the countdown line
- * "Renvoyer un mail dans  Xs" runs from 40s to 0, then active again.
+ * "Resend code" grey pill — disabled while the countdown line
+ * "Resend available in  Xs" runs from 40s to 0, then active again.
  */
 export function ResendButton({ initialSeconds = 40, onResend }: ResendButtonProps) {
   const [seconds, setSeconds] = React.useState(initialSeconds);
@@ -49,7 +49,7 @@ export function ResendButton({ initialSeconds = 40, onResend }: ResendButtonProp
         }}
       >
         <RefreshCcw size={15} />
-        Renvoyer le code
+        Resend code
       </button>
       {running && (
         <p
@@ -62,7 +62,7 @@ export function ResendButton({ initialSeconds = 40, onResend }: ResendButtonProp
             color: "var(--foreground)",
           }}
         >
-          <span>Renvoyer un mail dans</span>
+          <span>Resend available in</span>
           <strong style={{ fontWeight: 700 }}>{seconds}s</strong>
         </p>
       )}

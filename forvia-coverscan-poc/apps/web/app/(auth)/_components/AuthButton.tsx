@@ -6,7 +6,7 @@ interface AuthButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   variant?: "primary" | "grey";
 }
 
-/** Full-width pill button of the login screens — primary blue, or grey "Annuler". */
+/** Full-width pill button of the login screens — primary blue, or grey "Cancel". */
 export function AuthButton({ variant = "primary", style, disabled, ...props }: AuthButtonProps) {
   const [hover, setHover] = React.useState(false);
   const primary = variant === "primary";

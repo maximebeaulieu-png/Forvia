@@ -23,7 +23,7 @@ export interface ProfileSwitcherProps {
 }
 
 /** Sprint 0: recomputation ships in Sprint 1, so the Expert profile stays disabled. */
-const EXPERT_DISABLED_TITLE = "Recalcul au Sprint 1";
+const EXPERT_DISABLED_TITLE = "Rescoring arrives in Sprint 1";
 
 /**
  * Header control for the active requirements profile. Changing it rescores client-side and recolours

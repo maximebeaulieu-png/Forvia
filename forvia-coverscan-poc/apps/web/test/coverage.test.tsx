@@ -7,6 +7,14 @@ import { KpiCard } from "@/components/coverscan/KpiCard";
 
 afterEach(cleanup);
 
+/** Wording the client dossier forbids: below the minimum there is no gradation at all. */
+const FORBIDDEN = /minor|partial|underinsur|under-insur|sous-assurance|almost|nearly/i;
+
+/** "Non-compliant" legitimately contains "compliant" — strip it before asserting the positive claim. */
+function withoutNonCompliant(text: string | null): string {
+  return (text ?? "").replace(/non[-\s]?compliant/gi, "");
+}
+
 describe("GapBar", () => {
   it("fill width = found/required", () => {
     const { container } = render(
@@ -44,6 +52,42 @@ describe("GapBar", () => {
     const fill = container.querySelector<HTMLElement>('[data-slot="gap-bar-fill"]');
     expect(fill!.style.width).toBe("100%");
     expect(container.textContent).toContain("€20M · meets requirement");
+  });
+
+  /* Doctrine §1.3 — the bar is a gap indicator, never a partial-compliance band. */
+
+  it("names both figures so the percentage reads as a gap, not as a degree of compliance", () => {
+    const { container } = render(<GapBar found={30500000} required={1500000000} />);
+    expect(container.textContent).toContain("€305k of €15M · 2 % of requirement");
+    expect(withoutNonCompliant(container.textContent)).not.toMatch(/compliant/i);
+  });
+
+  it("never uses a partial-compliance vocabulary in any state", () => {
+    for (const status of ["BELOW_MINIMUM", "MISSING", "COVERED_NO_AMOUNT", "EXCLUDED"] as const) {
+      const { container } = render(
+        <GapBar found={30500000} required={1500000000} status={status} />,
+      );
+      expect(container.textContent).not.toMatch(FORBIDDEN);
+      cleanup();
+    }
+  });
+
+  it("nonCompliant reddens the label and reinforces the requirement tick", () => {
+    const { container } = render(
+      <GapBar found={500000000} required={2000000000} nonCompliant />,
+    );
+    const label = container.querySelector<HTMLElement>(".cs-num");
+    expect(label!.style.color).toBe("var(--status-red)");
+    const tick = container.querySelector<HTMLElement>('[data-slot="gap-bar-tick"]');
+    expect(tick!.style.background).toBe("var(--status-red)");
+    expect(tick!.style.width).toBe("3px");
+  });
+
+  it("without nonCompliant the tick stays the neutral requirement marker", () => {
+    const { container } = render(<GapBar found={500000000} required={2000000000} />);
+    const tick = container.querySelector<HTMLElement>('[data-slot="gap-bar-tick"]');
+    expect(tick!.style.background).toBe("var(--required-marker)");
+    expect(tick!.style.width).toBe("2px");
   });
 });
 
@@ -93,6 +137,187 @@ describe("CoverageGrid", () => {
     expect(screen.getByText("Missing")).toBeInTheDocument();
     const pflRow = container.querySelector('[data-row-id="pfl"]')!;
     expect(pflRow.querySelector('[data-slot="gap-bar-fill"]')).toBeNull();
+  });
+
+  /* ── Doctrine §1.3: binary compliance, no gradation under the minimum ── */
+
+  const verdictOf = (container: HTMLElement, id: string) =>
+    container
+      .querySelector(`[data-row-id="${id}"]`)!
+      .querySelector<HTMLElement>('[data-slot="binary-verdict"]')!;
+
+  const row = (over: Partial<CoverageRow>): CoverageRow => ({
+    id: "pl",
+    guarantee: "Product liability",
+    required: 2000000000,
+    status: "BELOW_MINIMUM",
+    ...over,
+  });
+
+  it("€5M against €20M required is non-compliant, never partially compliant", () => {
+    const { container } = render(
+      <CoverageGrid rows={[row({ foundEur: 500000000, status: "BELOW_MINIMUM" })]} />,
+    );
+    const verdict = verdictOf(container, "pl");
+    expect(verdict.getAttribute("data-verdict")).toBe("NON_COMPLIANT");
+    expect(verdict.textContent).toContain("Non-compliant");
+    expect(verdict.style.color).toBe("var(--status-red)");
+    expect(verdict.querySelector("svg")).not.toBeNull();
+    expect(withoutNonCompliant(container.textContent)).not.toMatch(/compliant/i);
+    expect(container.textContent).not.toMatch(FORBIDDEN);
+  });
+
+  it("€19M against €20M required is non-compliant too — no near-miss credit", () => {
+    const { container } = render(
+      <CoverageGrid rows={[row({ foundEur: 1900000000 })]} />,
+    );
+    expect(verdictOf(container, "pl").getAttribute("data-verdict")).toBe("NON_COMPLIANT");
+    expect(withoutNonCompliant(container.textContent)).not.toMatch(/compliant/i);
+    expect(container.textContent).not.toMatch(FORBIDDEN);
+  });
+
+  it("€20M against €20M required is compliant", () => {
+    const { container } = render(
+      <CoverageGrid rows={[row({ foundEur: 2000000000, status: "COMPLIANT" })]} />,
+    );
+    const verdict = verdictOf(container, "pl");
+    expect(verdict.getAttribute("data-verdict")).toBe("COMPLIANT");
+    expect(verdict.textContent).toContain("Compliant");
+    expect(verdict.textContent).not.toMatch(/non-compliant/i);
+    expect(verdict.style.color).toBe("var(--status-go)");
+    expect(container.textContent).toContain("€20M of €20M required");
+  });
+
+  it("€30M against €20M required stays compliant — bonus band only above the minimum", () => {
+    const { container } = render(
+      <CoverageGrid rows={[row({ foundEur: 3000000000, status: "COMPLIANT" })]} />,
+    );
+    const verdict = verdictOf(container, "pl");
+    expect(verdict.getAttribute("data-verdict")).toBe("COMPLIANT_STRONG");
+    expect(verdict.textContent).toContain("Compliant");
+    expect(container.textContent).toContain("€30M of €20M required · strong cover");
+  });
+
+  it("a missing guarantee is non-compliant with its motive next to the verdict", () => {
+    const { container } = render(
+      <CoverageGrid
+        rows={[row({ id: "pfl", guarantee: "Pure financial loss", required: 1500000000, status: "MISSING" })]}
+      />,
+    );
+    const verdict = verdictOf(container, "pfl");
+    expect(verdict.textContent).toContain("Non-compliant · not mentioned");
+    expect(container.textContent).toContain("nothing found · €15M required");
+  });
+
+  it("keeps every dataset status as a motive beside the binary verdict", () => {
+    const { container } = render(
+      <CoverageGrid
+        rows={[
+          row({ id: "a", status: "COVERED_NO_AMOUNT", foundEur: null }),
+          row({ id: "b", status: "EXCLUDED", foundEur: 400000000 }),
+          row({ id: "c", status: "UNCLEAR", foundEur: 2500000000 }),
+        ]}
+      />,
+    );
+    expect(verdictOf(container, "a").textContent).toContain(
+      "Non-compliant · covered, no amount stated",
+    );
+    expect(verdictOf(container, "b").textContent).toContain(
+      "Non-compliant · excluded from the policy",
+    );
+    // an amount above the requirement cannot rescue an unreadable guarantee
+    expect(verdictOf(container, "c").textContent).toContain("Non-compliant · wording unclear");
+    expect(container.textContent).not.toMatch(FORBIDDEN);
+  });
+
+  it("the gap line names both figures and calls the percentage a share of the requirement", () => {
+    const { container } = render(
+      <CoverageGrid
+        rows={[
+          row({
+            id: "recall",
+            guarantee: "Product recall / withdrawal costs (frais de retrait)",
+            required: 1500000000,
+            foundEur: 30500000,
+          }),
+        ]}
+      />,
+    );
+    expect(container.textContent).toContain("€305k of €15M required · 2 % of the requirement");
+    expect(withoutNonCompliant(container.textContent)).not.toMatch(/compliant/i);
+  });
+
+  it("a PRESENT guarantee with no requirement is neutral, not compliant", () => {
+    const { container } = render(
+      <CoverageGrid
+        rows={[
+          {
+            id: "cyber",
+            guarantee: "Cyber liability",
+            status: "PRESENT",
+            foundEur: 100000000,
+            group: "other",
+          },
+        ]}
+      />,
+    );
+    const verdict = verdictOf(container, "cyber");
+    expect(verdict.getAttribute("data-verdict")).toBe("NOT_ASSESSABLE");
+    expect(verdict.textContent).toContain("Not assessable");
+    expect(withoutNonCompliant(container.textContent)).not.toMatch(/compliant/i);
+  });
+
+  /** The dataset answers presence-type criteria with scope words instead of the enum. */
+  const scope = (s: string) => s as CoverageRow["status"];
+
+  it("scores presence-type criteria yes / no, with the motive spelled out", () => {
+    const { container } = render(
+      <CoverageGrid
+        rows={[
+          {
+            id: "terr",
+            guarantee: "Territory incl. USA/Canada",
+            status: scope("INCLUDED"),
+            group: "secondary",
+          },
+          {
+            id: "terr2",
+            guarantee: "Territory incl. USA/Canada",
+            status: scope("PARTIAL_EXCLUDED"),
+            group: "secondary",
+          },
+        ]}
+      />,
+    );
+    expect(verdictOf(container, "terr").textContent).toContain("Compliant · included as required");
+    expect(verdictOf(container, "terr").getAttribute("data-verdict")).toBe("COMPLIANT");
+    const failed = verdictOf(container, "terr2");
+    expect(failed.getAttribute("data-verdict")).toBe("NON_COMPLIANT");
+    expect(failed.textContent).toContain("Non-compliant · required territory not fully covered");
+    expect(container.textContent).not.toMatch(FORBIDDEN);
+  });
+
+  it("gives every verdict a motive — no verdict without a consultable reason", () => {
+    const { container } = render(
+      <CoverageGrid
+        rows={[
+          row({ id: "a", foundEur: 500000000 }),
+          row({ id: "b", required: undefined, status: "PRESENT", group: "other" }),
+          row({ id: "c", required: undefined, status: "MISSING", group: "secondary" }),
+        ]}
+      />,
+    );
+    for (const id of ["a", "b", "c"]) {
+      expect(verdictOf(container, id).textContent).toMatch(/ · \w/);
+    }
+  });
+
+  it("marks the gap bar of a non-compliant row as non-compliant", () => {
+    const { container } = render(
+      <CoverageGrid rows={[row({ foundEur: 500000000 })]} />,
+    );
+    const bar = container.querySelector<HTMLElement>('[data-slot="gap-bar"]')!;
+    expect(bar.getAttribute("data-non-compliant")).toBe("true");
   });
 });
 

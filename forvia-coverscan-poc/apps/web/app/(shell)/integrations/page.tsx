@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHeading } from "@/components/shell/PageHeading";
 import { IntegrationsView } from "./integrations-view";
 
-export const metadata: Metadata = { title: "Integrations — CoverScan" };
+export const metadata: Metadata = { title: "Integrations — Forvia" };
 
 /** Integrations & exports (mid-fi): SAP Ariba, Excel, registry and rates. */
 export default function IntegrationsPage() {

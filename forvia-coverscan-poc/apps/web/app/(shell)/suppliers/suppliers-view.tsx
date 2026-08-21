@@ -5,6 +5,13 @@
  * (design-pack ui_kits/coverscan/MidFiScreens.jsx). Facts, policy numbers and
  * the year-by-year rows are the demo values from the ui_kit; the live fields
  * (supplier, insurer, rating, expiry, decision) come from certificate 10.
+ *
+ * Doctrine (client technical dossier, §1.3): **one certificate = one contracting
+ * entity**. There is no consolidated supplier score and no multi-policy roll-up —
+ * the header card carries the verdict of the LATEST certificate, dated and
+ * labelled as such, and every row of "Certificates by year" keeps its own verdict.
+ * Guarantee labels carry the Direction des Assurances vocabulary (frais de
+ * retrait, DINC) next to the spec wording.
  */
 
 import * as React from "react";
@@ -37,6 +44,16 @@ const POLICY_NUMBERS: Array<[string, string]> = [
   ["2024", "IT-GEN-881190"],
   ["2023", "IT-GEN-844021"],
 ];
+
+/**
+ * Direction des Assurances vocabulary paired with the spec wording — the
+ * dossier requires both to be visible wherever a guarantee is named.
+ */
+const GUARANTEE_LABEL = {
+  pl: "Product liability",
+  recall: "Product recall / withdrawal costs (frais de retrait)",
+  pfl: "Pure financial loss (DINC)",
+} as const;
 
 interface YearRow {
   id: string;
@@ -82,21 +99,40 @@ const YEAR_ROWS: YearRow[] = [
   },
 ];
 
+/** The certificate the header verdict belongs to — the most recent year on file. */
+const LATEST = YEAR_ROWS[0]!;
+const LATEST_POLICY = POLICY_NUMBERS[0]![1];
+
 export function SupplierView({ certificateId, supplier, insurer, rating, expiry, decision }: SupplierViewProps) {
   const router = useRouter();
 
   const columns: Array<TableColumn<YearRow>> = [
     { key: "year", header: "Year", mono: true },
-    { key: "decision", header: "Decision", render: (r) => <DecisionChip decision={r.decision} size="sm" /> },
+    {
+      key: "decision",
+      header: "Verdict (per certificate)",
+      render: (r) => <DecisionChip decision={r.decision} size="sm" />,
+    },
     {
       key: "mini",
-      header: "PL · Recall · PFL",
+      header: "PL · retrait · DINC",
       align: "center",
-      render: (r) => <StatusMiniGrid pl={r.mini.pl} recall={r.mini.recall} pfl={r.mini.pfl} />,
+      render: (r) => (
+        <StatusMiniGrid
+          pl={r.mini.pl}
+          recall={r.mini.recall}
+          pfl={r.mini.pfl}
+          tooltips={{
+            pl: `${GUARANTEE_LABEL.pl} · ${r.pl}`,
+            recall: `${GUARANTEE_LABEL.recall} · ${r.recall}`,
+            pfl: `${GUARANTEE_LABEL.pfl} · ${r.pfl}`,
+          }}
+        />
+      ),
     },
-    { key: "pl", header: "Product liability", mono: true, align: "right" },
-    { key: "recall", header: "Recall", mono: true, align: "right" },
-    { key: "pfl", header: "Pure financial loss", mono: true, align: "right" },
+    { key: "pl", header: GUARANTEE_LABEL.pl, mono: true, align: "right" },
+    { key: "recall", header: GUARANTEE_LABEL.recall, mono: true, align: "right" },
+    { key: "pfl", header: GUARANTEE_LABEL.pfl, mono: true, align: "right" },
     { key: "received", header: "Received", mono: true, muted: true },
   ];
 
@@ -117,8 +153,9 @@ export function SupplierView({ certificateId, supplier, insurer, rating, expiry,
       >
         <TriangleAlert size={15} strokeWidth={1.75} aria-hidden="true" style={{ flex: "0 0 auto" }} />
         <span>
-          <b style={{ fontWeight: 600 }}>Change detected</b> — product recall dropped from €15,000,000 to €10,000,000
-          between the 2024 and 2025 certificates.
+          <b style={{ fontWeight: 600 }}>Change detected</b> — {GUARANTEE_LABEL.recall} dropped from €15,000,000 to
+          €10,000,000 between the 2024 and 2025 certificates. €10,000,000 is under the €15,000,000 minimum, so the 2025
+          certificate is non-compliant on that guarantee.
         </span>
         <span style={{ flex: 1 }} />
         <DsButton size="sm" disabled title="Sprint 1+">
@@ -141,11 +178,27 @@ export function SupplierView({ certificateId, supplier, insurer, rating, expiry,
             </div>
           </div>
         </Card>
-        <Card title="Current status">
+        <Card
+          title={`Latest certificate · ${LATEST.received}`}
+          subtitle={`${LATEST.year} policy ${LATEST_POLICY} — one contracting entity`}
+        >
           <div style={{ display: "grid", gap: 10 }}>
             <DecisionChip decision={decision} size="md" />
             <div style={{ fontSize: 13, color: "var(--muted-foreground)" }}>
-              Best coverage in the batch — one-line fix: recall 10 → 15M and the insurer&apos;s stamp.
+              Blocking motive: no insurer stamp on the {LATEST.year} certificate. {GUARANTEE_LABEL.recall} at{" "}
+              {LATEST.recall} against €15,000,000 required — under the minimum, so non-compliant. Fix: raise it to
+              €15,000,000 and have the insurer stamp the certificate.
+            </div>
+            <div
+              style={{
+                fontSize: 12,
+                lineHeight: 1.5,
+                color: "var(--muted-foreground)",
+                borderTop: "1px solid var(--border)",
+                paddingTop: 8,
+              }}
+            >
+              Verdicts are per certificate — Forvia never consolidates several policies into one supplier score.
             </div>
             <div style={{ display: "flex", gap: 16, marginTop: 4 }}>
               <div>
@@ -180,7 +233,11 @@ export function SupplierView({ certificateId, supplier, insurer, rating, expiry,
         </Card>
       </div>
 
-      <Card title="Certificates by year" padded={false}>
+      <Card
+        title="Certificates by year"
+        subtitle="One verdict per certificate — no supplier-level score is derived from these rows"
+        padded={false}
+      >
         <DataTable rows={YEAR_ROWS} onRowClick={() => router.push(`/certificates/${certificateId}`)} columns={columns} />
       </Card>
     </div>

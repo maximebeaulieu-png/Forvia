@@ -7,7 +7,7 @@ import {
 } from "./certificates-view";
 
 export const metadata: Metadata = {
-  title: "Certificates — CoverScan",
+  title: "Certificates — Forvia",
 };
 
 const VIEW_SLUGS: ViewSlug[] = [

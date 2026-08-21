@@ -14,9 +14,9 @@ export const SESSION_COOKIE = "cs_session";
 export const SESSION_MAX_AGE = 8 * 60 * 60; // 8h
 
 export const PASSWORD_RULE_TEXT =
-  "Au moins 10 caractères, une minuscule, une majuscule, un chiffre, un caractère spécial";
+  "At least 10 characters, one lowercase, one uppercase, one digit, one special character";
 
-/** Password policy for screens "Créer votre mot de passe" / "Réinitialiser le mot de passe". */
+/** Password policy for screens "Create your password" / "Reset password". */
 export function isValidPassword(password: string): boolean {
   return (
     password.length >= 10 &&
@@ -27,15 +27,28 @@ export function isValidPassword(password: string): boolean {
   );
 }
 
-interface DemoAccount {
+/** Identity shown in the header account menu — the role comes from the account, not a switcher. */
+export interface DemoUser {
   email: string;
+  /** Display name, e.g. "Damien". */
+  name: string;
+  /** Account role, e.g. "Buyer" / "Insurance analyst". */
+  role: string;
+}
+
+interface DemoAccount extends DemoUser {
   /** null = account exists but must create a password (first-login flow). */
   password: string | null;
 }
 
 const ACCOUNTS: DemoAccount[] = [
-  { email: "demo@forvia.com", password: "CoverScan2026!" },
-  { email: "nouveau@forvia.com", password: null },
+  { email: "demo@forvia.com", name: "Damien", role: "Buyer", password: "CoverScan2026!" },
+  {
+    email: "nouveau@forvia.com",
+    name: "Arkan Reviewer",
+    role: "Insurance analyst",
+    password: null,
+  },
 ];
 
 /** Passwords created/reset at runtime — module memory, demo only. */
@@ -59,6 +72,39 @@ export function accountNeedsSetup(email: string): boolean {
 /** Stores a created/reset password (kept in module memory, demo). */
 export function setDemoPassword(email: string, password: string): void {
   createdPasswords.set(normalizeEmail(email), password);
+}
+
+/** Identity of a demo account (name + role), or null when the e-mail is unknown. */
+export function getDemoUser(email: string): DemoUser | null {
+  const account = findAccount(email);
+  if (account == null) return null;
+  return { email: account.email, name: account.name, role: account.role };
+}
+
+/**
+ * Decodes the e-mail out of a `cs_session` value — format `base64url(email).signature`
+ * (see lib/auth-session.ts). Kept free of node:crypto so the module stays edge-safe:
+ * middleware.ts imports it. Only accounts of ACCOUNTS resolve to a user, so a tampered
+ * payload yields null.
+ */
+export function decodeSessionEmail(sessionValue: string | null | undefined): string | null {
+  if (!sessionValue) return null;
+  const payload = sessionValue.split(".")[0];
+  if (!payload) return null;
+  try {
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const binary = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "="));
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  } catch {
+    return null;
+  }
+}
+
+/** Demo user behind a `cs_session` cookie value, or null when absent/unknown. */
+export function getSessionUser(sessionValue: string | null | undefined): DemoUser | null {
+  const email = decodeSessionEmail(sessionValue);
+  return email == null ? null : getDemoUser(email);
 }
 
 export function verifyDemoPassword(email: string, password: string): boolean {

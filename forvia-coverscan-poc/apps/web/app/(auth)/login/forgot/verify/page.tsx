@@ -20,16 +20,15 @@ export default function ForgotVerifyPage() {
     if (code === DEMO_2FA_CODE) {
       router.push("/login/reset");
     } else {
-      setError("Code incorrect.");
+      setError("Incorrect code.");
     }
   };
 
   return (
     <div>
-      <AuthTitle>Mot de passe oublié</AuthTitle>
+      <AuthTitle>Forgot password</AuthTitle>
       <AuthSubtitle>
-        Afin de réinitialiser votre mot de passe, vous devez entrer un code pin à 6 chiffres envoyé
-        dans votre boite mail.
+        To reset your password, enter the 6-digit code sent to your inbox.
       </AuthSubtitle>
       <form onSubmit={handleSubmit} noValidate>
         <div style={{ marginTop: 40 }}>
@@ -50,9 +49,9 @@ export default function ForgotVerifyPage() {
           <ResendButton />
         </div>
         <div style={{ marginTop: 40, display: "grid", gap: 12 }}>
-          <AuthButton type="submit">Continuer</AuthButton>
+          <AuthButton type="submit">Continue</AuthButton>
           <AuthButton type="button" variant="grey" onClick={() => router.push("/login")}>
-            Annuler
+            Cancel
           </AuthButton>
         </div>
       </form>

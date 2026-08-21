@@ -16,10 +16,16 @@ export interface GapBarProps {
   /** px, default 6 */
   height?: number;
   showLabel?: boolean;
-  /** overrides the generated label, e.g. "€305k · 2 %" */
+  /** overrides the generated label, e.g. "€305k of €15M · 2 % of requirement" */
   label?: string;
   /** label under the bar at 11 px instead of beside it — for narrow table cells */
   stacked?: boolean;
+  /**
+   * Binary verdict from lib/doctrine: the cover is under the minimum, so it is
+   * non-compliant — the label turns red and the requirement tick is reinforced.
+   * There is no intermediate band: the fill is gap *information*, never partial credit.
+   */
+  nonCompliant?: boolean;
   /** scrolls the document to the matching evidence */
   onClick?: () => void;
   style?: React.CSSProperties;
@@ -28,6 +34,11 @@ export interface GapBarProps {
 /**
  * Signature element #2. One scale 0 → required; ink fill for what was found; a hard tick at the requirement.
  * The bar is always ink — the label carries the status colour.
+ *
+ * Doctrine (dossier §1.3, binary_minimum): the fill shows HOW FAR the cover is from the
+ * requirement, it never grants partial compliance. No wording here may suggest a degree
+ * of conformity ("minor", "partial", "underinsurance" are banned); below the minimum the
+ * only verdict is non-compliant, rendered by the caller from `binaryStatus()`.
  */
 export function GapBar({
   found,
@@ -38,6 +49,7 @@ export function GapBar({
   showLabel = true,
   label,
   stacked = false,
+  nonCompliant = false,
   onClick,
   style,
 }: GapBarProps) {
@@ -61,10 +73,11 @@ export function GapBar({
         ? `${formatCompactEur(found ?? 0)} · excluded`
         : compliant
           ? `${formatCompactEur(found ?? 0)} · meets requirement`
-          : `${formatCompactEur(found ?? 0)} · ${pct} %`;
+          : `${formatCompactEur(found ?? 0)} of ${formatCompactEur(required)} · ${pct} % of requirement`;
 
-  const labelColor =
-    missing || excluded
+  const labelColor = nonCompliant
+    ? "var(--status-red)"
+    : missing || excluded
       ? "var(--status-red)"
       : noAmount
         ? "var(--status-amber)"
@@ -75,6 +88,7 @@ export function GapBar({
   return (
     <span
       data-slot="gap-bar"
+      data-non-compliant={nonCompliant ? "true" : undefined}
       onClick={onClick}
       style={{
         display: "inline-flex",
@@ -89,7 +103,7 @@ export function GapBar({
         data-slot="gap-bar-track"
         style={{
           position: "relative",
-          width: typeof width === "number" ? width : undefined,
+          width,
           height,
           flex: typeof width === "number" ? `0 0 ${width}px` : `1 1 auto`,
           background: "var(--gap-track)",
@@ -130,10 +144,10 @@ export function GapBar({
           style={{
             position: "absolute",
             right: 0,
-            top: -(height * 0.7),
-            width: 2,
-            height: height * 2.4,
-            background: "var(--required-marker)",
+            top: nonCompliant ? -Math.round(height * 0.95) : -(height * 0.7),
+            width: nonCompliant ? 3 : 2,
+            height: nonCompliant ? Math.round(height * 2.9) : height * 2.4,
+            background: nonCompliant ? "var(--status-red)" : "var(--required-marker)",
             borderRadius: 1,
           }}
         />
@@ -144,7 +158,7 @@ export function GapBar({
           style={{
             fontSize: stacked ? 11 : 13,
             color: labelColor,
-            whiteSpace: "nowrap",
+            whiteSpace: stacked ? "normal" : "nowrap",
             fontWeight: 500,
           }}
         >

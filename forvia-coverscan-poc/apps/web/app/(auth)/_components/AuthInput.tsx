@@ -64,7 +64,7 @@ export function AuthInput({ label, password = false, id, style, type, onFocus, o
           <button
             type="button"
             onClick={() => setVisible((v) => !v)}
-            aria-label={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            aria-label={visible ? "Hide password" : "Show password"}
             style={{
               position: "absolute",
               right: 6,

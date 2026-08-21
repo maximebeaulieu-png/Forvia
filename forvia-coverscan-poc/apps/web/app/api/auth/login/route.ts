@@ -8,12 +8,12 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Requête invalide." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
   const email = typeof body.email === "string" ? body.email : "";
   const password = typeof body.password === "string" ? body.password : "";
   if (!verifyDemoPassword(email, password)) {
-    return NextResponse.json({ error: "E-mail ou mot de passe incorrect." }, { status: 401 });
+    return NextResponse.json({ error: "Incorrect email or password." }, { status: 401 });
   }
   const response = NextResponse.json({ ok: true });
   response.cookies.set(SESSION_COOKIE, createSessionValue(email), {

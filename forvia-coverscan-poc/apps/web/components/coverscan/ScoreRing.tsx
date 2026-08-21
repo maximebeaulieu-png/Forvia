@@ -32,7 +32,10 @@ export function ScoreRing({
 }: ScoreRingProps) {
   const stroke = Math.max(7, Math.round(size / 11));
   const r = (size - stroke) / 2;
-  const start = 90 + (360 - SWEEP) / 2; // gap opens at the bottom
+  // Angles are clock angles (0 = 12 o'clock, increasing clockwise). Centring the
+  // gap on 6 o'clock means starting half a gap before it — 90 put the start at
+  // 4-5 o'clock, so a low score drew its stub straight through the label.
+  const start = 180 + (360 - SWEEP) / 2;
   const polar = (a: number): [number, number] => {
     const rad = ((a - 90) * Math.PI) / 180;
     return [size / 2 + r * Math.cos(rad), size / 2 + r * Math.sin(rad)];

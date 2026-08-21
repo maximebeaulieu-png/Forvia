@@ -5,22 +5,21 @@ import { AuthButton } from "../../_components/AuthButton";
 import { AuthTitle, AuthSubtitle } from "../../_components/AuthHeading";
 import { ContactLink } from "../../_components/ContactLink";
 
-/** /login/forgot — mockup 3: "Mot de passe oublié". */
+/** /login/forgot — mockup 3: "Forgot password". */
 export default function ForgotPage() {
   const router = useRouter();
   return (
     <div>
-      <AuthTitle>Mot de passe oublié</AuthTitle>
+      <AuthTitle>Forgot password</AuthTitle>
       <AuthSubtitle>
-        Afin de réinitialiser votre mot de passe, vous devez entrer un code pin à 6 chiffres envoyé
-        dans votre boite mail.
+        To reset your password, enter the 6-digit code sent to your inbox.
       </AuthSubtitle>
       <div style={{ marginTop: 36, display: "grid", gap: 12 }}>
         <AuthButton onClick={() => router.push("/login/forgot/verify")}>
-          Envoyer le code mail e-mail
+          Send the code by email
         </AuthButton>
         <AuthButton variant="grey" onClick={() => router.push("/login")}>
-          Annuler
+          Cancel
         </AuthButton>
       </div>
       <div style={{ marginTop: 20 }}>

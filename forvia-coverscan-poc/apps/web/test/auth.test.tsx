@@ -34,17 +34,17 @@ function PinHarness({ onChange }: { onChange?: (v: string) => void }) {
 }
 
 describe("PinInput", () => {
-  it("rend 6 cases accessibles (aria-label Chiffre N du code)", () => {
+  it("renders 6 accessible boxes (aria-label Digit N of the code)", () => {
     render(<PinHarness />);
     for (let i = 1; i <= 6; i++) {
-      expect(screen.getByLabelText(`Chiffre ${i} du code`)).toBeInTheDocument();
+      expect(screen.getByLabelText(`Digit ${i} of the code`)).toBeInTheDocument();
     }
   });
 
-  it("avance automatiquement à la saisie et assemble la valeur", () => {
+  it("auto-advances while typing and assembles the value", () => {
     const onChange = vi.fn();
     render(<PinHarness onChange={onChange} />);
-    const box = (n: number) => screen.getByLabelText(`Chiffre ${n} du code`) as HTMLInputElement;
+    const box = (n: number) => screen.getByLabelText(`Digit ${n} of the code`) as HTMLInputElement;
 
     fireEvent.change(box(1), { target: { value: "1" } });
     expect(onChange).toHaveBeenLastCalledWith("1");
@@ -58,10 +58,10 @@ describe("PinInput", () => {
     expect(box(3).value).toBe("3");
   });
 
-  it("le retour arrière sur une case vide recule et efface", () => {
+  it("backspace on an empty box steps back and clears", () => {
     const onChange = vi.fn();
     render(<PinHarness onChange={onChange} />);
-    const box = (n: number) => screen.getByLabelText(`Chiffre ${n} du code`) as HTMLInputElement;
+    const box = (n: number) => screen.getByLabelText(`Digit ${n} of the code`) as HTMLInputElement;
 
     fireEvent.change(box(1), { target: { value: "4" } });
     fireEvent.change(box(2), { target: { value: "5" } });
@@ -71,10 +71,10 @@ describe("PinInput", () => {
     expect(document.activeElement).toBe(box(2));
   });
 
-  it("le collage d'un code à 6 chiffres remplit toutes les cases", () => {
+  it("pasting a 6-digit code fills every box", () => {
     const onChange = vi.fn();
     render(<PinHarness onChange={onChange} />);
-    const box = (n: number) => screen.getByLabelText(`Chiffre ${n} du code`) as HTMLInputElement;
+    const box = (n: number) => screen.getByLabelText(`Digit ${n} of the code`) as HTMLInputElement;
 
     fireEvent.paste(box(1), { clipboardData: { getData: () => "123456" } });
     expect(onChange).toHaveBeenLastCalledWith("123456");
@@ -84,30 +84,30 @@ describe("PinInput", () => {
   });
 });
 
-/* --------------------------------------------------- validation mot de passe */
+/* ------------------------------------------------------- password validation */
 
 describe("isValidPassword", () => {
-  it("refuse moins de 10 caractères", () => {
+  it("rejects fewer than 10 characters", () => {
     expect(isValidPassword("Ab1!x")).toBe(false);
   });
-  it("exige une minuscule", () => {
+  it("requires a lowercase letter", () => {
     expect(isValidPassword("ABCDEF123!")).toBe(false);
   });
-  it("exige une majuscule", () => {
+  it("requires an uppercase letter", () => {
     expect(isValidPassword("abcdef123!")).toBe(false);
   });
-  it("exige un chiffre", () => {
+  it("requires a digit", () => {
     expect(isValidPassword("Abcdefghi!")).toBe(false);
   });
-  it("exige un caractère spécial", () => {
+  it("requires a special character", () => {
     expect(isValidPassword("Abcdefgh12")).toBe(false);
   });
-  it("accepte un mot de passe conforme", () => {
+  it("accepts a compliant password", () => {
     expect(isValidPassword("CoverScan2026!")).toBe(true);
   });
 });
 
-/* ------------------------------------------------------------- flux de login */
+/* ------------------------------------------------------------------ login flow */
 
 describe("LoginPage", () => {
   const fetchMock = vi.fn();
@@ -126,47 +126,45 @@ describe("LoginPage", () => {
 
   async function goToPasswordStep() {
     fetchMock.mockReturnValueOnce(jsonResponse(true, 200, { mode: "password" }));
-    fireEvent.change(screen.getByLabelText("E-mail"), {
+    fireEvent.change(screen.getByLabelText("Email"), {
       target: { value: "demo@forvia.com" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Se connecter" }));
-    await waitFor(() => expect(screen.getByLabelText("Mot de passe")).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => expect(screen.getByLabelText("Password")).toBeInTheDocument());
   }
 
-  it("affiche l'étape e-mail avec les textes de la maquette", () => {
+  it("shows the email step with the mockup copy in English", () => {
     render(<LoginPage />);
-    expect(screen.getByText("Bienvenue sur CoverScan")).toBeInTheDocument();
-    expect(
-      screen.getByText("Configurez votre mot de passe afin d’accéder à la plateforme"),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Contacter CoverScan")).toBeInTheDocument();
+    expect(screen.getByText("Welcome to Forvia")).toBeInTheDocument();
+    expect(screen.getByText("Set up your password to access the platform")).toBeInTheDocument();
+    expect(screen.getByText("Contact Forvia")).toBeInTheDocument();
   });
 
-  it("mauvais mot de passe → message d'erreur sous le champ", async () => {
+  it("wrong password → error message under the field", async () => {
     render(<LoginPage />);
     await goToPasswordStep();
     expect(screen.getByText("demo@forvia.com")).toBeInTheDocument();
 
     fetchMock.mockReturnValueOnce(
-      jsonResponse(false, 401, { error: "E-mail ou mot de passe incorrect." }),
+      jsonResponse(false, 401, { error: "Incorrect email or password." }),
     );
-    fireEvent.change(screen.getByLabelText("Mot de passe"), { target: { value: "mauvais" } });
-    fireEvent.click(screen.getByRole("button", { name: "Se connecter" }));
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     const alert = await screen.findByRole("alert");
-    expect(alert).toHaveTextContent("E-mail ou mot de passe incorrect.");
+    expect(alert).toHaveTextContent("Incorrect email or password.");
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("bon mot de passe → POST /api/auth/login puis redirection vers l'accueil", async () => {
+  it("correct password → POST /api/auth/login then redirect to the home page", async () => {
     render(<LoginPage />);
     await goToPasswordStep();
 
     fetchMock.mockReturnValueOnce(jsonResponse(true, 200, { ok: true }));
-    fireEvent.change(screen.getByLabelText("Mot de passe"), {
+    fireEvent.change(screen.getByLabelText("Password"), {
       target: { value: "CoverScan2026!" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Se connecter" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
     const loginCall = fetchMock.mock.calls.find(([url]) => url === "/api/auth/login");

@@ -63,9 +63,9 @@ export default function LoginPage() {
         router.push("/");
         return;
       }
-      setError("E-mail ou mot de passe incorrect.");
+      setError("Incorrect email or password.");
     } catch {
-      setError("E-mail ou mot de passe incorrect.");
+      setError("Incorrect email or password.");
     } finally {
       setBusy(false);
     }
@@ -74,11 +74,11 @@ export default function LoginPage() {
   if (step === "email") {
     return (
       <div>
-        <AuthTitle>Bienvenue sur CoverScan</AuthTitle>
-        <AuthSubtitle>Configurez votre mot de passe afin d’accéder à la plateforme</AuthSubtitle>
+        <AuthTitle>Welcome to Forvia</AuthTitle>
+        <AuthSubtitle>Set up your password to access the platform</AuthSubtitle>
         <form onSubmit={handleEmailSubmit} noValidate style={{ marginTop: 40 }}>
           <AuthInput
-            label="E-mail"
+            label="Email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -87,7 +87,7 @@ export default function LoginPage() {
           />
           <div style={{ marginTop: 20 }}>
             <AuthButton type="submit" disabled={busy}>
-              Se connecter
+              Sign in
             </AuthButton>
           </div>
         </form>
@@ -100,7 +100,7 @@ export default function LoginPage() {
 
   return (
     <div>
-      <AuthTitle>Bienvenue sur CoverScan</AuthTitle>
+      <AuthTitle>Welcome to Forvia</AuthTitle>
       <div
         style={{
           marginTop: 36,
@@ -120,7 +120,7 @@ export default function LoginPage() {
       </div>
       <form onSubmit={handlePasswordSubmit} noValidate style={{ marginTop: 30 }}>
         <AuthInput
-          label="Mot de passe"
+          label="Password"
           password
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -143,12 +143,12 @@ export default function LoginPage() {
               textDecoration: "none",
             }}
           >
-            Mot de passe oublié ?
+            Forgot password?
           </Link>
         </div>
         <div style={{ marginTop: 40, display: "grid", gap: 12 }}>
           <AuthButton type="submit" disabled={busy}>
-            Se connecter
+            Sign in
           </AuthButton>
           <AuthButton
             type="button"
@@ -159,7 +159,7 @@ export default function LoginPage() {
               setError(null);
             }}
           >
-            Annuler
+            Cancel
           </AuthButton>
         </div>
       </form>

@@ -78,7 +78,7 @@ export function HomeView() {
   return (
     <div style={{ padding: "max(48px, 8vh) 24px 48px", maxWidth: 1100, width: "100%", margin: "0 auto" }}>
       <header style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: "var(--text-h1)" }}>Welcome to CoverScan</h1>
+        <h1 style={{ fontSize: "var(--text-h1)" }}>Welcome to Forvia</h1>
         <p style={{ marginTop: 6, color: "var(--muted-foreground)" }}>
           Supplier insurance certificates, checked in seconds. Start here.
         </p>

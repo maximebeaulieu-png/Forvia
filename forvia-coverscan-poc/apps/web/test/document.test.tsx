@@ -124,7 +124,7 @@ describe("ProfileSwitcher", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Profile/ }));
 
-    const expert = screen.getByTitle("Recalcul au Sprint 1");
+    const expert = screen.getByTitle("Rescoring arrives in Sprint 1");
     expect(expert).toBeDisabled();
     expect(expert).toHaveTextContent("Expert (R. Mekouar)");
   });
@@ -136,7 +136,7 @@ describe("ProfileSwitcher", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: /Profile/ }));
-    fireEvent.click(screen.getByTitle("Recalcul au Sprint 1"));
+    fireEvent.click(screen.getByTitle("Rescoring arrives in Sprint 1"));
     expect(onChange).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole("option", { name: /GPTC default/ }));

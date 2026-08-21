@@ -22,7 +22,7 @@ afterEach(() => {
   takeBatch(); /* drain the module store between tests */
 });
 
-const PROFILES = [{ id: "gptc", label: "GPTC default", version: "v3" }];
+const USER = { email: "demo@forvia.com", name: "Léa Fontaine", role: "Buyer" };
 
 /** File with a controlled size — jsdom Files are tiny otherwise. */
 function file(name: string, size = 1024): File {
@@ -44,7 +44,7 @@ function addFiles(files: File[]) {
 
 describe("UploadDialog", () => {
   it("opens from the header Upload button instead of the native picker", () => {
-    render(<TopHeader profiles={PROFILES} />);
+    render(<TopHeader user={USER} />);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(document.querySelector('input[type="file"]')).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Upload" }));
