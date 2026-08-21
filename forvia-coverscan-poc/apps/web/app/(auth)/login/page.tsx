@@ -60,7 +60,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email: email.trim(), password }),
       });
       if (res.ok) {
-        router.push("/portfolio");
+        router.push("/");
         return;
       }
       setError("E-mail ou mot de passe incorrect.");

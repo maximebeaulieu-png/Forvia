@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Eye,
+  House,
   LayoutDashboard,
   LogOut,
   PanelLeft,
@@ -32,6 +33,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
   {
     group: "Monitor",
     items: [
+      { id: "home", label: "Home", href: "/", icon: House, match: "/" },
       { id: "portfolio", label: "Portfolio", href: "/portfolio", icon: LayoutDashboard, match: "/portfolio" },
       { id: "certificates", label: "Certificates", href: "/certificates", icon: Table, match: "/certificates" },
       { id: "review", label: "Review queue", href: "/certificates?view=Needs+review", icon: Eye, match: null, count: 16 },
@@ -79,9 +81,7 @@ export function Sidebar() {
           <img src="/logo-mark.svg" alt="FORVIA" style={{ height: 16, display: "block" }} />
         ) : (
           <>
-            <img src="/logo-wordmark.png" alt="FORVIA" style={{ height: 14, display: "block" }} />
-            <span style={{ width: 1, height: 18, background: "var(--border)" }} />
-            <span style={{ fontSize: 13, fontWeight: 600 }}>CoverScan</span>
+            <img src="/logo-wordmark.png" alt="FORVIA" style={{ height: 16, display: "block" }} />
           </>
         )}
       </div>

@@ -24,7 +24,7 @@ export default function ResetPage() {
         body: JSON.stringify({ email, password }),
       });
       if (res.ok) {
-        router.push("/portfolio");
+        router.push("/");
         return;
       }
     } catch {

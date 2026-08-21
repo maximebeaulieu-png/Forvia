@@ -446,10 +446,13 @@ export function CertificatesView({
   certificates,
   view,
   q,
+  entity = "",
 }: {
   certificates: CertificateRow[];
   view: ViewSlug;
   q: string;
+  /** Contracting entity from the portfolio breakdown (?filter=). */
+  entity?: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -497,11 +500,14 @@ export function CertificatesView({
     if (view === "my-suppliers") r = r.filter((c) => c.assignee === "L. Fontaine");
     if (country !== COUNTRY_OPTIONS[0]) r = r.filter((c) => c.country === country);
     if (insurer !== INSURER_OPTIONS[0]) r = r.filter((c) => c.insurer.includes(insurer));
+    const entityNeedle = entity.trim().toLowerCase();
+    if (entityNeedle)
+      r = r.filter((c) => (c.entity ?? "").toLowerCase().includes(entityNeedle));
     const needle = q.trim().toLowerCase();
     if (needle)
       r = r.filter((c) => `${c.supplier} ${c.policyNumber}`.toLowerCase().includes(needle));
     return r;
-  }, [certificates, view, country, insurer, q]);
+  }, [certificates, view, country, insurer, q, entity]);
 
   const viewLabel = VIEWS.find((v) => v.slug === view)?.label ?? "All";
 

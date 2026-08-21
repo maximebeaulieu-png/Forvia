@@ -1,7 +1,7 @@
 /**
  * Login flow layout — full-screen split without the app shell.
  * Left ~58%: token background, form block anchored ~14vh from the top (per the mockups)
- * (logo wordmark + separator + "CoverScan" like the sidebar, then the screen).
+ * (FORVIA wordmark, then the screen).
  * Right ~42%: full-height visual (object-fit cover).
  */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -20,9 +20,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       >
         <div style={{ width: "min(448px, 100%)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 48 }}>
-            <img src="/logo-wordmark.png" alt="FORVIA" style={{ height: 18, display: "block" }} />
-            <span aria-hidden style={{ width: 1, height: 22, background: "var(--border)" }} />
-            <span style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)" }}>CoverScan</span>
+            <img src="/logo-wordmark.png" alt="FORVIA" style={{ height: 22, display: "block" }} />
           </div>
           {children}
         </div>

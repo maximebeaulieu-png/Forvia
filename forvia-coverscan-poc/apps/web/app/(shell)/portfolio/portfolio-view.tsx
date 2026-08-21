@@ -6,8 +6,8 @@ import {
   ArrowUpRight,
   CalendarClock,
   Coins,
+  Building2,
   Download,
-  Globe,
   TriangleAlert,
   type LucideIcon,
 } from "lucide-react";
@@ -31,6 +31,32 @@ export interface PortfolioStats {
   reviewShare: number;
   demoClock: string;
 }
+
+/** One FORVIA contracting entity in the portfolio breakdown. */
+interface ClientRow {
+  entity: string;
+  total: number;
+  go: number;
+  request: number;
+  nogo: number;
+}
+
+/**
+ * Compliance split across the FORVIA contracting entities.
+ * Demo distribution of the same 150-certificate synthetic dataset the country
+ * split used: the totals below sum exactly to the portfolio aggregates
+ * (150 · 9 compliant · 61 request changes · 80 not admissible). The first three
+ * entities are the ones actually named in the annotated certificates; the others
+ * are FORVIA business-group entities added so the chart reads like a real portfolio.
+ */
+const BY_CLIENT: ClientRow[] = [
+  { entity: "Faurecia Systèmes d'Échappement", total: 38, go: 3, request: 16, nogo: 19 },
+  { entity: "Faurecia Intérieur Industrie", total: 31, go: 2, request: 13, nogo: 16 },
+  { entity: "Faurecia Sièges d'Automobile", total: 26, go: 2, request: 11, nogo: 13 },
+  { entity: "HELLA GmbH & Co. KGaA", total: 22, go: 1, request: 9, nogo: 12 },
+  { entity: "Faurecia Automotive Exteriors España", total: 19, go: 1, request: 8, nogo: 10 },
+  { entity: "Faurecia Clarion Electronics", total: 14, go: 0, request: 4, nogo: 10 },
+];
 
 export interface CountryRow {
   country: string;
@@ -249,23 +275,23 @@ const compactMajor = (v: number) => formatCompactEur(v * 100);
 
 /* ── Compliance by country — stacked go / request / nogo bars ── */
 
-function ComplianceByCountry({
+function ComplianceByClient({
   rows,
   onSelect,
 }: {
-  rows: CountryRow[];
-  onSelect?: (r: CountryRow) => void;
+  rows: ClientRow[];
+  onSelect?: (r: ClientRow) => void;
 }) {
   const max = Math.max(...rows.map((r) => r.total));
   return (
     <div style={{ display: "grid", gap: 10 }}>
       {rows.map((r) => (
         <div
-          key={r.code}
+          key={r.entity}
           onClick={() => onSelect && onSelect(r)}
           style={{
             display: "grid",
-            gridTemplateColumns: "104px 1fr 40px",
+            gridTemplateColumns: "190px 1fr 40px",
             alignItems: "center",
             gap: 10,
             cursor: "pointer",
@@ -279,7 +305,7 @@ function ComplianceByCountry({
               textOverflow: "ellipsis",
             }}
           >
-            {r.country}
+            {r.entity}
           </span>
           <span
             style={{
@@ -520,8 +546,8 @@ export function PortfolioView({
 }: PortfolioViewProps) {
   const router = useRouter();
   const goView = (view: string) => router.push(`/certificates?view=${encodeURIComponent(view)}`);
-  const goCountry = (country: string) =>
-    router.push(`/certificates?filter=${encodeURIComponent(country)}`);
+  const goClient = (entity: string) =>
+    router.push(`/certificates?filter=${encodeURIComponent(entity)}`);
   const openRisk = (r: TopRiskRow) => {
     if (certificateIds.includes(r.id)) router.push(`/certificates/${r.id}`);
   };
@@ -567,10 +593,10 @@ export function PortfolioView({
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <Card
-          title={<CardTitle icon={Globe}>Compliance by country</CardTitle>}
-          subtitle="Click a country to filter the certificates table"
+          title={<CardTitle icon={Building2}>Compliance by client entity</CardTitle>}
+          subtitle="Click an entity to filter the certificates table"
         >
-          <ComplianceByCountry rows={byCountry} onSelect={(r) => goCountry(r.country)} />
+          <ComplianceByClient rows={BY_CLIENT} onSelect={(r) => goClient(r.entity)} />
         </Card>
         <Card
           title={<CardTitle icon={Coins}>Coverage gap by guarantee</CardTitle>}

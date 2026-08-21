@@ -158,7 +158,7 @@ describe("LoginPage", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("bon mot de passe → POST /api/auth/login puis redirection /portfolio", async () => {
+  it("bon mot de passe → POST /api/auth/login puis redirection vers l'accueil", async () => {
     render(<LoginPage />);
     await goToPasswordStep();
 
@@ -168,7 +168,7 @@ describe("LoginPage", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Se connecter" }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/portfolio"));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
     const loginCall = fetchMock.mock.calls.find(([url]) => url === "/api/auth/login");
     expect(loginCall).toBeDefined();
     expect(JSON.parse((loginCall![1] as RequestInit).body as string)).toEqual({

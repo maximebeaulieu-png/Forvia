@@ -40,6 +40,7 @@ export default async function CertificatesPage({
       certificates={getCertificates() as CertificateRow[]}
       view={normalizeView(params.view)}
       q={normalizeQ(params.q)}
+      entity={normalizeQ(params.filter)}
     />
   );
 }
