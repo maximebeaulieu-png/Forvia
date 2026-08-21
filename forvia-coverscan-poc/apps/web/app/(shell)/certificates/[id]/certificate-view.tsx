@@ -19,6 +19,7 @@ import {
   FileText,
   Globe,
   Hash,
+  Info,
   Link2,
   Minus,
   PenLine,
@@ -359,6 +360,13 @@ export function CertificateView({
   const [rejected, setRejected] = React.useState(false);
   const [showMinors, setShowMinors] = React.useState(false);
   const [scoreOpen, setScoreOpen] = React.useState(false);
+  /* Verdict "Read more" disclosure — `moreOpen` is the intent (drives aria-expanded),
+     `moreShown` drives the 0fr→1fr row transition one frame after the folded copy
+     mounts, `moreMounted` keeps the copy out of the DOM (and the SSR payload)
+     while collapsed. */
+  const [moreOpen, setMoreOpen] = React.useState(false);
+  const [moreShown, setMoreShown] = React.useState(false);
+  const [moreMounted, setMoreMounted] = React.useState(false);
   /* Simulated pipeline replay — running step index, or null once the analysis is shown. */
   const [processingStep, setProcessingStep] = React.useState<number | null>(processing ? 0 : null);
   const isProcessing = processingStep != null;
@@ -418,6 +426,21 @@ export function CertificateView({
     return () => clearTimeout(t);
   }, [processingStep, router, c.id]);
 
+  /* Read more / Read less — mount the folded copy, then unfold it on the next
+     frame so grid-template-rows transitions; unmount 320 ms after folding
+     (--dur-pulse is 300 ms, and 0 ms under prefers-reduced-motion, so the
+     collapse is instant there — see styles/tokens/motion.css). */
+  React.useEffect(() => {
+    if (moreOpen) {
+      setMoreMounted(true);
+      const raf = requestAnimationFrame(() => setMoreShown(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    setMoreShown(false);
+    const t = setTimeout(() => setMoreMounted(false), 320);
+    return () => clearTimeout(t);
+  }, [moreOpen]);
+
   /* Escape closes the score breakdown popover. */
   React.useEffect(() => {
     if (!scoreOpen) return;
@@ -449,7 +472,25 @@ export function CertificateView({
   const headline = sentences[0] ?? "";
   const rest = sentences.slice(1).join(" ");
 
-  const gates = c.gates ?? {};
+  /* Reviewer clearances (demo, per session): confirming a "?" gate lifts the
+     review so the seal can reach 8/8. Clearing a gate never makes a
+     non-compliant certificate approvable — see canApprove below. */
+  const [clearedGates, setClearedGates] = React.useState<Record<string, "pass" | "fail">>({});
+  const baseGates = c.gates ?? {};
+  const gates: Record<string, SealGateState> = React.useMemo(() => {
+    const merged: Record<string, SealGateState> = { ...baseGates };
+    for (const [id, verdict] of Object.entries(clearedGates)) {
+      const prev = merged[id];
+      merged[id] = {
+        state: verdict,
+        note:
+          verdict === "pass"
+            ? `Confirmed by reviewer — ${prev?.note ?? "no automated reading"}`
+            : `Rejected by reviewer — ${prev?.note ?? "no automated reading"}`,
+      };
+    }
+    return merged;
+  }, [baseGates, clearedGates]);
   /* No verdict without a consultable reason (dossier §3) — never render a bare failure. */
   const gateReason = (g?: SealGateState) => g?.note ?? "Reason not recorded — human review";
   const entityGate = gates.entity;
@@ -459,10 +500,27 @@ export function CertificateView({
   // A gate under review has NOT passed — only "pass" (and "na", which does not
   // apply to this certificate) may be counted, otherwise the header claims 8/8
   // next to two visible "?" marks.
+  const reviewCount = SEAL_GATES.filter((g) => gates[g.id]?.state === "review").length;
+  const failedCount = SEAL_GATES.filter((g) => gates[g.id]?.state === "fail").length;
   const passedCount = SEAL_GATES.filter((g) => {
     const st = gates[g.id]?.state;
     return st === "pass" || st === "na";
   }).length;
+
+  /* Approve needs BOTH: an admissible document (nothing failed, nothing left to
+     read) and a compliant substance. Clearing the "?" gates lifts admissibility
+     but never turns a certificate that is under the minimum into an approvable
+     one — the dossier is explicit that below-minimum cover is non-compliant. */
+  const admissibleNow = failedCount === 0 && reviewCount === 0;
+  const canApprove = admissibleNow && c.decision === "GO";
+  const approveBlockReason =
+    failedCount > 0
+      ? `Blocked — ${failedCount} admissibility check${failedCount > 1 ? "s" : ""} failed`
+      : reviewCount > 0
+        ? `Confirm the ${reviewCount} check${reviewCount > 1 ? "s" : ""} under review first`
+        : c.decision !== "GO"
+          ? "Enabled once every critical guarantee meets the minimum — this one is below it, so request changes"
+          : undefined;
 
   const majors = findings.filter((f) => f.severity === "BLOCK" || f.severity === "CRITICAL");
   const minors = findings.filter((f) => f.severity !== "BLOCK" && f.severity !== "CRITICAL");
@@ -635,7 +693,8 @@ export function CertificateView({
             >
               {/* ------------------------------------------------ Summary */}
               <TabsPrimitive.Content value="summary" className="outline-none">
-                <div style={{ padding: 20, display: "grid", gap: 20 }}>
+                {/* Sections breathe on the --space-* scale: one notch up from the old 20px. */}
+                <div style={{ padding: 20, display: "grid", gap: "var(--space-8)" }}>
                   {/* verdict callout */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 24, alignItems: "center", padding: "18px 20px", borderRadius: "var(--radius-lg)", background: hero.bg, border: `1px solid color-mix(in oklch, ${hero.fg} 18%, transparent)` }}>
                     <div style={{ display: "flex", gap: 14, alignItems: "flex-start", minWidth: 0 }}>
@@ -644,7 +703,35 @@ export function CertificateView({
                       </span>
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.45, color: "var(--foreground)", textWrap: "pretty", maxWidth: "58ch" }}>{headline}</div>
-                        {rest && <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--muted-foreground)", marginTop: 6, textWrap: "pretty", maxWidth: "66ch" }}>{rest}</div>}
+                        {rest && (
+                          <>
+                            <div
+                              id="verdict-read-more"
+                              style={{
+                                display: "grid",
+                                gridTemplateRows: moreShown ? "1fr" : "0fr",
+                                transition: "grid-template-rows var(--dur-pulse) var(--ease-standard)",
+                              }}
+                            >
+                              <div style={{ overflow: "hidden", minHeight: 0 }}>
+                                {moreMounted && (
+                                  <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--muted-foreground)", paddingTop: 6, textWrap: "pretty", maxWidth: "66ch" }}>{rest}</div>
+                                )}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setMoreOpen((v) => !v)}
+                              aria-expanded={moreOpen}
+                              aria-controls="verdict-read-more"
+                              className={focusRing}
+                              style={{ marginTop: 6, background: "transparent", border: "none", cursor: "pointer", font: "inherit", fontSize: 12, fontWeight: 500, color: "var(--primary)", display: "inline-flex", alignItems: "center", gap: 5, padding: 0 }}
+                            >
+                              {moreOpen ? <ChevronUp size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
+                              {moreOpen ? "Read less" : "Read more"}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                     {/* Accuracy guard (dossier §6): below the threshold no risk score is published. */}
@@ -666,13 +753,14 @@ export function CertificateView({
                           aria-expanded={scoreOpen}
                           aria-haspopup="dialog"
                           aria-label={`Risk score ${ringValue} of 100 — score breakdown`}
+                          title="Binary compliance at the minimum (dossier §1.3)"
                           className={focusRing}
                           style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", font: "inherit", color: "inherit" }}
                         >
                           <ScoreRing value={ringValue} provisional={provisional} size={104} />
                         </button>
-                        <span style={{ fontSize: 10, lineHeight: 1.35, color: "var(--muted-foreground)", textAlign: "center", maxWidth: 170 }}>
-                          Binary compliance at the minimum (dossier §1.3)
+                        <span title="Binary compliance at the minimum (dossier §1.3)" style={{ fontSize: 10, lineHeight: 1.35, color: "var(--muted-foreground)", textAlign: "center", maxWidth: 170 }}>
+                          Binary scoring
                         </span>
                         {scoreOpen && (
                           <div
@@ -745,7 +833,7 @@ export function CertificateView({
                     <VerificationSeal gates={gates} size={96} onGateClick={gateEvidence} />
                     <div style={{ minWidth: 0, display: "grid", gap: 10 }}>
                       <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--muted-foreground)" }}>
-                        Admissibility · {passedCount} of 8 checks passed
+                        Admissibility · {passedCount} of 8 checks passed{reviewCount > 0 ? ` · ${reviewCount} under review` : ""}{failedCount > 0 ? ` · ${failedCount} failed` : ""}
                       </div>
                       {failingGates.length > 0 && (
                         <div style={{ display: "grid", gap: 8 }}>
@@ -766,6 +854,44 @@ export function CertificateView({
                               </button>
                             );
                           })}
+                          {reviewCount > 0 && (
+                            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, paddingTop: 4 }}>
+                              <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+                                {reviewCount} check{reviewCount > 1 ? "s" : ""} awaiting your reading:
+                              </span>
+                              {SEAL_GATES.filter((g) => gates[g.id]?.state === "review").map((g) => (
+                                <span key={g.id} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                                  <span style={{ fontSize: 12, fontWeight: 500 }}>{g.label}</span>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={() => setClearedGates((p) => ({ ...p, [g.id]: "pass" }))}
+                                  >
+                                    Confirm
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={() => setClearedGates((p) => ({ ...p, [g.id]: "fail" }))}
+                                  >
+                                    Reject
+                                  </Button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          {Object.keys(clearedGates).length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setClearedGates({})}
+                              className={focusRing}
+                              style={{ justifySelf: "start", background: "transparent", border: "none", padding: 0, cursor: "pointer", font: "inherit", fontSize: 12, color: "var(--muted-foreground)", textDecoration: "underline" }}
+                            >
+                              Undo my review decisions
+                            </button>
+                          )}
                         </div>
                       )}
                       <TooltipProvider>
@@ -798,7 +924,14 @@ export function CertificateView({
                       <h2 style={{ fontSize: "var(--text-h3)", display: "inline-flex", alignItems: "center", gap: 7 }}>
                         <Link2 size={15} color="var(--primary)" aria-hidden="true" />Coverage against FORVIA GPTC
                       </h2>
-                      <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>Click a figure to see it on the document</span>
+                      <span
+                        role="img"
+                        title="Click a figure to see it on the document"
+                        aria-label="Click a figure to see it on the document"
+                        style={{ display: "inline-flex", alignSelf: "center", color: "var(--muted-foreground)", cursor: "help" }}
+                      >
+                        <Info size={14} aria-hidden="true" />
+                      </span>
                     </div>
                     <div
                       style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", overflowX: "auto" }}
@@ -976,7 +1109,7 @@ export function CertificateView({
         <Button size="lg" onClick={() => { setEmail((e) => e ?? emailText(c, findings)); setEmailOpen(true); }}>
           <PenLine size={15} aria-hidden="true" />Request changes
         </Button>
-        <Button size="lg" variant="outline" disabled={c.decision !== "GO"} title={c.decision !== "GO" ? "Approve requires a Compliant decision, or an override with justification" : undefined}>
+        <Button size="lg" variant="outline" disabled={!canApprove} title={approveBlockReason}>
           Approve
         </Button>
         <Button size="lg" variant="ghost" onClick={() => setRejected(true)}>Reject</Button>

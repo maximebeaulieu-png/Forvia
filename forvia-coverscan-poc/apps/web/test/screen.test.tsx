@@ -1,6 +1,6 @@
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { CertificateView } from "../app/(shell)/certificates/[id]/certificate-view";
 import { getCertificate } from "../lib/repository";
 import { NO_SCORE_REASON } from "../lib/doctrine";
@@ -16,6 +16,42 @@ describe("Certificate analysis screen", () => {
     render(<CertificateView cert={getCertificate("04")!} prevId="03" nextId="05" />);
     expect(screen.getAllByText("Not admissible").length).toBeGreaterThan(0);
     expect(screen.queryByText(/rejected/i)).not.toBeInTheDocument();
+  });
+
+  it("folds the verdict detail behind Read more, headline always visible (cert 04)", async () => {
+    render(<CertificateView cert={getCertificate("04")!} />);
+    /* First sentence in bold, always on screen. */
+    expect(screen.getByText(/issued by a broker \(Marron & Associés\)/)).toBeInTheDocument();
+    /* The rest of the summary is collapsed by default — not in the DOM at all. */
+    expect(screen.queryByText(/Even if reissued by MMA/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Recommended action/)).not.toBeInTheDocument();
+
+    const toggle = screen.getByRole("button", { name: "Read more" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveAttribute("aria-controls", "verdict-read-more");
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText(/Even if reissued by MMA/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Read less" })).toBe(toggle);
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    /* The folded copy leaves the DOM once the collapse settles. */
+    await waitFor(() =>
+      expect(screen.queryByText(/Even if reissued by MMA/)).not.toBeInTheDocument(),
+    );
+    expect(screen.getByRole("button", { name: "Read more" })).toBeInTheDocument();
+  });
+
+  it("keeps the coverage evidence hint as an info-icon tooltip, not standing copy", () => {
+    render(<CertificateView cert={getCertificate("04")!} />);
+    const hint = screen.getByLabelText("Click a figure to see it on the document");
+    expect(hint).toHaveAttribute("title", "Click a figure to see it on the document");
+    /* No permanent text node carries the sentence any more. */
+    expect(
+      screen.queryByText("Click a figure to see it on the document"),
+    ).not.toBeInTheDocument();
   });
 
   it("shows the five locked tabs and switches to Extracted data", () => {
@@ -62,7 +98,16 @@ describe("Certificate analysis screen", () => {
     /* Cert 07 covers €5M of the €20M product liability requirement: the dataset
        hands it 7.5 / 30, the doctrine hands it nothing. */
     expect(screen.queryByText("7.5 / 30")).not.toBeInTheDocument();
-    expect(screen.getByText("Binary compliance at the minimum (dossier §1.3)")).toBeInTheDocument();
+    /* The doctrine sentence is compressed to a short visible caption; the full
+       wording stays discoverable as the ring's (and caption's) title. */
+    expect(screen.getByText("Binary scoring")).toHaveAttribute(
+      "title",
+      "Binary compliance at the minimum (dossier §1.3)",
+    );
+    expect(screen.getByRole("button", { name: /score breakdown/i })).toHaveAttribute(
+      "title",
+      "Binary compliance at the minimum (dossier §1.3)",
+    );
     fireEvent.click(screen.getByRole("button", { name: /score breakdown/i }));
     const dialog = screen.getByRole("dialog", { name: "Score breakdown" });
     expect(dialog).toBeInTheDocument();
@@ -166,5 +211,41 @@ describe("Certificate analysis screen", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+describe("Reviewer clearance flow", () => {
+  it("confirming the gates under review lifts the seal to 8 of 8", () => {
+    render(<CertificateView cert={getCertificate("01")!} />);
+    expect(screen.getByText(/6 of 8 checks passed · 2 under review/)).toBeInTheDocument();
+    for (const btn of screen.getAllByRole("button", { name: "Confirm" })) fireEvent.click(btn);
+    expect(screen.getByText(/8 of 8 checks passed/)).toBeInTheDocument();
+    expect(screen.queryByText(/under review/)).not.toBeInTheDocument();
+  });
+
+  it("keeps Approve disabled after clearing when the cover is below the minimum", () => {
+    render(<CertificateView cert={getCertificate("01")!} />);
+    for (const btn of screen.getAllByRole("button", { name: "Confirm" })) fireEvent.click(btn);
+    const approve = screen.getByRole("button", { name: "Approve" });
+    expect(approve).toBeDisabled();
+    expect(approve).toHaveAttribute(
+      "title",
+      expect.stringContaining("every critical guarantee meets the minimum"),
+    );
+  });
+
+  it("explains that the review must be cleared before approving", () => {
+    render(<CertificateView cert={getCertificate("01")!} />);
+    expect(screen.getByRole("button", { name: "Approve" })).toHaveAttribute(
+      "title",
+      expect.stringContaining("under review first"),
+    );
+  });
+
+  it("lets the reviewer undo their decisions", () => {
+    render(<CertificateView cert={getCertificate("01")!} />);
+    fireEvent.click(screen.getAllByRole("button", { name: "Confirm" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Undo my review decisions" }));
+    expect(screen.getByText(/6 of 8 checks passed · 2 under review/)).toBeInTheDocument();
   });
 });

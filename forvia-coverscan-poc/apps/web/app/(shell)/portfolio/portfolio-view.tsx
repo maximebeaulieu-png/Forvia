@@ -104,56 +104,6 @@ export interface PortfolioViewProps {
 
 /* ── Local primitives, re-implemented from the ui_kit design-system contracts ── */
 
-function Tooltip({
-  content,
-  children,
-  style,
-}: {
-  content: React.ReactNode;
-  children: React.ReactNode;
-  style?: React.CSSProperties;
-}) {
-  const [open, setOpen] = React.useState(false);
-  return (
-    <span
-      style={{ position: "relative", display: "inline-flex", ...style }}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-      onFocus={() => setOpen(true)}
-      onBlur={() => setOpen(false)}
-      tabIndex={0}
-    >
-      {children}
-      {open && content && (
-        <span
-          role="tooltip"
-          style={{
-            position: "absolute",
-            zIndex: 40,
-            bottom: "calc(100% + 6px)",
-            left: 0,
-            maxWidth: 320,
-            width: "max-content",
-            background: "var(--popover)",
-            color: "var(--popover-foreground)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            boxShadow: "var(--shadow-popover)",
-            padding: "8px 10px",
-            fontSize: 12,
-            lineHeight: 1.45,
-            textAlign: "left",
-            whiteSpace: "normal",
-            pointerEvents: "none",
-          }}
-        >
-          {content}
-        </span>
-      )}
-    </span>
-  );
-}
-
 function Card({
   title,
   subtitle,
@@ -306,83 +256,213 @@ function doctrineWording(text: string): string {
   return TERM_RULES.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), text);
 }
 
-/* ── Compliance by client entity — stacked go / request / nogo bars ── */
+/* ── Certificates by client entity — donut of the client mix ──
+ * Direct client request: "a circle with the client split, the name next to it,
+ * and on hover the exact compliant / request changes / not admissible counts."
+ *
+ * COLOR EXCEPTION (palette validator): the six segment hues below are the
+ * validated categorical set for client identity — the ONLY raw hex allowed in
+ * this file, restricted to data segments and their legend swatches. Fixed
+ * order, one hue per entity in descending-total order, never cycled. Status
+ * colors (--status-*) must NOT be used for client identity. All text stays in
+ * ink tokens (--foreground / --muted-foreground), never in the segment hue.
+ */
 
-function ComplianceByClient({
+const DONUT_HUES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#4a3aa7"] as const;
+
+/** Thick-stroke arc on the centreline circle of radius r, from angle a0 to a1 (rad, clockwise). */
+function arcPath(cx: number, cy: number, r: number, a0: number, a1: number): string {
+  const x0 = cx + r * Math.cos(a0);
+  const y0 = cy + r * Math.sin(a0);
+  const x1 = cx + r * Math.cos(a1);
+  const y1 = cy + r * Math.sin(a1);
+  const largeArc = a1 - a0 > Math.PI ? 1 : 0;
+  return `M ${x0.toFixed(3)} ${y0.toFixed(3)} A ${r} ${r} 0 ${largeArc} 1 ${x1.toFixed(3)} ${y1.toFixed(3)}`;
+}
+
+const complianceDetail = (r: ClientRow) =>
+  `${r.go} compliant · ${r.request} request changes · ${r.nogo} not admissible`;
+
+function ClientDonut({
   rows,
   onSelect,
 }: {
   rows: ClientRow[];
   onSelect?: (r: ClientRow) => void;
 }) {
-  const max = Math.max(...rows.map((r) => r.total));
+  const [active, setActive] = React.useState<number | null>(null);
+
+  /* Hues are assigned in descending-total order and never recycled: the donut
+   * renders at most as many entities as there are validated hues (6 = 6 here). */
+  const ordered = React.useMemo(
+    () =>
+      [...rows]
+        .sort((a, b) => b.total - a.total)
+        .slice(0, DONUT_HUES.length)
+        .map((row, i) => ({ row, hue: DONUT_HUES[i] })),
+    [rows],
+  );
+  const total = ordered.reduce((sum, s) => sum + s.row.total, 0);
+
+  const SIZE = 170;
+  const C = SIZE / 2;
+  const R = 62; // stroke centreline radius
+  const SW = 22;
+  const SW_ACTIVE = 27;
+  const GAP_ANGLE = 2 / R; // 2px surface gap between segments, measured on the centreline
+
+  let angle = -Math.PI / 2; // start at 12 o'clock, clockwise
+  const segments = ordered.map(({ row, hue }) => {
+    const sweep = (row.total / total) * Math.PI * 2;
+    const seg = { row, hue, a0: angle + GAP_ANGLE / 2, a1: angle + sweep - GAP_ANGLE / 2 };
+    angle += sweep;
+    return seg;
+  });
+
+  const activate = (i: number | null) => setActive(i);
+  const activeSeg = active === null ? null : segments[active];
+
   return (
-    <div style={{ display: "grid", gap: 10 }}>
-      {rows.map((r) => (
-        <div
-          key={r.entity}
-          onClick={() => onSelect && onSelect(r)}
+    <div style={{ display: "flex", alignItems: "center", gap: 16, minWidth: 0 }}>
+      <span style={{ position: "relative", flex: `0 0 ${SIZE}px`, width: SIZE, height: SIZE }}>
+        <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden={false}>
+          {segments.map((seg, i) => (
+            <path
+              key={seg.row.entity}
+              d={arcPath(C, C, R, seg.a0, seg.a1)}
+              fill="none"
+              stroke={seg.hue}
+              strokeWidth={active === i ? SW_ACTIVE : SW}
+              strokeLinecap="butt"
+              opacity={active === null || active === i ? 1 : 0.4}
+              tabIndex={0}
+              role="button"
+              aria-label={`${seg.row.entity} — ${seg.row.total} of ${total} certificates · ${complianceDetail(seg.row)}. Press Enter to filter the certificates table.`}
+              onMouseEnter={() => activate(i)}
+              onMouseLeave={() => activate(null)}
+              onFocus={() => activate(i)}
+              onBlur={() => activate(null)}
+              onClick={() => onSelect && onSelect(seg.row)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  if (onSelect) onSelect(seg.row);
+                }
+              }}
+              style={{
+                cursor: "pointer",
+                outline: "none",
+                /* --dur-recolour is zeroed under prefers-reduced-motion (motion.css),
+                 * so the arc emphasis snaps instead of animating when the user asks. */
+                transition:
+                  "stroke-width var(--dur-recolour) var(--ease-standard), opacity var(--dur-recolour) var(--ease-standard)",
+              }}
+            />
+          ))}
+        </svg>
+        {/* Centre total — text in ink tokens, never in a segment hue. */}
+        <span
+          aria-hidden
           style={{
-            display: "grid",
-            gridTemplateColumns: "190px 1fr 40px",
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            gap: 10,
-            cursor: "pointer",
+            justifyContent: "center",
+            pointerEvents: "none",
           }}
         >
           <span
+            className="cs-num"
+            style={{ fontSize: 26, fontWeight: 600, lineHeight: 1.1, color: "var(--foreground)" }}
+          >
+            {total}
+          </span>
+          <span style={{ fontSize: 11, color: "var(--muted-foreground)" }}>certificates</span>
+        </span>
+        {activeSeg && (
+          <span
+            role="tooltip"
             style={{
-              fontSize: 13,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+              position: "absolute",
+              zIndex: 40,
+              bottom: "calc(100% + 6px)",
+              left: 0,
+              maxWidth: 300,
+              width: "max-content",
+              background: "var(--popover)",
+              color: "var(--popover-foreground)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius)",
+              boxShadow: "var(--shadow-popover)",
+              padding: "8px 10px",
+              fontSize: 12,
+              lineHeight: 1.45,
+              textAlign: "left",
+              whiteSpace: "normal",
+              pointerEvents: "none",
             }}
           >
-            {r.entity}
+            <span style={{ display: "block", fontWeight: 600 }}>{activeSeg.row.entity}</span>
+            <span style={{ display: "block" }}>
+              <span className="cs-num">{activeSeg.row.total}</span> certificates
+            </span>
+            <span style={{ display: "block", color: "var(--muted-foreground)" }}>
+              {complianceDetail(activeSeg.row)}
+            </span>
           </span>
-          <span
+        )}
+      </span>
+      {/* Direct labels: vertical legend — swatch + entity name + total, ink text only. */}
+      <div style={{ flex: 1, minWidth: 0, display: "grid", gap: 2 }}>
+        {segments.map((seg, i) => (
+          <button
+            key={seg.row.entity}
+            type="button"
+            title={`${seg.row.entity} — ${seg.row.total} certificates`}
+            onClick={() => onSelect && onSelect(seg.row)}
+            onMouseEnter={() => activate(i)}
+            onMouseLeave={() => activate(null)}
+            onFocus={() => activate(i)}
+            onBlur={() => activate(null)}
             style={{
               display: "flex",
-              height: 14,
-              width: `${(r.total / max) * 100}%`,
-              borderRadius: 2,
-              overflow: "hidden",
-              background: "var(--gap-track)",
+              alignItems: "center",
+              gap: 8,
+              width: "100%",
+              minWidth: 0,
+              padding: "3px 6px",
+              margin: 0,
+              font: "inherit",
+              textAlign: "left",
+              color: "var(--foreground)",
+              background: active === i ? "var(--accent)" : "transparent",
+              border: "none",
+              borderRadius: "var(--radius-sm)",
+              cursor: "pointer",
             }}
           >
-            <Tooltip content={`${r.go} compliant`} style={{ width: `${(r.go / r.total) * 100}%` }}>
-              <span style={{ width: "100%", background: "var(--status-go)", height: 14, display: "block" }} />
-            </Tooltip>
-            <Tooltip
-              content={`${r.request} request changes`}
-              style={{ width: `${(r.request / r.total) * 100}%` }}
+            <span
+              aria-hidden
+              style={{ width: 10, height: 10, borderRadius: 3, background: seg.hue, flex: "0 0 auto" }}
+            />
+            <span
+              style={{
+                flex: 1,
+                minWidth: 0,
+                fontSize: 12.5,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
             >
-              <span style={{ width: "100%", background: "var(--status-amber)", height: 14, display: "block" }} />
-            </Tooltip>
-            <Tooltip
-              content={`${r.nogo} not admissible`}
-              style={{ width: `${(r.nogo / r.total) * 100}%` }}
-            >
-              <span style={{ width: "100%", background: "var(--status-red)", height: 14, display: "block" }} />
-            </Tooltip>
-          </span>
-          <span className="cs-num" style={{ fontSize: 12, textAlign: "right", color: "var(--muted-foreground)" }}>
-            {r.total}
-          </span>
-        </div>
-      ))}
-      <div style={{ display: "flex", gap: 14, marginTop: 4, fontSize: 11, color: "var(--muted-foreground)" }}>
-        {(
-          [
-            ["Compliant", "var(--status-go)"],
-            ["Request changes", "var(--status-amber)"],
-            ["Not admissible", "var(--status-red)"],
-          ] as const
-        ).map(([l, c]) => (
-          <span key={l} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
-            <span style={{ width: 8, height: 8, borderRadius: 2, background: c }} />
-            {l}
-          </span>
+              {seg.row.entity}
+            </span>
+            <span className="cs-num" style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+              {seg.row.total}
+            </span>
+          </button>
         ))}
       </div>
     </div>
@@ -401,8 +481,21 @@ function GapByGuarantee({ rows }: { rows: GuaranteeGapRow[] }) {
     <div style={{ display: "grid", gap: 14 }}>
       {rows.map((r) => (
         <div key={r.guarantee} style={{ display: "grid", gap: 5 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 500, flex: 1 }}>{guaranteeLabel(r.guarantee)}</span>
+          {/* Name on its own line — the card now sits in a narrower 3-up column,
+           * so the long Direction des Assurances labels must not wrap word-by-word
+           * against the figures. */}
+          <span style={{ fontSize: 13, fontWeight: 500, minWidth: 0 }}>
+            {guaranteeLabel(r.guarantee)}
+          </span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              gap: 8,
+              flexWrap: "wrap",
+            }}
+          >
             <span className="cs-num" style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
               required {compactMajor(r.required)}
             </span>
@@ -423,68 +516,92 @@ function GapByGuarantee({ rows }: { rows: GuaranteeGapRow[] }) {
   );
 }
 
-/* ── Expiring timeline — bucketed supplier chips ── */
+/* ── Expiring soon — compact list (top row): soonest first, max 4 + View all ── */
 
-function ExpiringTimeline({
+function ExpiringCompact({
   items,
-  onOpen,
+  onViewAll,
 }: {
   items: ExpiringItem[];
-  onOpen?: () => void;
+  onViewAll: () => void;
 }) {
-  const buckets = [
-    { k: -1, label: "Expired" },
-    { k: 30, label: "≤ 30 days" },
-    { k: 60, label: "≤ 60 days" },
-    { k: 90, label: "≤ 90 days" },
-  ];
+  const list = [...items].sort((a, b) => a.days - b.days).slice(0, 4);
   return (
-    <div style={{ display: "grid", gap: 12 }}>
-      {buckets.map((b) => {
-        const list = items.filter((i) => i.bucket === b.k);
-        return (
-          <div
-            key={b.k}
-            style={{ display: "grid", gridTemplateColumns: "86px 1fr", gap: 12, alignItems: "start" }}
-          >
+    <div style={{ display: "grid", gap: 2 }}>
+      {list.map((i) => (
+        <button
+          key={i.supplier}
+          type="button"
+          onClick={onViewAll}
+          title={`${i.supplier} — expires ${i.date}`}
+          style={{
+            display: "grid",
+            gap: 1,
+            width: "100%",
+            minWidth: 0,
+            padding: "5px 6px",
+            margin: 0,
+            font: "inherit",
+            textAlign: "left",
+            color: "var(--foreground)",
+            background: "transparent",
+            border: "none",
+            borderBottom: "1px solid var(--border)",
+            cursor: "pointer",
+          }}
+        >
+          <span style={{ display: "flex", alignItems: "baseline", gap: 8, minWidth: 0 }}>
             <span
               style={{
-                fontSize: 12,
-                color: b.k === -1 ? "var(--status-red)" : "var(--muted-foreground)",
-                paddingTop: 3,
+                flex: 1,
+                minWidth: 0,
+                fontSize: 13,
+                fontWeight: 500,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
-              {b.label}
+              {i.supplier}
             </span>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {list.length === 0 && (
-                <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>—</span>
-              )}
-              {list.map((i) => (
-                <span
-                  key={i.supplier}
-                  onClick={onOpen}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    height: 22,
-                    padding: "0 8px",
-                    borderRadius: "var(--radius-full)",
-                    border: "1px solid var(--border)",
-                    background: "var(--card)",
-                    fontSize: 12,
-                    cursor: onOpen ? "pointer" : "default",
-                  }}
-                >
-                  {i.supplier}
-                  <span className="cs-num" style={{ color: "var(--muted-foreground)" }}>{i.date}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+            <span
+              className="cs-num"
+              style={{
+                fontSize: 12,
+                flex: "0 0 auto",
+                color: i.bucket === -1 ? "var(--status-red)" : "var(--muted-foreground)",
+              }}
+            >
+              {i.bucket === -1 ? "expired" : `${i.days} d`}
+            </span>
+          </span>
+          <span className="cs-num" style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
+            {i.date}
+          </span>
+        </button>
+      ))}
+      <button
+        type="button"
+        onClick={onViewAll}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 4,
+          justifySelf: "start",
+          marginTop: 6,
+          padding: 0,
+          font: "inherit",
+          fontSize: 12.5,
+          fontWeight: 500,
+          color: "var(--primary)",
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        View all
+        <ArrowUpRight size={13} strokeWidth={1.75} />
+      </button>
     </div>
   );
 }
@@ -495,7 +612,8 @@ interface RiskColumn {
   key: string;
   header: string;
   align?: "left" | "right";
-  wrap?: boolean;
+  /** Column absorbs the leftover width and truncates with an ellipsis (full text in `title`). */
+  ellipsis?: boolean;
   muted?: boolean;
   render?: (r: TopRiskRow) => React.ReactNode;
 }
@@ -550,20 +668,44 @@ function RiskTable({
                 e.currentTarget.style.background = "transparent";
               }}
             >
-              {columns.map((c) => (
-                <td
-                  key={c.key}
-                  style={{
-                    padding: "0 10px",
-                    borderBottom: "1px solid var(--border)",
-                    textAlign: c.align || "left",
-                    whiteSpace: c.wrap ? "normal" : "nowrap",
-                    color: c.muted ? "var(--muted-foreground)" : undefined,
-                  }}
-                >
-                  {c.render ? c.render(r) : (r as unknown as Record<string, React.ReactNode>)[c.key]}
-                </td>
-              ))}
+              {columns.map((c) => {
+                const content = c.render
+                  ? c.render(r)
+                  : (r as unknown as Record<string, React.ReactNode>)[c.key];
+                return (
+                  <td
+                    key={c.key}
+                    style={{
+                      padding: "0 10px",
+                      borderBottom: "1px solid var(--border)",
+                      textAlign: c.align || "left",
+                      whiteSpace: "nowrap",
+                      color: c.muted ? "var(--muted-foreground)" : undefined,
+                      /* width:100% + maxWidth:0 lets this cell soak up the leftover
+                       * width and shrink freely — the row never forces a horizontal
+                       * scroll; the inner span ellipsizes instead. */
+                      width: c.ellipsis ? "100%" : undefined,
+                      maxWidth: c.ellipsis ? 0 : undefined,
+                    }}
+                  >
+                    {c.ellipsis ? (
+                      <span
+                        title={typeof content === "string" ? content : undefined}
+                        style={{
+                          display: "block",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {content}
+                      </span>
+                    ) : (
+                      content
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
@@ -629,12 +771,12 @@ export function PortfolioView({
         />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1.25fr 1fr 0.75fr", gap: 16 }}>
         <Card
-          title={<CardTitle icon={Building2}>Compliance by client entity</CardTitle>}
-          subtitle="Click an entity to filter the certificates table"
+          title={<CardTitle icon={Building2}>Certificates by client entity</CardTitle>}
+          subtitle="Hover a segment for the compliance detail · click to filter the certificates table"
         >
-          <ComplianceByClient rows={BY_CLIENT} onSelect={(r) => goClient(r.entity)} />
+          <ClientDonut rows={BY_CLIENT} onSelect={(r) => goClient(r.entity)} />
         </Card>
         <Card
           title={<CardTitle icon={Coins}>Coverage gap by guarantee</CardTitle>}
@@ -642,50 +784,53 @@ export function PortfolioView({
         >
           <GapByGuarantee rows={gapByGuarantee} />
         </Card>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16 }}>
-        <Card
-          title={<CardTitle icon={TriangleAlert}>Top 10 risks</CardTitle>}
-          subtitle="One row = one certificate — the verdict belongs to that certificate, not to the supplier"
-          padded={false}
-          actions={
-            <SmallButton iconLeft={<Download size={13} strokeWidth={1.75} />}>Export Excel</SmallButton>
-          }
-        >
-          <RiskTable
-            rows={topRisks}
-            onRowClick={openRisk}
-            columns={[
-              {
-                key: "decision",
-                header: "Status",
-                render: (r) => (
-                  <DecisionChip decision={r.decision as DecisionChipProps["decision"]} size="sm" />
-                ),
-              },
-              { key: "supplier", header: "Supplier" },
-              { key: "country", header: "Country", muted: true },
-              { key: "worst", header: "Worst finding", wrap: true, render: (r) => doctrineWording(r.worst) },
-              { key: "spend", header: "Spend", muted: true },
-              {
-                key: "open",
-                header: "",
-                align: "right",
-                render: () => (
-                  <ArrowUpRight size={14} color="var(--muted-foreground)" strokeWidth={1.75} />
-                ),
-              },
-            ]}
-          />
-        </Card>
         <Card
           title={<CardTitle icon={CalendarClock}>Expiring soon</CardTitle>}
           subtitle="Next 90 days at the demo clock"
         >
-          <ExpiringTimeline items={expiring} onOpen={() => goView("Expiring")} />
+          <ExpiringCompact items={expiring} onViewAll={() => goView("Expiring")} />
         </Card>
       </div>
+
+      <Card
+        title={<CardTitle icon={TriangleAlert}>Top 10 risks</CardTitle>}
+        subtitle="One row = one certificate — the verdict belongs to that certificate, not to the supplier"
+        padded={false}
+        actions={
+          <SmallButton iconLeft={<Download size={13} strokeWidth={1.75} />}>Export Excel</SmallButton>
+        }
+      >
+        <RiskTable
+          rows={topRisks}
+          onRowClick={openRisk}
+          columns={[
+            {
+              key: "decision",
+              header: "Status",
+              render: (r) => (
+                <DecisionChip decision={r.decision as DecisionChipProps["decision"]} size="sm" />
+              ),
+            },
+            { key: "supplier", header: "Supplier" },
+            { key: "country", header: "Country", muted: true },
+            {
+              key: "worst",
+              header: "Worst finding",
+              ellipsis: true,
+              render: (r) => doctrineWording(r.worst),
+            },
+            { key: "spend", header: "Spend", muted: true },
+            {
+              key: "open",
+              header: "",
+              align: "right",
+              render: () => (
+                <ArrowUpRight size={14} color="var(--muted-foreground)" strokeWidth={1.75} />
+              ),
+            },
+          ]}
+        />
+      </Card>
 
       <div
         style={{
