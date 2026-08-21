@@ -30,7 +30,7 @@ export function isValidPassword(password: string): boolean {
 /** Identity shown in the header account menu — the role comes from the account, not a switcher. */
 export interface DemoUser {
   email: string;
-  /** Display name, e.g. "Damien". */
+  /** Display name, e.g. "Damien Conchon". */
   name: string;
   /** Account role, e.g. "Buyer" / "Insurance analyst". */
   role: string;
@@ -42,7 +42,7 @@ interface DemoAccount extends DemoUser {
 }
 
 const ACCOUNTS: DemoAccount[] = [
-  { email: "demo@forvia.com", name: "Damien", role: "Buyer", password: "CoverScan2026!" },
+  { email: "demo@forvia.com", name: "Damien Conchon", role: "Buyer", password: "CoverScan2026!" },
   {
     email: "nouveau@forvia.com",
     name: "Arkan Reviewer",

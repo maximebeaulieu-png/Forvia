@@ -61,11 +61,19 @@ export function VerificationSeal({
   const r = size / 2;
   const ringR = r - (size >= 72 ? 9 : 5);
   const tickLen = size >= 72 ? 7 : 4;
-  const failing = SEAL_GATES.filter(
-    (g) => gates[g.id]?.state === "fail",
-  ).length;
-  const isAdmissible = admissible != null ? admissible : failing === 0;
-  const centreColor = isAdmissible ? "var(--status-go)" : "var(--status-red)";
+  const failing = SEAL_GATES.filter((g) => gates[g.id]?.state === "fail").length;
+  const underReview = SEAL_GATES.filter((g) => gates[g.id]?.state === "review").length;
+  // A gate under review has NOT passed: showing 8/8 next to two "?" marks read as
+  // "everything is validated" in user testing. Only pass/na count towards the total.
+  const passed = SEAL_GATES.filter((g) => {
+    const st = gates[g.id]?.state;
+    return st === "pass" || st === "na";
+  }).length;
+  // Admissible only when nothing failed AND nothing is still awaiting a human.
+  const isAdmissible = admissible != null ? admissible : failing === 0 && underReview === 0;
+  const verdictWord = failing > 0 ? "Not admissible" : underReview > 0 ? "Pending review" : "Admissible";
+  const centreColor =
+    failing > 0 ? "var(--status-red)" : underReview > 0 ? "var(--status-review)" : "var(--status-go)";
   return (
     <div
       style={{
@@ -81,7 +89,7 @@ export function VerificationSeal({
         height={size}
         viewBox={`0 0 ${size} ${size}`}
         role="img"
-        aria-label={`${isAdmissible ? "Admissible" : "Not admissible"} — ${8 - failing} of 8 checks passed`}
+        aria-label={`${verdictWord} — ${passed} of 8 checks passed${underReview > 0 ? `, ${underReview} under review` : ""}${failing > 0 ? `, ${failing} failed` : ""}`}
       >
         <circle cx={r} cy={r} r={ringR} fill="none" stroke="var(--border)" strokeWidth="1" />
         {SEAL_GATES.map((g, i) => {
@@ -129,7 +137,7 @@ export function VerificationSeal({
               fill={centreColor}
               style={{ letterSpacing: "-0.02em" }}
             >
-              {8 - failing}
+              {passed}
               <tspan fontSize={size * 0.15} fill="var(--muted-foreground)">
                 /8
               </tspan>
@@ -142,7 +150,7 @@ export function VerificationSeal({
               fontSize={size * 0.105}
               fill="var(--muted-foreground)"
             >
-              {isAdmissible ? "Admissible" : "Not admissible"}
+              {verdictWord}
             </text>
           </>
         ) : (
@@ -155,7 +163,7 @@ export function VerificationSeal({
             fontWeight="600"
             fill={centreColor}
           >
-            {8 - failing}
+            {passed}
           </text>
         )}
       </svg>

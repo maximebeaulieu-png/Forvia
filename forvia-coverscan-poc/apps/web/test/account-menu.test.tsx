@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: nav.push, replace: nav.replace, prefetch: vi.fn(), back: vi.fn() }),
 }));
 
-const USER = { email: "demo@forvia.com", name: "Damien", role: "Buyer" };
+const USER = { email: "demo@forvia.com", name: "Damien Conchon", role: "Buyer" };
 
 const fetchMock = vi.fn();
 
@@ -37,15 +37,15 @@ function openMenu(): HTMLElement {
 describe("AccountMenu", () => {
   it("shows initials and the account name on the closed trigger", () => {
     render(<AccountMenu user={USER} />);
-    expect(screen.getByText("DA")).toBeInTheDocument();
-    expect(screen.getByText("Damien")).toBeInTheDocument();
+    expect(screen.getByText("DC")).toBeInTheDocument();
+    expect(screen.getByText("Damien Conchon")).toBeInTheDocument();
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
   it("opens a menu with the name, the e-mail and the account role badge", () => {
     render(<AccountMenu user={USER} />);
     const menu = openMenu();
-    expect(within(menu).getByText("Damien")).toBeInTheDocument();
+    expect(within(menu).getByText("Damien Conchon")).toBeInTheDocument();
     expect(within(menu).getByText("demo@forvia.com")).toBeInTheDocument();
     expect(within(menu).getByText("Buyer")).toBeInTheDocument();
     /* identity lines are plain text — the only actionable entry is Sign out */
@@ -118,7 +118,7 @@ describe("TopHeader", () => {
     expect(screen.getByPlaceholderText("Search supplier or policy number")).toBeInTheDocument();
     expect(screen.getByText("15 Apr 2025")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Upload" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Account/ })).toHaveTextContent("Damien");
+    expect(screen.getByRole("button", { name: /Account/ })).toHaveTextContent("Damien Conchon");
   });
 
   it("no longer renders the profile switcher nor the role select", () => {
@@ -136,7 +136,7 @@ describe("demo accounts", () => {
   it("carries the name and the role of each account", () => {
     expect(getDemoUser("demo@forvia.com")).toEqual({
       email: "demo@forvia.com",
-      name: "Damien",
+      name: "Damien Conchon",
       role: "Buyer",
     });
     expect(getDemoUser("  NOUVEAU@Forvia.com ")).toEqual({
@@ -150,7 +150,7 @@ describe("demo accounts", () => {
   it("resolves the user behind a cs_session cookie value", () => {
     const session = createSessionValue("demo@forvia.com");
     expect(decodeSessionEmail(session)).toBe("demo@forvia.com");
-    expect(getSessionUser(session)?.name).toBe("Damien");
+    expect(getSessionUser(session)?.name).toBe("Damien Conchon");
     expect(getSessionUser(undefined)).toBeNull();
     expect(getSessionUser("not-a-session")).toBeNull();
     expect(getSessionUser(createSessionValue("intruder@forvia.com"))).toBeNull();

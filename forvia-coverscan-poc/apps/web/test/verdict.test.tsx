@@ -151,7 +151,7 @@ describe("VerificationSeal", () => {
     render(<VerificationSeal gates={gates} />);
     expect(
       screen.getByRole("img", {
-        name: "Not admissible — 5 of 8 checks passed",
+        name: "Not admissible — 5 of 8 checks passed, 3 failed",
       }),
     ).toBeInTheDocument();
   });
@@ -164,6 +164,21 @@ describe("VerificationSeal", () => {
     expect(
       screen.getByRole("img", { name: "Admissible — 8 of 8 checks passed" }),
     ).toBeInTheDocument();
+  });
+
+  it("never reads admissible while a gate is still under review", () => {
+    const pending: Record<string, SealGateState> = Object.fromEntries(
+      SEAL_GATES.map((g) => [g.id, { state: "pass" as const }]),
+    );
+    pending.stamp = { state: "review", note: "faint stamp, low contrast" };
+    pending.signature = { state: "review", note: "signature not attributable" };
+    render(<VerificationSeal gates={pending} />);
+    expect(
+      screen.getByRole("img", {
+        name: "Pending review — 6 of 8 checks passed, 2 under review",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Admissible")).not.toBeInTheDocument();
   });
 
   it("list renders ✓ / ✗ / ? / – marks per gate state", () => {
